@@ -1,0 +1,22 @@
+package AMS.AMSsideproject.web.apiController.user.form;
+
+import lombok.Data;
+
+import java.time.LocalDateTime;
+
+@Data
+public class UserJoinForm {
+
+    /**
+     * validation 적용하기 -> bingResult 쓰기
+     */
+    private String social_id; //소설 플랫폼 고유 id
+    private String nickname;
+    private int birth; //월,일만
+    private String email;
+
+    private String social_type; //google, kakao
+    private String job; //학생, 취준생, 직장인, 백수..
+    private String main_lang; // java, python, c++, c, kotlin..
+
+}

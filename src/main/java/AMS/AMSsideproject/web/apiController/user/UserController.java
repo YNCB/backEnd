@@ -1,0 +1,120 @@
+package AMS.AMSsideproject.web.apiController.user;
+
+import AMS.AMSsideproject.domain.user.User;
+import AMS.AMSsideproject.domain.user.service.UserService;
+import AMS.AMSsideproject.web.apiController.user.form.UserJoinForm;
+import AMS.AMSsideproject.web.dto.user.UserJoinDto;
+import AMS.AMSsideproject.web.dto.user.UserDto;
+import AMS.AMSsideproject.web.exception.UserNullException;
+import AMS.AMSsideproject.web.oauth.provider.profile.KakaoProfile;
+import AMS.AMSsideproject.web.oauth.provider.token.KakaoToken;
+import AMS.AMSsideproject.web.oauth.service.KakaoService;
+import AMS.AMSsideproject.web.response.defaultResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api")
+@Api(tags = "User 관련 api")
+public class UserController {
+
+    private final KakaoService kakaoService;
+    private final UserService userService;
+
+    //인가코드 받아 회원가입을 처리하는 부분
+    @GetMapping("/join/token/kakao")
+    @ApiOperation(value = "인가코드를 받아 회원가입을 진행하는 api - kakao", notes = "인가코드를 받는 api 입니다. 엑세스토큰, " +
+            "사용자 정보를 받아오게 되고 서비스의 회원가입을 진행합니다. 이미 회원가입한 사용자이면 회원가입 진행하지 않습니다.")
+    public defaultResponse KakaoJoinCheck(@RequestParam("code")String code) throws JsonProcessingException {
+
+        //엑세스 토큰 받기
+        KakaoToken kakaoToken = kakaoService.getAccessToken(code);
+
+        //사용자 정보 받기
+        KakaoProfile userProfile = kakaoService.getUserProfile(kakaoToken.getAccess_token());
+
+        /**
+         * 회원가입하지않은 사용자는 -> 회원가입시키기
+         * 회원가입한 사용자는 -> 회원가입했다는 응답
+         */
+        try { //이미 회원가입 한 user
+            User findUser = userService.findUserBySocialId(userProfile.getId());
+
+            UserDto userJoinedDto = UserDto.builder()
+                    .social_id(findUser.getSocial_id())
+                    .nickname(findUser.getNickname())
+                    .build();
+
+            return new defaultResponse("200", "이미 회원가입한 사용자입니다.",userJoinedDto);
+
+        }catch(UserNullException e ) { //회원가입이 필요한 user
+            UserJoinDto userJoinDto = UserJoinDto.builder()
+                    .social_id(userProfile.id)
+                    .nickname(userProfile.kakao_account.profile.nickname)
+                    .birth(userProfile.kakao_account.birthday)
+                    .email(userProfile.kakao_account.email)
+                    .social_type("Kakao")
+                    .build();
+
+            return new defaultResponse("200", "회원가입을 진행합니다.", userJoinDto);
+        }
+
+    }
+
+    //실제 회원가입을 진행하는 부분
+    @PostMapping("/join")
+    @ApiOperation(value = "실제 회원가입을 진행하는 api", notes = "실제 회원가입을 진행합니다.")
+    public defaultResponse Join(@RequestBody UserJoinForm userJoinForm) {
+
+        try { //정상적인 회원가입
+            User joinUser = userService.join(userJoinForm);
+            UserDto joinUserDto = UserDto.builder()
+                    .social_id(joinUser.getSocial_id())
+                    .nickname(joinUser.getNickname())
+                    .build();
+
+            return new defaultResponse("200", "회원가입이 정상적으로 되었습니다", joinUserDto);
+        } catch (IllegalStateException e) { //중복된 닉네임을 입력한 경우
+            return new defaultResponse("200", "중복된 닉네임 입니다", userJoinForm);
+        }
+
+    }
+
+    //카카오 로그인 처리 부분
+    @GetMapping("/login/kakao")
+    @ApiOperation(value = "로그인을 처리하는 api - kakao", notes = "회원가입을 한 사용자가 소셜로그인을 하면 로그인 처리 ," +
+            " 회원가입을 하지않는 사용자가 소셜로그인을 하면 회원가입을 하라는 요청을 보낸다.")
+    public defaultResponse KakaoLogin(@RequestParam("code") String code) throws JsonProcessingException {
+
+        //엑세스 토큰 받기
+        KakaoToken kakaoToken = kakaoService.getAccessToken(code);
+
+        //사용자 정보 받기
+        KakaoProfile userProfile = kakaoService.getUserProfile(kakaoToken.getAccess_token());
+
+        try {
+            User findUser = userService.findUserBySocialId(userProfile.id);
+
+            /**
+             * 여기서 회원 정보 주면 redirect로 사용자 메인페이지("/api/{nickname}") 요청해야함(프론트가) , 또한 JWT 토큰 발급해서 줘야됌!
+             * -> 임시로 userDto 반환!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+             */
+            UserDto userDto = UserDto.builder()
+                    .social_id(findUser.getSocial_id())
+                    .nickname(findUser.getNickname())
+                    .build();
+            return new defaultResponse("200", "로그인을 성공하였습니다", userDto); // -> redirect:/api/{nickname}
+
+        }catch(UserNullException e ) {
+            return new defaultResponse("200", "회원가입이 필요합니다.", null);
+
+        }
+    }
+
+
+
+}
