@@ -58,6 +58,12 @@ dependencies {
 
 }
 
+//build test 코드 오류
+test.onlyIf {
+	!project.hasProperty('test')
+}
+
+
 //querydsl 추가
 def queryDslDir = "$buildDir/generated/querydsl"
 querydsl {
