@@ -5,8 +5,11 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://43.200.219.233 :3306/ams_sideproject?serverTimezone=UTC&characterEncoding=UTF-8
-    username: root
-    password: 1234
+    #url: jdbc:mysql://43.200.219.233 :3306/ams_sideproject?serverTimezone=UTC&characterEncoding=UTF-8
+    #username: root
+    username: rnqhstlr2297
+    #password: 1234
+    password: rnqhstlr123!
 
   jpa:
     hibernate:
