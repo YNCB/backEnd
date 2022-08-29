@@ -20,7 +20,7 @@ public class RefreshTokenController {
     private final UserService userService;
 
 
-    @GetMapping("/{nickname}/refreshToken") //인증,권한이 필요한 uri
+    @GetMapping("/{nickname}/refreshToken") //인증,권한이 필요한 uri -> 이 uri 이 맞나?!!!!!!!!!!!!!!!!!!!!!
     @ApiOperation(value = "토큰 재발급 api", notes = "엑세스 토큰이 만료되었을때 리프레시토큰으로 요청하게 되면 엑세스,리프레시 토큰을 재발급해줍니다.")
     public defaultResponse recreateToken(@PathVariable("nickname") String nickname, @RequestHeader("refreshToken") String refreshToken) {
 

@@ -37,7 +37,8 @@ public class UserController {
     //인가코드 받아 회원가입을 처리하는 부분
     @GetMapping("/join/token/kakao")
     @ApiOperation(value = "인가코드를 받아 회원가입을 진행하는 api - kakao", notes = "인가코드를 받는 api 입니다. 엑세스토큰, " +
-            "사용자 정보를 받아오게 되고 서비스의 회원가입을 진행합니다. 이미 회원가입한 사용자이면 회원가입 진행하지 않습니다.")
+            "사용자 정보를 받아오게 되고 서비스의 회원가입을 진행합니다. 이미 회원가입한 사용자이면 회원가입 진행하지 않습니다." +
+            "성공시 ip:8888/api/join uri로 호출 ")
     public defaultResponse KakaoJoinCheck(@RequestParam("code")String code) throws JsonProcessingException {
 
         //엑세스 토큰 받기
@@ -76,7 +77,7 @@ public class UserController {
 
     //실제 회원가입을 진행하는 부분
     @PostMapping("/join")
-    @ApiOperation(value = "실제 회원가입을 진행하는 api", notes = "실제 회원가입을 진행합니다.")
+    @ApiOperation(value = "실제 회원가입을 진행하는 api", notes = "실제 회원가입을 진행합니다. ")
     public defaultResponse Join(@RequestBody UserJoinForm userJoinForm) {
 
         try { //정상적인 회원가입
@@ -96,7 +97,8 @@ public class UserController {
     //카카오 로그인 처리 부분
     @GetMapping("/login/kakao")
     @ApiOperation(value = "로그인을 처리하는 api - kakao", notes = "회원가입을 한 사용자가 소셜로그인을 하면 로그인 처리 ," +
-            " 회원가입을 하지않는 사용자가 소셜로그인을 하면 회원가입을 하라는 요청을 보낸다.")
+            " 회원가입을 하지않는 사용자가 소셜로그인을 하면 회원가입을 하라는 요청을 보낸다." +
+            " 성공시 -> ip:8888/api/{nickname} uri로 호출 ")
     public defaultResponse KakaoLogin(@RequestParam("code") String code) throws JsonProcessingException {
 
         //엑세스 토큰 받기
