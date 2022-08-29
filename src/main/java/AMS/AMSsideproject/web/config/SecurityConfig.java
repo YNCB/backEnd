@@ -21,8 +21,10 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring()
-                .antMatchers("/","/api/join/token/kakao","/api/join", "/login/kakao")
-                .antMatchers("/login/oauth2/code/kakao"); //test용
+                .antMatchers("/api/join/token/kakao","/api/join", "/api/login/kakao")
+                .antMatchers("/api/*/refreshToken")
+
+                .antMatchers("/test", "/login/oauth2/code/kakao"); //test용
     }
 
     @Bean

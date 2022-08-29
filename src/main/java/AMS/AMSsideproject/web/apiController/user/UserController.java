@@ -3,8 +3,11 @@ package AMS.AMSsideproject.web.apiController.user;
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
 import AMS.AMSsideproject.web.apiController.user.form.UserJoinForm;
+import AMS.AMSsideproject.web.auth.jwt.JwtToken;
+import AMS.AMSsideproject.web.auth.jwt.service.JwtService;
 import AMS.AMSsideproject.web.dto.user.UserJoinDto;
 import AMS.AMSsideproject.web.dto.user.UserDto;
+import AMS.AMSsideproject.web.dto.user.UserLoginDto;
 import AMS.AMSsideproject.web.exception.UserNullException;
 import AMS.AMSsideproject.web.oauth.provider.profile.KakaoProfile;
 import AMS.AMSsideproject.web.oauth.provider.token.KakaoToken;
@@ -16,14 +19,20 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ * Exception 같은 경우에는 try~catch 구문을 쓰지말고 "@controllerAdvice"로 공통 처리하는게 맞지?
+ */
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
-@Api(tags = "User 관련 api")
+@Api(tags = "사용자 관련 api")
 public class UserController {
 
     private final KakaoService kakaoService;
     private final UserService userService;
+    private final JwtService jwtService;
 
     //인가코드 받아 회원가입을 처리하는 부분
     @GetMapping("/join/token/kakao")
@@ -96,22 +105,23 @@ public class UserController {
         //사용자 정보 받기
         KakaoProfile userProfile = kakaoService.getUserProfile(kakaoToken.getAccess_token());
 
-        try {
+        try { //회원가입을 한 이용자
             User findUser = userService.findUserBySocialId(userProfile.id);
 
-            /**
-             * 여기서 회원 정보 주면 redirect로 사용자 메인페이지("/api/{nickname}") 요청해야함(프론트가) , 또한 JWT 토큰 발급해서 줘야됌!
-             * -> 임시로 userDto 반환!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-             */
-            UserDto userDto = UserDto.builder()
+            //토큰(access, refresh) 생성
+            JwtToken jwtToken = jwtService.createAndSaveToken(findUser.getUser_id(), findUser.getNickname(), findUser.getRole());
+
+            UserLoginDto userLoginDto = UserLoginDto.builder()
                     .social_id(findUser.getSocial_id())
                     .nickname(findUser.getNickname())
+                    .accessToken(jwtToken.getAccessToken())
+                    .refreshToken(jwtToken.getRefreshToken())
                     .build();
-            return new defaultResponse("200", "로그인을 성공하였습니다", userDto); // -> redirect:/api/{nickname}
 
-        }catch(UserNullException e ) {
+            return new defaultResponse("200", "로그인을 성공하였습니다. 토큰이 발급되었습니다.", userLoginDto); // -> redirect:/api/{nickname}
+
+        }catch(UserNullException e ) { //회원가입을 하지 않은 사용자
             return new defaultResponse("200", "회원가입이 필요합니다.", null);
-
         }
     }
 

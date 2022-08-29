@@ -1,10 +1,14 @@
 package AMS.AMSsideproject.web.apiController.user.form;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserJoinForm {
 
     /**

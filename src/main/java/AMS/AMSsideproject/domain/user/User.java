@@ -7,7 +7,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 
 @Entity
 @Getter @Setter
@@ -32,8 +31,8 @@ public class User {
     private String role; //사용자 권한 (Reader, Master)
 
     //리프레시 토큰
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "token_id")
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "refresh_token_id")
     private RefreshToken refreshToken;
 
 
@@ -47,17 +46,21 @@ public class User {
         user.setSocial_type(joinForm.getSocial_type());
         user.setJob(joinForm.getJob());
         user.setMain_lang(joinForm.getMain_lang());
-
         user.setRedate(LocalDateTime.now());
+
+        /**
+         * 임시
+         */
+        user.setRole("MASTER");
+
         return user;
     }
 
 
     //setter 메서드
-    public RefreshToken SetRefreshToken(String refresh_Token) {
-        RefreshToken refresh_token  = new RefreshToken(refresh_Token);
-         this.refreshToken = refresh_token;
-         return this.refreshToken;
+    public RefreshToken setRefreshToken(RefreshToken refreshToken) {
+        this.refreshToken = refreshToken;
+        return this.refreshToken;
     }
 
 

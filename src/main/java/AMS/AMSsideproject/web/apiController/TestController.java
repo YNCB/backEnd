@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(tags = "test용 컨트롤러 안보셔도 됩니다!")
 public class TestController {
 
-    @GetMapping("/")
+    @GetMapping("/test")
     public String home() {
         return "test";
     }

@@ -22,16 +22,16 @@ public class JwtProviderService {
         String accessToken = JWT.create()
                 .withSubject(String.valueOf(user_id))
                 .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.ACCESSTOKEN_TIME))
-                .withClaim("user_id", user_id)
-                .withClaim("nickname", nickname)
+                .withClaim("userId", user_id)
+                .withClaim("nickName", nickname)
                 .withClaim("role", role)
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
 
         String refreshToken = JWT.create()
                 .withSubject(String.valueOf(user_id))
                 .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.REFRESHTOKEN_TIME))
-                .withClaim("user_id", user_id)
-                .withClaim("nickname", nickname)
+                .withClaim("userId", user_id)
+                .withClaim("nickName", nickname)
                 .withClaim("role", role)
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
 
@@ -39,7 +39,7 @@ public class JwtProviderService {
         return new JwtToken(accessToken, refreshToken);
     }
 
-    //access token 만 생성
+    //access token 만 생성 -> refresh 토큰 요청이 왔을때
     public String createAccessToken(Long user_id, String nickname, String role) {
 
         return JWT.create()

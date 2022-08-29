@@ -1,0 +1,26 @@
+server:
+  port: 8888
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ams_sideproject?serverTimezone=UTC&characterEncoding=UTF-8
+    username: root
+    password: 1234
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+
+  properties:
+    hibernate:
+      show_sql: true
+      #format_sql: true
+      default_batch_fetch_size: 100
+
+  # swagger 오류
+  # : Spring boot 2.6버전 이후에 spring.mvc.pathmatch.matching-strategy 값이
+  #   ant_apth_matcher에서 path_pattern_parser로 변경되면서 몇몇 라이브러리에서 오류가 발생하고 있다!
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
