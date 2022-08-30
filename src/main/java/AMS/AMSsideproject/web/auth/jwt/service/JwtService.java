@@ -4,8 +4,13 @@ import AMS.AMSsideproject.domain.token.RefreshToken;
 import AMS.AMSsideproject.domain.token.service.RefreshTokenService;
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
+import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
 import AMS.AMSsideproject.web.auth.jwt.JwtToken;
 import AMS.AMSsideproject.web.exception.RefreshTokenExpireException;
+import AMS.AMSsideproject.web.exception.RefreshTokenInvalidException;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,28 +50,46 @@ public class JwtService {
         return createToken;
     }
 
-    //refresh token 요청시 사용 (access 토큰이 기한 만료인 경우)
-    @Transactional
-    public JwtToken validRefreshTokenAndRecreateToken(String refresh_token, Long userId) { //nickname????!!!!으로 받아야되나?!
+    //실제 refreshToken 검증 메서드
+    public JwtToken validRefreshToken(Long user_id, String refreshToken) {
 
-        String accessToken = null;
-        String refreshToken = null;
-        User findUser = userService.findUserByUserId(userId);
+        User findUser = userService.findUserByUserId(user_id);
 
-        try { //리프레시 토큰의 기한이 만료되지 않은 경우
-            refreshToken = refreshTokenService.validRefreshToken(refresh_token);
-            accessToken = jwtProviderService.createAccessToken(findUser.getUser_id(), findUser.getNickname(), findUser.getRole());
+        //토큰의 값이 정상적인지 판별
+        validRefreshTokenValue(findUser, refreshToken);
 
-        }catch(RefreshTokenExpireException e) { //리프레시 토큰도 기한이 만료된 경우
-            JwtToken jwtToken = jwtProviderService.createJwtToken(findUser.getUser_id(), findUser.getNickname(), findUser.getRole());
+        //토큰의 만료기간이 유호한지 판별
+        validRefreshTokenExpired(refreshToken);
 
-            refreshTokenService.updateRefreshToken(findUser.getUser_id(), jwtToken.getRefreshToken());
-            accessToken = jwtToken.getAccessToken();
-            refreshToken = jwtToken.getRefreshToken();
-        }
-
+        //정상적인 경우
+        String accessToken = jwtProviderService.createAccessToken(findUser.getUser_id(), findUser.getNickname(), findUser.getRole());
         return new JwtToken(accessToken, refreshToken);
     }
 
+    //사용자의 refreshToken 유효기간 체크 메서드
+    public String validRefreshTokenExpired(String refreshToken) {
+
+        String validToken = null;
+        try { //refreshToken 이 만료되지 않은 경우
+            validToken = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(refreshToken).getToken();
+
+        }catch (TokenExpiredException e) { //refreshToken 이 만료된 경우
+            throw new RefreshTokenExpireException("리프레시 토큰이 만료되었습니다. 다시 로그인을 해주시기 바랍니다.");
+        }
+
+        return validToken;
+    }
+
+    //사용자의 refreshToken 과 일치하는지 체크하는 메서드
+    public String validRefreshTokenValue(User user, String refreshToken) {
+
+        String userRefreshToken = user.getRefreshToken().getRefresh_token();
+
+        //토큰의 값이 잘못된 경우
+        if (!userRefreshToken.equals(refreshToken)) {
+            throw new RefreshTokenInvalidException("리프레시 토큰이 없거나 잘못된 값입니다.");
+        }
+        return refreshToken;
+    }
 
 }

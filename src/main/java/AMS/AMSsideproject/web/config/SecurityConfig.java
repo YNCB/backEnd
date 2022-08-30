@@ -22,7 +22,7 @@ public class SecurityConfig {
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring()
                 .antMatchers("/api/join/token/kakao","/api/join", "/api/login/kakao")
-                .antMatchers("/api/*/refreshToken")
+                .antMatchers("/api/token/refresh")
 
                 .antMatchers("/test", "/login/oauth2/code/kakao"); //test용
     }
@@ -39,6 +39,11 @@ public class SecurityConfig {
                 .apply(new MyCustomDsl())
                 .and()
 
+                .authorizeRequests()
+                .antMatchers("/api/page/**").hasAuthority("USER")
+                .anyRequest().permitAll()
+
+                .and()
                 .build();
 
     }
@@ -50,6 +55,7 @@ public class SecurityConfig {
             AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
 
             http.addFilter(config.corsFilter());
+
         }
     }
 }

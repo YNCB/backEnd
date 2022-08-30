@@ -4,11 +4,9 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://43.200.219.233 :3306/ams_sideproject?serverTimezone=UTC&characterEncoding=UTF-8
-    #url: jdbc:mysql://43.200.219.233 :3306/ams_sideproject?serverTimezone=UTC&characterEncoding=UTF-8
-    #username: root
-    username: rnqhstlr2297
-    #password: 1234
+    #RDS IP 주소
+    url: jdbc:mysql://ams-sideproject.cplvn3gq33xj.ap-northeast-2.rds.amazonaws.com:3306/ams_sideproject?serverTimezone=UTC&characterEncoding=UTF-8
+    username: admin
     password: rnqhstlr123!
 
   jpa:

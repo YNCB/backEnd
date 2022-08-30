@@ -10,6 +10,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.Optional;
 
@@ -25,20 +26,6 @@ public class RefreshTokenService {
 
         return Optional.ofNullable(findUser.getRefreshToken()); //없을수가 있다. -> 처음 회원가입하고 로그인 한 경우
 
-    }
-
-    //사용자의 refreshToken 유효기간 체크 메서드
-    public String validRefreshToken(String refreshToken) {
-
-        String validToken = null;
-        try { //refreshToken 이 만료되지 않은 경우
-            validToken = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(refreshToken).getToken();
-
-        }catch (TokenExpiredException e) { //refreshToken 이 만료된 경우
-            throw new RefreshTokenExpireException("리프레시 토큰이 만료되었습니다");
-        }
-
-        return validToken;
     }
 
     //refreshToken 저장 메서드

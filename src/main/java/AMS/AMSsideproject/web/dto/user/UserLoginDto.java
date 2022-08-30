@@ -7,7 +7,7 @@ import lombok.Data;
 @Builder
 public class UserLoginDto {
 
-    private String social_id;
+    private Long user_Id;
     private String nickname;
     private String accessToken;
     private String refreshToken;
