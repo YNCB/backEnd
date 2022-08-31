@@ -135,6 +135,12 @@ public class UserController {
     public defaultResponse UserEditForm(@RequestBody UserEdit userEdit) {
 
         User findUser = userService.findUserByUserId(userEdit.getUserId());
+
+        /**
+         * 요청으로 userid, nickname 받기 (useid만 못받으니)
+         * 응답으로 수정가능한 사용자 정보 dto return
+         */
+
         return null;
 
     }
@@ -142,19 +148,16 @@ public class UserController {
     @ApiOperation(value = "회원 정보 수정 api", notes = "아직 구현 중...")
     public defaultResponse UserEdit(@RequestBody UserEditForm userEditForm) {
 
-
         /**
-         * rnqhstlr
-         * fdafd
-         * fsdafdsaf
-         * fadsfda
-         * fsadaf
-         * fadsfdf
-         * fasfas
-         * 
+         * 요청으로 userId를 포함한 수정한 사용자 정보 받기
+         * 응답으로 userId, nickname 해주기
          */
+
         return null;
     }
+    /**
+     * 테스트테스트테스트
+     */
 
 
 }
