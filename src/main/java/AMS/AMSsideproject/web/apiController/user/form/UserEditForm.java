@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserEditForm {
 
+    public Long userId;
     public String nickname;
     public String job;
     public String main_lang;
