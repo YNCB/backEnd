@@ -151,18 +151,7 @@ public class UserController {
          * 요청으로 userId를 포함한 수정한 사용자 정보 받기
          * 응답으로 userId, nickname 해주기
          */
-        /**
-         * fdfsafdfasfdfdas
-         * fa
-         * fd
-         * af
-         *
-         * fads
-         * f
-         * d
-         * fd
-         * f
-         */
+
         return null;
     }
 
