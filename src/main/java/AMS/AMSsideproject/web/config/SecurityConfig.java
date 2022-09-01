@@ -39,11 +39,11 @@ public class SecurityConfig {
                 .apply(new MyCustomDsl())
                 .and()
 
-                .authorizeRequests()
-                .antMatchers("/api/page/**").hasAuthority("USER")
-                .anyRequest().permitAll()
+                //.authorizeRequests()
+                //.antMatchers("/api/page/**").hasAuthority("USER")
+                //.anyRequest().permitAll()
 
-                .and()
+                //.and()
                 .build();
 
     }
