@@ -1,19 +1,22 @@
 package AMS.AMSsideproject.web.auth.jwt.service;
 
+import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
 import AMS.AMSsideproject.web.auth.jwt.JwtToken;
+import AMS.AMSsideproject.web.exception.RefreshTokenExpireException;
+import AMS.AMSsideproject.web.exception.RefreshTokenInvalidException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.Date;
 
 /**
- * Jwt(access,refresh) 토큰 생성과 관련된 서비스
+ * Jwt(access,refresh) 토큰과 관련된 기능
  */
 @Service
-public class JwtProviderService {
+public class JwtProvider {
 
     //access token, refresh token 생성
     public JwtToken createJwtToken(Long user_id, String nickname ,String role) {
@@ -51,6 +54,26 @@ public class JwtProviderService {
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
 
     }
+
+    //사용자의 Token 유효기간 체크 메서드
+    public String validTokenExpired(String Token) {
+
+        try { //refreshToken 이 만료되지 않은 경우
+            JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(Token).getToken();
+
+        }catch (TokenExpiredException e) { //refreshToken 이 만료된 경우
+            throw new RefreshTokenExpireException("리프레시 토큰이 만료되었습니다. 다시 로그인을 해주시기 바랍니다.");
+        }
+
+        return Token;
+    }
+
+    //JWT 토큰 헤더 검증 기능
+
+
+
+
+
 
 
 }

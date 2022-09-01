@@ -5,6 +5,7 @@ import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
 import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
 import AMS.AMSsideproject.web.exception.RefreshTokenExpireException;
+import AMS.AMSsideproject.web.exception.RefreshTokenInvalidException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.TokenExpiredException;
@@ -14,6 +15,9 @@ import org.springframework.util.StringUtils;
 
 import java.util.Optional;
 
+/**
+ * RefreshToken 토큰과 관련된 기능
+ */
 @Service
 @RequiredArgsConstructor
 public class RefreshTokenService {
@@ -41,6 +45,19 @@ public class RefreshTokenService {
 
         return findUser.getRefreshToken();
     }
+
+    //사용자의 refreshToken 과 일치하는지 체크하는 메서드
+    public String validRefreshTokenValue(Long userId, String refreshToken) {
+
+        String findRefreshToken = findRefreshToken(userId).get().getRefresh_token();
+
+        //토큰의 값이 잘못된 경우
+        if (!findRefreshToken.equals(refreshToken)) {
+            throw new RefreshTokenInvalidException("리프레시 토큰이 없거나 잘못된 값입니다.");
+        }
+        return refreshToken;
+    }
+
 
 
 }
