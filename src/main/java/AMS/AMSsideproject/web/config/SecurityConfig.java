@@ -1,5 +1,8 @@
 package AMS.AMSsideproject.web.config;
 
+import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
+import AMS.AMSsideproject.web.custom.security.filter.UsernamePasswordCustomFilter;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +20,8 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final CorConfig config;
+    private final JwtProvider jwtProvider;
+    private final ObjectMapper objectMapper;
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -33,7 +38,7 @@ public class SecurityConfig {
         return http.csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .formLogin().disable()
+                .formLogin().loginProcessingUrl("/ams/login").disable()
                 .httpBasic().disable()
 
                 .apply(new MyCustomDsl())
@@ -55,6 +60,7 @@ public class SecurityConfig {
             AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
 
             http.addFilter(config.corsFilter());
+            http.addFilter(new UsernamePasswordCustomFilter(authenticationManager, jwtProvider, objectMapper));
 
         }
     }

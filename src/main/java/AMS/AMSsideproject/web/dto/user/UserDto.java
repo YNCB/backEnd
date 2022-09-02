@@ -8,6 +8,6 @@ import lombok.Data;
 public class UserDto {
 
     private Long user_id;
-    private String social_id;
+    private String id;
     private String nickname;
 }

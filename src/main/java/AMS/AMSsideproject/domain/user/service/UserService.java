@@ -7,6 +7,7 @@ import AMS.AMSsideproject.web.apiController.user.form.UserJoinForm;
 import AMS.AMSsideproject.web.exception.DuplicationUserNickname;
 import AMS.AMSsideproject.web.exception.UserNullException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final BCryptPasswordEncoder encodePwd;
 
     //회원 가입 메서드
     @Transactional
@@ -25,6 +27,8 @@ public class UserService {
 
         //사용자 닉네임 중복 검사
         validDuplicateUserNickName(joinForm.getNickname());
+
+        joinForm.setPassword(encodePwd.encode(joinForm.getPassword()));
 
         //정상적인 사용자
         User user = User.createUser(joinForm);
@@ -45,9 +49,9 @@ public class UserService {
         return findUser.get();
     }
 
-    //회원 조회 메서드 - 소셜 고유 id
-    public User findUserBySocialId(String socialId) {
-        Optional<User> findUser = userRepository.findBySocialId(socialId);
+    //회원 조회 메서드 - 회원 id
+    public User findUserById(String Id) {
+        Optional<User> findUser = userRepository.findById(Id);
 
         if(findUser.isEmpty())
             throw new UserNullException("회원가입을 해주시기 바랍니다.");

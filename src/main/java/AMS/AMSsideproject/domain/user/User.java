@@ -16,19 +16,19 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long user_id;
 
-    private String social_id; //소설 플랫폼 고유 id
-    //private String password; //꼭 필요하나?!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    private String id; //소설 플랫폼 고유 id
+    private String password;
     private String nickname;
     private int birth; //월,일만
     private String email;
 
-    private String social_type; //google, kakao
+    private String social_type; //google, kakao, NUll
     private LocalDateTime redate; //회원가입 일자
 
     private String job; //학생, 취준생, 직장인, 백수..
     private String main_lang; // java, python, c++, c, kotlin..
 
-    private String role; //사용자 권한 (Reader, Master)
+    private String role; //USER, MANAGER, ADMIN
 
     //리프레시 토큰
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -39,7 +39,8 @@ public class User {
     //생성 메서드
     public static User createUser(UserJoinForm joinForm) {
         User user = new User();
-        user.setSocial_id(joinForm.getSocial_id());
+        user.setId(joinForm.getId());
+        user.setPassword(joinForm.getPassword());
         user.setNickname(joinForm.getNickname());
         user.setBirth(joinForm.getBirth());
         user.setEmail(joinForm.getEmail());
@@ -51,7 +52,7 @@ public class User {
         /**
          * 임시
          */
-        user.setRole("MASTER");
+        user.setRole("USER");
 
         return user;
     }

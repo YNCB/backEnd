@@ -14,7 +14,8 @@ public class UserJoinForm {
     /**
      * validation 적용하기 -> bingResult 쓰기
      */
-    private String social_id; //소설 플랫폼 고유 id
+    private String id; //사용자 id
+    private String password;
     private String nickname;
     private int birth; //월,일만
     private String email;

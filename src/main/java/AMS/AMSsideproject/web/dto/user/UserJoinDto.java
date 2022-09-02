@@ -7,7 +7,8 @@ import lombok.Data;
 @Builder
 public class UserJoinDto {
 
-    private String social_id;
+    private String id;
+    private String password;
     private String nickname;
     private String birth;
     private String email;

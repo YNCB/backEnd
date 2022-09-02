@@ -7,7 +7,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 /**
- * JWT 를 사용할때 반드시 해주기
+ * JWT 를 사용할때 반드시 해주기 "CORS 정책"
  */
 @Configuration
 public class CorConfig {

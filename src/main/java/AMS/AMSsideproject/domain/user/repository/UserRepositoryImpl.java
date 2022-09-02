@@ -35,10 +35,10 @@ public class UserRepositoryImpl implements UserRepository{
     }
 
     @Override
-    public Optional<User> findBySocialId(String socialId) {
+    public Optional<User> findById(String Id) {
         return query.select(QUser.user)
                 .from(QUser.user)
-                .where(socialIdEq(socialId))
+                .where(socialIdEq(Id))
                 .fetch()
                 .stream().findFirst(); //어차피 social id 별로 한명의 사용자 밖에 없을테니
     }

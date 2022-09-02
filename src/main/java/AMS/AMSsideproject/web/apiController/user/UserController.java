@@ -23,8 +23,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- * Exception 같은 경우에는 try~catch 구문을 쓰지말고 "@controllerAdvice"로 공통 처리하는게 맞지?
+ * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ * 회원 아이디, 닉네임 중복 검사하는 api 만들어야 된다.
+ * 회원가입할때 중복 검사하는 버튼이 있어야 되니!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
  */
 
 @RestController
@@ -55,11 +56,11 @@ public class UserController {
          * 회원가입한 사용자는 -> 회원가입했다는 응답
          */
         try { //이미 회원가입 한 user
-            User findUser = userService.findUserBySocialId(userProfile.getId());
+            User findUser = userService.findUserById(userProfile.getId());
 
             UserDto userJoinedDto = UserDto.builder()
                     .user_id(findUser.getUser_id())
-                    .social_id(findUser.getSocial_id())
+                    .id(findUser.getId())
                     .nickname(findUser.getNickname())
                     .build();
 
@@ -67,7 +68,8 @@ public class UserController {
 
         }catch(UserNullException e ) { //회원가입이 필요한 user
             UserJoinDto userJoinDto = UserJoinDto.builder()
-                    .social_id(userProfile.id)
+                    .id(userProfile.id)
+                    .password(userProfile.id) //소셜 로그인은 비밀번호가 중요하지 않으니 그냥 세팅
                     .nickname(userProfile.kakao_account.profile.nickname)
                     .birth(userProfile.kakao_account.birthday)
                     .email(userProfile.kakao_account.email)
@@ -87,7 +89,8 @@ public class UserController {
         try { //정상적인 회원가입
             User joinUser = userService.join(userJoinForm);
             UserDto joinUserDto = UserDto.builder()
-                    .social_id(joinUser.getSocial_id())
+                    .user_id(joinUser.getUser_id())
+                    .id(joinUser.getId())
                     .nickname(joinUser.getNickname())
                     .build();
 
@@ -113,7 +116,7 @@ public class UserController {
         KakaoProfile userProfile = kakaoService.getUserProfile(kakaoToken.getAccess_token());
 
         //회원가입을 한 이용자
-        User findUser = userService.findUserBySocialId(userProfile.id);
+        User findUser = userService.findUserById(userProfile.id);
 
         //토큰(access, refresh) 생성
         JwtToken jwtToken = jwtService.createAndSaveToken(findUser.getUser_id(), findUser.getNickname(), findUser.getRole());
@@ -126,6 +129,8 @@ public class UserController {
 
         return new defaultResponse("200", "로그인을 성공하였습니다. 토큰이 발급되었습니다.", userLoginDto); // -> redirect:/api/{nickname}
     }
+
+
 
 
     //회원 정보 수정
