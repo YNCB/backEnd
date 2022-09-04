@@ -115,7 +115,7 @@ public class UserController {
         //사용자 정보 받기
         KakaoProfile userProfile = kakaoService.getUserProfile(kakaoToken.getAccess_token());
 
-        //회원가입을 한 이용자
+        //회원가입을 한 이용자인지 정검
         User findUser = userService.findUserById(userProfile.id);
 
         //토큰(access, refresh) 생성

@@ -54,7 +54,7 @@ public class UserService {
         Optional<User> findUser = userRepository.findById(Id);
 
         if(findUser.isEmpty())
-            throw new UserNullException("회원가입을 해주시기 바랍니다.");
+            throw new UserNullException("회원가입이 안된 사용자입니다. 회원가입을 해주시기 바랍니다.");
         return findUser.get();
     }
 

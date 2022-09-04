@@ -1,6 +1,8 @@
 package AMS.AMSsideproject.web.config;
 
 import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
+import AMS.AMSsideproject.web.custom.security.filter.UserLoginFailureCustomHandler;
+import AMS.AMSsideproject.web.custom.security.filter.UserLoginSuccessCustomHandler;
 import AMS.AMSsideproject.web.custom.security.filter.UsernamePasswordCustomFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -22,12 +24,14 @@ public class SecurityConfig {
     private final CorConfig config;
     private final JwtProvider jwtProvider;
     private final ObjectMapper objectMapper;
+    private final UserLoginSuccessCustomHandler successHandler;
+    private final UserLoginFailureCustomHandler failureHandler;
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring()
-                .antMatchers("/api/join/token/kakao","/api/join", "/api/login/kakao")
-                .antMatchers("/api/token/refresh")
+                .antMatchers("/ams/join/token/kakao","/ams/join", "/ams/login/kakao")
+                .antMatchers("/ams/token/refresh")
 
                 .antMatchers("/test", "/login/oauth2/code/kakao"); //test용
     }
@@ -60,7 +64,7 @@ public class SecurityConfig {
             AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
 
             http.addFilter(config.corsFilter());
-            http.addFilter(new UsernamePasswordCustomFilter(authenticationManager, jwtProvider, objectMapper));
+            http.addFilter(new UsernamePasswordCustomFilter(authenticationManager, objectMapper , successHandler, failureHandler));
 
         }
     }

@@ -38,14 +38,14 @@ public class UserRepositoryImpl implements UserRepository{
     public Optional<User> findById(String Id) {
         return query.select(QUser.user)
                 .from(QUser.user)
-                .where(socialIdEq(Id))
+                .where(idEq(Id))
                 .fetch()
                 .stream().findFirst(); //어차피 social id 별로 한명의 사용자 밖에 없을테니
     }
-    private BooleanExpression socialIdEq(String socialId) {
-        if (!StringUtils.hasText(socialId))
+    private BooleanExpression idEq(String Id) {
+        if (!StringUtils.hasText(Id))
             return null;
-        return QUser.user.social_id.eq(socialId);
+        return QUser.user.id.eq(Id);
     }
 
     @Override
