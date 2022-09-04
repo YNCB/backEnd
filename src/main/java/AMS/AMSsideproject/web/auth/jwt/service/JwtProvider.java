@@ -68,7 +68,12 @@ public class JwtProvider {
         return Token;
     }
 
-    //JWT 토큰 헤더 검증 기능
+    //JWT 토큰 헤더 검증 기능(토큰이 있는지)
+
+    //JWT 토큰에서 user nickName 가져오는 기능
+
+    //추가로 필터에서 에러발생하면 스프링 컨테이너까지 올라갔다가 돌아오니깐(controlAdvice가 잡아주나?!) 스프링 컨테이너까지 안올라가게 처리해주기
+    //필터에 대한 오류를 잡아주는 필터!? 아니면 다른게 있나?!
 
 
 
