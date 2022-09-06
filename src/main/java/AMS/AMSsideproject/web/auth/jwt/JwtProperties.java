@@ -7,6 +7,6 @@ public interface JwtProperties {
 
     public String SECRET = "AMS-sideProject";
     public int ACCESSTOKEN_TIME = 3000; // (1/1000초)
-    public int REFRESHTOKEN_TIME = 3000;
+    public int REFRESHTOKEN_TIME = 300000;
 
 }
