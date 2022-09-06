@@ -33,8 +33,8 @@ public class UserKakaoController {
 
     //인가코드 받아 회원가입을 처리하는 부분
     @GetMapping("/join/token/kakao")
-    @ApiOperation(value = "인가코드를 받아 회원가입을 진행하는 api - kakao", notes = "인가코드를 받는 api 입니다. 엑세스토큰, " +
-            "사용자 정보를 받아오게 되고 서비스의 회원가입을 진행합니다. 이미 회원가입한 사용자이면 회원가입 진행하지 않습니다." +
+    @ApiOperation(value = "인가코드를 받아 카카오 회원가입을 진행하는 api - kakao", notes = "인가코드를 받는 api 입니다. 엑세스토큰, " +
+            "사용자 정보를 받아오게 되고 카카오 회원가입을 진행합니다. 이미 카카오 회원가입한 사용자이면 회원가입 진행하지 않습니다." +
             "성공시 -> /ams/join api 로 추가 데이터와 함께 호출하면 됩니다. ")
     public defaultResponse KakaoJoinCheck(@RequestParam("code")String code) throws JsonProcessingException {
 
@@ -64,7 +64,7 @@ public class UserKakaoController {
                     .id(userProfile.id)
                     .password(userProfile.id) //소셜 로그인은 비밀번호가 중요하지 않으니 그냥 세팅
                     .nickname(userProfile.kakao_account.profile.nickname)
-                    .birth(userProfile.kakao_account.birthday)
+                    //.birth(userProfile.kakao_account.birthday)
                     .email(userProfile.kakao_account.email)
                     .social_type("Kakao")
                     .build();
@@ -76,8 +76,8 @@ public class UserKakaoController {
 
     //카카오 로그인 처리 부분
     @GetMapping("/login/kakao")
-    @ApiOperation(value = "로그인을 처리하는 api - kakao", notes = "회원가입을 한 사용자가 소셜로그인을 하면 로그인 처리 ," +
-            " 회원가입을 하지않는 사용자가 소셜로그인을 하면 회원가입을 하라는 요청을 보냅니다." +
+    @ApiOperation(value = "카카오 로그인을 처리하는 api - kakao", notes = "카카오 회원가입을 한 사용자가 카카오 로그인을 하면 로그인 처리 ," +
+            " 카카오 회원가입을 하지않는 사용자가 카카오 로그인을 하면 카카오 회원가입을 하라는 요청을 보냅니다." +
             " 성공시 -> /ams/{nickname} api 호출 ")
     public defaultResponse KakaoLogin(@RequestParam("code") String code) throws JsonProcessingException {
 

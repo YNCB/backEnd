@@ -1,11 +1,9 @@
 package AMS.AMSsideproject.web.oauth.service;
 
 import AMS.AMSsideproject.web.oauth.provider.info.GoogleInfo;
-import AMS.AMSsideproject.web.oauth.provider.info.KakaoInfo;
 import AMS.AMSsideproject.web.oauth.provider.profile.GoogleProfile;
 import AMS.AMSsideproject.web.oauth.provider.profile.KakaoProfile;
 import AMS.AMSsideproject.web.oauth.provider.token.GoogleToken;
-import AMS.AMSsideproject.web.oauth.provider.token.KakaoToken;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -13,9 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

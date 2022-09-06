@@ -1,12 +1,10 @@
 package AMS.AMSsideproject.web.apiController;
 
+import AMS.AMSsideproject.web.apiController.user.form.UserJoinForm;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -32,6 +30,13 @@ public class TestController {
     public String GoogleCode(@RequestParam("code") String code) {
 
         return "구글 로그인 인증완료, code " + code;
+    }
+
+    @PostMapping("/join/test")
+    @ResponseBody
+    public UserJoinForm test(@RequestBody UserJoinForm userJoinForm) {
+
+        return userJoinForm;
     }
 
 

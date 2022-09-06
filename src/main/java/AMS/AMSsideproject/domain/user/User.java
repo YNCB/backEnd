@@ -2,6 +2,7 @@ package AMS.AMSsideproject.domain.user;
 
 import AMS.AMSsideproject.domain.token.RefreshToken;
 import AMS.AMSsideproject.web.apiController.user.form.UserJoinForm;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,7 +10,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter @Setter
+@Data
 public class User {
 
     @Id
@@ -19,9 +20,11 @@ public class User {
     private String id; //소설 플랫폼 고유 id
     private String password;
     private String nickname;
-    private int birth; //월,일만
-    private String email;
 
+    @Embedded
+    private Birthday birthday;
+
+    private String email;
     private String social_type; //google, kakao, NUll
     private LocalDateTime redate; //회원가입 일자
 
@@ -42,7 +45,10 @@ public class User {
         user.setId(joinForm.getId());
         user.setPassword(joinForm.getPassword());
         user.setNickname(joinForm.getNickname());
-        user.setBirth(joinForm.getBirth());
+
+        Birthday birthday = new Birthday(joinForm.getYear(), joinForm.getMonth(), joinForm.getDay());
+        user.setBirthday(birthday);
+
         user.setEmail(joinForm.getEmail());
         user.setSocial_type(joinForm.getSocial_type());
         user.setJob(joinForm.getJob());

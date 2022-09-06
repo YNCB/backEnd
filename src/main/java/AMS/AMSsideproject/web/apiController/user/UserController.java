@@ -22,7 +22,7 @@ public class UserController {
 
     //실제 회원가입을 진행하는 부분
     @PostMapping("/join")
-    @ApiOperation(value = "실제 회원가입을 진행하는 api", notes = "실제 회원가입을 진행합니다. 닉네임 중복 여부도 검사합니다. ")
+    @ApiOperation(value = "실제 회원가입을 진행하는 api", notes = "실제 회원가입을 진행합니다. ")
     public defaultResponse Join(@RequestBody UserJoinForm userJoinForm) {
 
         User joinUser = userService.join(userJoinForm);
@@ -42,7 +42,7 @@ public class UserController {
      */
     // 회원가입시 아이디 중복 검사하는 부분
     @PostMapping("/join/validId")
-    @ApiOperation(value = "회원가입시 아이디 중복검사하는 api", notes = "")
+    @ApiOperation(value = "회원가입시 아이디 중복검사하는 api", notes = "회원가입 시 회원 아이디에 대해서 중복 검사를 합니다.")
     public defaultResponse ValidDuplicateId (@RequestParam("id") String id) {
 
         String validId = userService.validDuplicateUserId(id);
@@ -53,15 +53,13 @@ public class UserController {
 
     // 회원가입시 닉네임 중복 검사하는 부분
     @PostMapping("/join/validNickName")
-    @ApiOperation(value = "회원가입시 닉네임 중복검사하는 api", notes = "")
+    @ApiOperation(value = "회원가입시 닉네임 중복검사하는 api", notes = "회원가입 시 회원 닉네임에 대해서 중복 검사를 합니다.")
     public defaultResponse ValidDuplicateNickName(@RequestParam("nickname") String nickName) {
 
         String validNickName = userService.validDuplicateUserNickName(nickName);
 
         return new defaultResponse("200", "사용 가능한 닉네임 입니다.", validNickName);
     }
-
-
 
 
     //회원 정보 수정

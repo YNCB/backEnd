@@ -9,11 +9,8 @@ public class GoogleUserJoinDto {
 
     private String id;
     private String password;
-    private String birth;
+    //private String birth; //존재 하지 않음
     private String email;
     private String social_type;
 
-    /**
-     * 생년월일은 못받나?!
-     */
 }
