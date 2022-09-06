@@ -38,8 +38,6 @@ public class UserLoginSuccessCustomHandler implements AuthenticationSuccessHandl
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
-        System.out.println("3==================================");
-
         //로그인 인증을 마친 사용자 가져오기
         PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
         User LoginUser = principal.getUser();

@@ -20,7 +20,7 @@ public class UserJoinForm {
     private int birth; //월,일만
     private String email;
 
-    private String social_type; //google, kakao
+    private String social_type; //google, kakao ,basic
     private String job; //학생, 취준생, 직장인, 백수..
     private String main_lang; // java, python, c++, c, kotlin..
 

@@ -42,7 +42,7 @@ public class SecurityConfig {
         return http.csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .formLogin().loginProcessingUrl("/ams/login").disable()
+                .formLogin().disable()
                 .httpBasic().disable()
 
                 .apply(new MyCustomDsl())

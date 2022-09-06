@@ -18,12 +18,20 @@ public class TestController {
         return "test";
     }
 
-    //test로 직접 인가 코드 받기
+    //test로 직접 인가 코드 받기 - kakao
     @GetMapping("/login/oauth2/code/kakao")
     @ResponseBody
     public String KakaoCode(@RequestParam("code") String code) {
 
         return "카카오 로그인 인증완료, code: "  + code;
+    }
+
+    //test로 직접 인가코드 받기 - google
+    @GetMapping("/login/oauth2/code/google")
+    @ResponseBody
+    public String GoogleCode(@RequestParam("code") String code) {
+
+        return "구글 로그인 인증완료, code " + code;
     }
 
 

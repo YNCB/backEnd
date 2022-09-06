@@ -29,7 +29,7 @@ class JwtServiceTest {
     @BeforeEach
     @Transactional
     public void init() {
-        UserJoinForm userJoinForm = new UserJoinForm("test1", "test1", 1, "test1", "test1", "test1", "test1");
+        UserJoinForm userJoinForm = new UserJoinForm("test1","test1", "test1", 1, "test1", "test1", "test1", "test1");
         userService.join(userJoinForm);
     }
 

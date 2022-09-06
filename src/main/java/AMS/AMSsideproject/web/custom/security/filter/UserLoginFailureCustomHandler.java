@@ -22,14 +22,17 @@ public class UserLoginFailureCustomHandler implements AuthenticationFailureHandl
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
 
-        /**
-         * 여기서 로그인에 대한 오류 처리!!!!! - 구분해서 처리해야되는거 아냐?!!!!!
-         * ex) 회원가입하지 않은 회원
-         * ex) 아이디, 패스워드가 틀린 사용자
-         */
+        //이거는 세세하게(회원가입하지 않은 사용자, 비밀번호 틀린사용자로 나눌때 사용하는 법!!!!!
+//        if(exp.equals(BadCredentialsException.class)) { //비밀번호가 맞지 않았을 경우
+//            errorResult = new ErrorResult(exception.getMessage(), "BAD", "400");
+//
+//        }else if(exp.equals(LoginUserNullException.class)) {
+//            errorResult = new ErrorResult(exception.getMessage(), "BAD", "400");
+//        }else {
+//            errorResult = new ErrorResult("InternalAuthenticationError", "BAD", "400");
+//        }
 
-
-        ErrorResult errorResult = new ErrorResult("회원가입이 안된 사용자입니다. 회원가입을 해주시기 바랍니다.", "BAD", "400");
+        ErrorResult errorResult = new ErrorResult(exception.getMessage(),"BAD", "400");
         String res = objectMapper.writeValueAsString(errorResult);
 
         response.setStatus(HttpStatus.BAD_REQUEST.value());

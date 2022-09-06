@@ -5,28 +5,12 @@ import AMS.AMSsideproject.domain.user.service.UserService;
 import AMS.AMSsideproject.web.apiController.user.form.UserEdit;
 import AMS.AMSsideproject.web.apiController.user.form.UserEditForm;
 import AMS.AMSsideproject.web.apiController.user.form.UserJoinForm;
-import AMS.AMSsideproject.web.auth.jwt.JwtToken;
-import AMS.AMSsideproject.web.auth.jwt.service.JwtService;
-import AMS.AMSsideproject.web.dto.user.UserJoinDto;
 import AMS.AMSsideproject.web.dto.user.UserDto;
-import AMS.AMSsideproject.web.dto.user.UserLoginDto;
-import AMS.AMSsideproject.web.exception.DuplicationUserNickname;
-import AMS.AMSsideproject.web.exception.UserNullException;
-import AMS.AMSsideproject.web.oauth.provider.profile.KakaoProfile;
-import AMS.AMSsideproject.web.oauth.provider.token.KakaoToken;
-import AMS.AMSsideproject.web.oauth.service.KakaoService;
 import AMS.AMSsideproject.web.response.defaultResponse;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
-/**
- * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- * 회원 아이디, 닉네임 중복 검사하는 api 만들어야 된다.
- * 회원가입할때 중복 검사하는 버튼이 있어야 되니!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- */
 
 @RestController
 @RequiredArgsConstructor
@@ -34,100 +18,47 @@ import org.springframework.web.bind.annotation.*;
 @Api(tags = "사용자 관련 api")
 public class UserController {
 
-    private final KakaoService kakaoService;
     private final UserService userService;
-    private final JwtService jwtService;
-
-    //인가코드 받아 회원가입을 처리하는 부분
-    @GetMapping("/join/token/kakao")
-    @ApiOperation(value = "인가코드를 받아 회원가입을 진행하는 api - kakao", notes = "인가코드를 받는 api 입니다. 엑세스토큰, " +
-            "사용자 정보를 받아오게 되고 서비스의 회원가입을 진행합니다. 이미 회원가입한 사용자이면 회원가입 진행하지 않습니다." +
-            "성공시 -> /ams/join uri로 추가 데이터와 함께 호출하면 됩니다. ")
-    public defaultResponse KakaoJoinCheck(@RequestParam("code")String code) throws JsonProcessingException {
-
-        //엑세스 토큰 받기
-        KakaoToken kakaoToken = kakaoService.getAccessToken(code);
-
-        //사용자 정보 받기
-        KakaoProfile userProfile = kakaoService.getUserProfile(kakaoToken.getAccess_token());
-
-        /**
-         * 회원가입하지않은 사용자는 -> 회원가입시키기
-         * 회원가입한 사용자는 -> 회원가입했다는 응답
-         */
-        try { //이미 회원가입 한 user
-            User findUser = userService.findUserById(userProfile.getId());
-
-            UserDto userJoinedDto = UserDto.builder()
-                    .user_id(findUser.getUser_id())
-                    .id(findUser.getId())
-                    .nickname(findUser.getNickname())
-                    .build();
-
-            return new defaultResponse("200", "이미 회원가입한 사용자입니다.",userJoinedDto);
-
-        }catch(UserNullException e ) { //회원가입이 필요한 user
-            UserJoinDto userJoinDto = UserJoinDto.builder()
-                    .id(userProfile.id)
-                    .password(userProfile.id) //소셜 로그인은 비밀번호가 중요하지 않으니 그냥 세팅
-                    .nickname(userProfile.kakao_account.profile.nickname)
-                    .birth(userProfile.kakao_account.birthday)
-                    .email(userProfile.kakao_account.email)
-                    .social_type("Kakao")
-                    .build();
-
-            return new defaultResponse("200", "회원가입을 진행합니다.", userJoinDto);
-        }
-
-    }
 
     //실제 회원가입을 진행하는 부분
     @PostMapping("/join")
     @ApiOperation(value = "실제 회원가입을 진행하는 api", notes = "실제 회원가입을 진행합니다. 닉네임 중복 여부도 검사합니다. ")
     public defaultResponse Join(@RequestBody UserJoinForm userJoinForm) {
 
-        try { //정상적인 회원가입
-            User joinUser = userService.join(userJoinForm);
-            UserDto joinUserDto = UserDto.builder()
-                    .user_id(joinUser.getUser_id())
-                    .id(joinUser.getId())
-                    .nickname(joinUser.getNickname())
-                    .build();
+        User joinUser = userService.join(userJoinForm);
 
-            return new defaultResponse("200", "회원가입이 정상적으로 되었습니다", joinUserDto);
-        } catch (DuplicationUserNickname e) { //중복된 닉네임을 입력한 경우
+        UserDto joinUserDto = UserDto.builder()
+                .user_id(joinUser.getUser_id())
+                .id(joinUser.getId())
+                .nickname(joinUser.getNickname())
+                .build();
 
-            return new defaultResponse("200", "중복된 닉네임 입니다", userJoinForm);
-        }
+        return new defaultResponse("200", "회원가입이 정상적으로 되었습니다", joinUserDto);
+    }
+
+    /**
+     * 회원가입에서 아이디, 닉네임 중복검사하지 않고 보내게 되면 어트케 처리되나?!! 프론트측에서 했는지 안했는지 판별하나?!!!
+     * 폼데이터로 id, nickname 받는게 되나 (프론트엔드 측에서)!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     */
+    // 회원가입시 아이디 중복 검사하는 부분
+    @PostMapping("/join/validId")
+    @ApiOperation(value = "회원가입시 아이디 중복검사하는 api", notes = "")
+    public defaultResponse ValidDuplicateId (@RequestParam("id") String id) {
+
+        String validId = userService.validDuplicateUserId(id);
+
+        return new defaultResponse("200", "사용 가능한 아이디 입니다.", validId);
 
     }
 
-    //카카오 로그인 처리 부분
-    @GetMapping("/login/kakao")
-    @ApiOperation(value = "로그인을 처리하는 api - kakao", notes = "회원가입을 한 사용자가 소셜로그인을 하면 로그인 처리 ," +
-            " 회원가입을 하지않는 사용자가 소셜로그인을 하면 회원가입을 하라는 요청을 보냅니다." +
-            " 성공시 -> /ams/{nickname} uri 호출 ")
-    public defaultResponse KakaoLogin(@RequestParam("code") String code) throws JsonProcessingException {
+    // 회원가입시 닉네임 중복 검사하는 부분
+    @PostMapping("/join/validNickName")
+    @ApiOperation(value = "회원가입시 닉네임 중복검사하는 api", notes = "")
+    public defaultResponse ValidDuplicateNickName(@RequestParam("nickname") String nickName) {
 
-        //엑세스 토큰 받기
-        KakaoToken kakaoToken = kakaoService.getAccessToken(code);
+        String validNickName = userService.validDuplicateUserNickName(nickName);
 
-        //사용자 정보 받기
-        KakaoProfile userProfile = kakaoService.getUserProfile(kakaoToken.getAccess_token());
-
-        //회원가입을 한 이용자인지 정검
-        User findUser = userService.findUserById(userProfile.id);
-
-        //토큰(access, refresh) 생성
-        JwtToken jwtToken = jwtService.createAndSaveToken(findUser.getUser_id(), findUser.getNickname(), findUser.getRole());
-        UserLoginDto userLoginDto = UserLoginDto.builder()
-                .user_Id(findUser.getUser_id())
-                .nickname(findUser.getNickname())
-                .accessToken(jwtToken.getAccessToken())
-                .refreshToken(jwtToken.getRefreshToken())
-                .build();
-
-        return new defaultResponse("200", "로그인을 성공하였습니다. 토큰이 발급되었습니다.", userLoginDto); // -> redirect:/api/{nickname}
+        return new defaultResponse("200", "사용 가능한 닉네임 입니다.", validNickName);
     }
 
 
@@ -161,12 +92,5 @@ public class UserController {
     }
 
 
-    /**
-     * 테스트테스트테스트
-     * merge 테스트
-     * 브렌치 테스트트
-     * testetstetste
-     * testetestsetettwstetststt
-    */
 
 }

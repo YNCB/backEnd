@@ -4,6 +4,7 @@ import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.repository.UserRepository;
 import AMS.AMSsideproject.web.apiController.user.form.UserEditForm;
 import AMS.AMSsideproject.web.apiController.user.form.UserJoinForm;
+import AMS.AMSsideproject.web.exception.DuplicationUserId;
 import AMS.AMSsideproject.web.exception.DuplicationUserNickname;
 import AMS.AMSsideproject.web.exception.UserNullException;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +26,6 @@ public class UserService {
     @Transactional
     public User join(UserJoinForm joinForm) {
 
-        //사용자 닉네임 중복 검사
-        validDuplicateUserNickName(joinForm.getNickname());
-
         joinForm.setPassword(encodePwd.encode(joinForm.getPassword()));
 
         //정상적인 사용자
@@ -35,6 +33,26 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    //회원 아이디 중복 검사 메서드
+    public String validDuplicateUserId(String id) {
+
+        userRepository.findById(id)
+                .ifPresent( e -> {
+                    throw new DuplicationUserId("이미 존재하는 아이디 입니다.");
+                });
+
+        return id;
+    }
+
+    //회원 닉네임 중복 검사 메서드
+    public String validDuplicateUserNickName(String nickName) {
+
+        userRepository.findByNickName(nickName)
+                .ifPresent(e -> {
+                    throw new DuplicationUserNickname("이미 존재하는 닉네임 입니다.");
+                });
+        return nickName;
+    }
 
     public User findUserByUserId(Long userId) {
         User findUser = userRepository.findByUserId(userId);
@@ -75,11 +93,4 @@ public class UserService {
 
 
 
-    //회원 닉네임을 기준으로 중복 검사
-    private void validDuplicateUserNickName(String nickname) {
-        userRepository.findByNickName(nickname)
-                .ifPresent(e -> {
-                    throw new DuplicationUserNickname("이미 존재하는 닉네임입니다.");
-                });
-    }
 }
