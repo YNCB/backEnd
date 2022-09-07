@@ -32,12 +32,6 @@ public class TestController {
         return "구글 로그인 인증완료, code " + code;
     }
 
-    @PostMapping("/join/test")
-    @ResponseBody
-    public UserJoinForm test(@RequestBody UserJoinForm userJoinForm) {
-
-        return userJoinForm;
-    }
 
 
 }

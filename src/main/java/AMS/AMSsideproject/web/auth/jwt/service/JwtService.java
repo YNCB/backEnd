@@ -4,13 +4,7 @@ import AMS.AMSsideproject.domain.token.RefreshToken;
 import AMS.AMSsideproject.domain.token.service.RefreshTokenService;
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
-import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
 import AMS.AMSsideproject.web.auth.jwt.JwtToken;
-import AMS.AMSsideproject.web.exception.RefreshTokenExpireException;
-import AMS.AMSsideproject.web.exception.RefreshTokenInvalidException;
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.TokenExpiredException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,7 +52,7 @@ public class JwtService {
         //토큰의 값이 정상적인지 판별
         refreshTokenService.validRefreshTokenValue(user_id, refreshToken);
 
-        //토큰의 만료기간이 유호한지 판별
+        //토큰의 만료기간이 유효한지 판별
         jwtProvider.validTokenExpired(refreshToken);
 
         //정상적인 경우

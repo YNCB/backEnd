@@ -3,15 +3,9 @@ package AMS.AMSsideproject.domain.token.service;
 import AMS.AMSsideproject.domain.token.RefreshToken;
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
-import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
-import AMS.AMSsideproject.web.exception.RefreshTokenExpireException;
 import AMS.AMSsideproject.web.exception.RefreshTokenInvalidException;
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.TokenExpiredException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.Optional;
 

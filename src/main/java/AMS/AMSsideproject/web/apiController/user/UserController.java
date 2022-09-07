@@ -2,7 +2,7 @@ package AMS.AMSsideproject.web.apiController.user;
 
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
-import AMS.AMSsideproject.web.apiController.user.form.UserEdit;
+import AMS.AMSsideproject.web.apiController.user.form.requestUserEdit;
 import AMS.AMSsideproject.web.apiController.user.form.UserEditForm;
 import AMS.AMSsideproject.web.apiController.user.form.UserJoinForm;
 import AMS.AMSsideproject.web.dto.user.UserDto;
@@ -62,10 +62,10 @@ public class UserController {
     }
 
 
-    //회원 정보 수정
-    @GetMapping("/edit")
-    @ApiOperation(value = "회원 정보 수정 api", notes = "아직 구현 중... ")
-    public defaultResponse UserEditForm(@RequestBody UserEdit userEdit) {
+    //회원 정보 수정 -> 권한 체크 필요한 기능
+    @GetMapping("/setting")
+    @ApiOperation(value = "회원 정보 수정 api", notes = "회원 수정을 위해 사용자 정보를 제공해주는 api 입니다.")
+    public defaultResponse UserEditForm(@RequestBody requestUserEdit userEdit) {
 
         User findUser = userService.findUserByUserId(userEdit.getUserId());
 
@@ -77,8 +77,8 @@ public class UserController {
         return null;
 
     }
-    @PutMapping("/edit")
-    @ApiOperation(value = "회원 정보 수정 api", notes = "아직 구현 중...")
+    @PutMapping("/setting")
+    @ApiOperation(value = "회원 정보 수정 api", notes = "수정된 회원정보를 받는 api 입니다.")
     public defaultResponse UserEdit(@RequestBody UserEditForm userEditForm) {
 
         /**

@@ -6,7 +6,8 @@ package AMS.AMSsideproject.web.auth.jwt;
 public interface JwtProperties {
 
     public String SECRET = "AMS-sideProject";
-    public int ACCESSTOKEN_TIME = 3000; // (1/1000초)
-    public int REFRESHTOKEN_TIME = 300000;
+    public int ACCESSTOKEN_TIME = 300000; // (1/1000초)
+    public int REFRESHTOKEN_TIME = 3000000;
+    public String HEADER_STRING = "accessToken";
 
 }

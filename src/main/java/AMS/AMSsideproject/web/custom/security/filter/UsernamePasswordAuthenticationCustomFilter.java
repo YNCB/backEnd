@@ -7,9 +7,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -20,16 +18,16 @@ import java.io.IOException;
 /**
  * "/ams/login" 요청시 로그인 처리를 하는 커스텀 필터
  */
-public class UsernamePasswordCustomFilter extends UsernamePasswordAuthenticationFilter {
+public class UsernamePasswordAuthenticationCustomFilter extends UsernamePasswordAuthenticationFilter {
 
     private AuthenticationManager authenticationManager;
     private ObjectMapper objectMapper;
     private UserLoginSuccessCustomHandler successHandler;
     private UserLoginFailureCustomHandler failureHandler;
 
-    public UsernamePasswordCustomFilter(AuthenticationManager authenticationManager , ObjectMapper objectMapper,
-                                        UserLoginSuccessCustomHandler handler ,
-                                        UserLoginFailureCustomHandler failureHandler) {
+    public UsernamePasswordAuthenticationCustomFilter(AuthenticationManager authenticationManager , ObjectMapper objectMapper,
+                                                      UserLoginSuccessCustomHandler handler ,
+                                                      UserLoginFailureCustomHandler failureHandler) {
         this.authenticationManager = authenticationManager;
         this.objectMapper = objectMapper;
         this.successHandler = handler;

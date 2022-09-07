@@ -30,8 +30,8 @@ public class UserRepositoryImpl implements UserRepository{
     }
 
     @Override
-    public User findByUserId(Long userId) {
-         return em.find(User.class, userId);
+    public Optional<User> findByUserId(Long userId) {
+         return Optional.ofNullable(em.find(User.class, userId));
     }
 
     @Override

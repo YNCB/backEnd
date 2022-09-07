@@ -38,9 +38,9 @@ public class ExControllerAdvice {
      * refreshToken 관련
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(RefreshTokenExpireException.class)
-    public ErrorResult refreshTokenExpireException(RefreshTokenExpireException e) {
-        return new ErrorResult(e.getMessage(), "BAD", "400");
+    @ExceptionHandler(JWTTokenExpireException.class)
+    public ErrorResult refreshTokenExpireException(JWTTokenExpireException e) {
+        return new ErrorResult("리프레시 토큰이 만료되었습니다. 다시 로그인을 해주시기 바랍니다", "BAD", "400");
     }
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(RefreshTokenInvalidException.class)

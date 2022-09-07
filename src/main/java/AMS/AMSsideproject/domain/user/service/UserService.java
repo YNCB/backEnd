@@ -54,10 +54,15 @@ public class UserService {
         return nickName;
     }
 
+    //회원 조회 메서드 - 고유 id
     public User findUserByUserId(Long userId) {
-        User findUser = userRepository.findByUserId(userId);
-        return findUser;
+        Optional<User> findUser = userRepository.findByUserId(userId);
+
+        if(findUser.isEmpty())
+            throw new UserNullException("존재하지 않는 회원입니다.");
+        return findUser.get();
     }
+
     //회원 조회 메서드 - 닉네임
     public User findUserByNickName(String nickName) {
         Optional<User> findUser = userRepository.findByNickName(nickName);
@@ -79,7 +84,7 @@ public class UserService {
     //회원 수정 메서드 -> 1차로 닉네임만 변경가능하게 구현
     @Transactional
     public User update(Long user_id, UserEditForm userEditForm) {
-        User findUser = userRepository.findByUserId(user_id);
+        User findUser = userRepository.findByUserId(user_id).get();
 
         //닉네임 중복 검사
         validDuplicateUserNickName(userEditForm.getNickname());

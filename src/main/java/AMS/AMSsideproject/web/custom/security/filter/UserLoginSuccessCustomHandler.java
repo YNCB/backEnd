@@ -20,13 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * <일반 로그인 ></일반>
- * "UsernamePasswordCustomFilter" 가 정상적으로 성공할 경우 호출되는 커스텀 Handler
- * => 여기서 JWT 토큰을 반환해준다.
- *
- * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- * 만약 회원가입하지 않은 사용자이면 "실패 Handler" 에서 처리?!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
- *
+ * <일반 로그인 >
+ * "UsernamePasswordCustomFilter" 가 정상적으로 성공할 경우 호출되는 커스텀 Handler => 여기서 JWT 토큰을 반환해준다.
  */
 @Component
 @RequiredArgsConstructor
