@@ -59,7 +59,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             /**
              * 권한을 그냥 "USER" 체크 할까?? -> 그럼 spring security context 안에 넣어서 스프링 시큐리티에게 권한처리 위임하면 되는데....
              * 이게 좋은 방식인가?!!!!???????
-             * 이방식이에서 궁금한점이 uri 요청올 때 spring security context에 Authentication 객체 저장했다가 모든 응답이 끝나면 해당 객체는 사라지나?!!!!
+             * 이방식이에서 궁금한점이 uri 요청올 때 spring security context에 Authentication 객체 저장했다가 모든 응답이 끝나면 해당 객체는 사라지나?!!!!!!!!!!!!!
              * -> 그러면 괜찮은거지!!!!!!! (지속적인 세션을 사용하지 않는거고 권한처리도 쉬우니!!!!!!!!!!!!!!!!!!!!!!!)
              */
             Long userId = jwtProvider.getUserIdToToken(token);
