@@ -24,3 +24,19 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+
+    # Naver smtp server 사용
+  mail:
+    host: smtp.naver.com
+    port: 465
+    username: rnqhstlr2297
+    password: rnqhstlr123!
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+          auth: true
+          ssl:
+            trust: smtp.naver.com
+            enable: true #반드시 필요 -> naver 에 설정되어있으면

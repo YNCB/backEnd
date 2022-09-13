@@ -32,10 +32,11 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring()
-                .antMatchers("/ams/join/token/kakao","/ams/join", "/ams/login/kakao")
-                .antMatchers("/ams/token/refresh")
+                .antMatchers("/codebox/login/token/kakao", "/codebox/login/token/google")
+                .antMatchers("/codebox/join", "/codebox/join/mailConfirm", "/codebox/join/validNickName")
+                .antMatchers("/codebox/token/refresh")
 
-                .antMatchers( "test", "/login/oauth2/code/kakao"); //test용
+                .antMatchers( "/test", "/login/oauth2/code/kakao", "/login/oauth2/code/google"); //test용
     }
 
     @Bean

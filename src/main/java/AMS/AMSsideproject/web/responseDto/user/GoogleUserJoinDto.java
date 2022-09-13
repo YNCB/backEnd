@@ -1,4 +1,4 @@
-package AMS.AMSsideproject.web.dto.user;
+package AMS.AMSsideproject.web.responseDto.user;
 
 import lombok.Builder;
 import lombok.Data;
@@ -7,10 +7,9 @@ import lombok.Data;
 @Builder
 public class GoogleUserJoinDto {
 
-    private String id;
-    private String password;
-    //private String birth; //존재 하지 않음
     private String email;
+    //private String id; //소셜 로그인 고유 아이디
+    private String password;
     private String social_type;
 
 }

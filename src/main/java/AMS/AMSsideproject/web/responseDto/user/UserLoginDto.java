@@ -1,4 +1,4 @@
-package AMS.AMSsideproject.web.dto.user;
+package AMS.AMSsideproject.web.responseDto.user;
 
 import lombok.Builder;
 import lombok.Data;

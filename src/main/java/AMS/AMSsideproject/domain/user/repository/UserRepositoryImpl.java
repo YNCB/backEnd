@@ -4,7 +4,6 @@ import AMS.AMSsideproject.domain.user.QUser;
 import AMS.AMSsideproject.domain.user.User;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -35,17 +34,17 @@ public class UserRepositoryImpl implements UserRepository{
     }
 
     @Override
-    public Optional<User> findById(String Id) {
+    public Optional<User> findByEmail(String email) {
         return query.select(QUser.user)
                 .from(QUser.user)
-                .where(idEq(Id))
+                .where(emailEq(email))
                 .fetch()
-                .stream().findFirst(); //어차피 social id 별로 한명의 사용자 밖에 없을테니
+                .stream().findFirst(); //어차피 email 별로 한명의 사용자 밖에 없을테니
     }
-    private BooleanExpression idEq(String Id) {
-        if (!StringUtils.hasText(Id))
+    private BooleanExpression emailEq(String email) {
+        if (!StringUtils.hasText(email))
             return null;
-        return QUser.user.id.eq(Id);
+        return QUser.user.email.eq(email);
     }
 
     @Override

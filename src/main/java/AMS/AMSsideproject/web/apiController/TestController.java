@@ -1,6 +1,5 @@
 package AMS.AMSsideproject.web.apiController;
 
-import AMS.AMSsideproject.web.apiController.user.form.UserJoinForm;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;

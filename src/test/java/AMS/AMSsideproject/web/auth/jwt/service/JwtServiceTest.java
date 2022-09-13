@@ -4,7 +4,7 @@ import AMS.AMSsideproject.domain.token.RefreshToken;
 import AMS.AMSsideproject.domain.token.service.RefreshTokenService;
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
-import AMS.AMSsideproject.web.apiController.user.form.UserJoinForm;
+import AMS.AMSsideproject.web.apiController.user.requestDto.UserJoinForm;
 import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
 import AMS.AMSsideproject.web.auth.jwt.JwtToken;
 import com.auth0.jwt.JWT;

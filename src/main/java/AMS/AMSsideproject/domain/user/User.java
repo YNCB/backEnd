@@ -1,10 +1,8 @@
 package AMS.AMSsideproject.domain.user;
 
 import AMS.AMSsideproject.domain.token.RefreshToken;
-import AMS.AMSsideproject.web.apiController.user.form.UserJoinForm;
+import AMS.AMSsideproject.web.apiController.user.requestDto.UserJoinForm;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -17,15 +15,12 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long user_id;
 
-    private String id; //소설 플랫폼 고유 id
+    private String email;
+    //private String id; //소설 플랫폼 고유 id
     private String password;
     private String nickname;
 
-    @Embedded
-    private Birthday birthday;
-
-    private String email;
-    private String social_type; //google, kakao, NUll
+    private String social_type; //google, kakao, etc
     private LocalDateTime redate; //회원가입 일자
 
     private String job; //학생, 취준생, 직장인, 백수..
@@ -42,14 +37,10 @@ public class User {
     //생성 메서드
     public static User createUser(UserJoinForm joinForm) {
         User user = new User();
-        user.setId(joinForm.getId());
+        user.setEmail(joinForm.getEmail());
         user.setPassword(joinForm.getPassword());
         user.setNickname(joinForm.getNickname());
 
-        Birthday birthday = new Birthday(joinForm.getYear(), joinForm.getMonth(), joinForm.getDay());
-        user.setBirthday(birthday);
-
-        user.setEmail(joinForm.getEmail());
         user.setSocial_type(joinForm.getSocial_type());
         user.setJob(joinForm.getJob());
         user.setMain_lang(joinForm.getMain_lang());

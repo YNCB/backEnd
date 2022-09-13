@@ -1,4 +1,4 @@
-package AMS.AMSsideproject.web.apiController.user.form;
+package AMS.AMSsideproject.web.apiController.user.requestDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

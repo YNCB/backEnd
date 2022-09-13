@@ -56,6 +56,9 @@ dependencies {
 	// jwt 사용
 	implementation group: 'com.auth0', name: 'java-jwt', version: '3.10.2'
 
+	//spring email
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.6.3'
+
 }
 
 //build test 코드 오류

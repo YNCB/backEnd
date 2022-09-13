@@ -4,8 +4,8 @@ import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.web.auth.jwt.JwtToken;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtService;
 import AMS.AMSsideproject.web.custom.security.PrincipalDetails;
-import AMS.AMSsideproject.web.dto.user.UserLoginDto;
-import AMS.AMSsideproject.web.response.defaultResponse;
+import AMS.AMSsideproject.web.responseDto.user.UserLoginDto;
+import AMS.AMSsideproject.web.response.DefaultResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,7 +13,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -48,7 +47,7 @@ public class UserLoginSuccessCustomHandler implements AuthenticationSuccessHandl
                 .refreshToken(jwtToken.getRefreshToken())
                 .build();
 
-        defaultResponse defaultResponse = new defaultResponse("200", "로그인을 성공하였습니다. 토큰이 발급되었습니다.", userLoginDto);
+        DefaultResponse defaultResponse = new DefaultResponse("200", "로그인을 성공하였습니다. 토큰이 발급되었습니다.", userLoginDto);
         String res = objectMapper.writeValueAsString(defaultResponse);
 
         //response 에 json 객체 담기

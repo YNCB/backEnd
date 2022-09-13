@@ -1,4 +1,4 @@
-package AMS.AMSsideproject.web.dto.user;
+package AMS.AMSsideproject.web.responseDto.user;
 
 import lombok.Builder;
 import lombok.Data;
@@ -7,11 +7,10 @@ import lombok.Data;
 @Builder
 public class KakaoUserJoinDto {
 
-    private String id;
+    //private String id;
+    private String email;
     private String password;
     private String nickname;
-    //private String birth;
-    private String email;
     private String social_type;
 
 }

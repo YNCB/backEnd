@@ -48,7 +48,7 @@ public class UsernamePasswordAuthenticationCustomFilter extends UsernamePassword
         }
 
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                new UsernamePasswordAuthenticationToken(userLoginForm.getId() , userLoginForm.getPassword());
+                new UsernamePasswordAuthenticationToken(userLoginForm.getEmail() , userLoginForm.getPassword());
 
         //user password 검사 -> 스프링 시큐리티 세션을 사용하지 않아 저장되지 않는다.(Authentication 객체)
         Authentication authenticate = null;
