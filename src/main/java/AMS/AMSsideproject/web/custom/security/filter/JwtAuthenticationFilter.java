@@ -40,7 +40,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
 
-        String token = jwtProvider.validTokenHeader(request);
+        String token = jwtProvider.validAccessTokenHeader(request);
         String message = null;
 
         try {

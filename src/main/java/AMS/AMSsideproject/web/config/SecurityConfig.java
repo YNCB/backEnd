@@ -34,7 +34,7 @@ public class SecurityConfig {
         return web -> web.ignoring()
                 .antMatchers("/codebox/login/token/kakao", "/codebox/login/token/google")
                 .antMatchers("/codebox/join", "/codebox/join/mailConfirm", "/codebox/join/validNickName")
-                .antMatchers("/codebox/token/refresh")
+                .antMatchers("/codebox/refreshToken")
 
                 .antMatchers( "/test", "/login/oauth2/code/kakao", "/login/oauth2/code/google"); //test용
     }

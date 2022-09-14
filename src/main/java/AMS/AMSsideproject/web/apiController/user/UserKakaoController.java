@@ -4,8 +4,6 @@ import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
 import AMS.AMSsideproject.web.auth.jwt.JwtToken;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtService;
-import AMS.AMSsideproject.web.responseDto.user.GoogleUserJoinDto;
-import AMS.AMSsideproject.web.responseDto.user.UserDto;
 import AMS.AMSsideproject.web.responseDto.user.KakaoUserJoinDto;
 import AMS.AMSsideproject.web.responseDto.user.UserLoginDto;
 import AMS.AMSsideproject.web.exception.UserNullException;
@@ -92,7 +90,7 @@ public class UserKakaoController {
             User findUser = userService.findUserByEmail(userProfile.kakao_account.email);
 
             //토큰(access, refresh) 생성
-            JwtToken jwtToken = jwtService.createAndSaveToken(findUser.getUser_id(), findUser.getNickname(), findUser.getRole());
+            JwtToken jwtToken = jwtService.createAndSaveTokenByLogin(findUser.getUser_id(), findUser.getNickname(), findUser.getRole());
             UserLoginDto userLoginDto = UserLoginDto.builder()
                     .user_Id(findUser.getUser_id())
                     .nickname(findUser.getNickname())

@@ -6,6 +6,7 @@ import AMS.AMSsideproject.domain.user.service.UserService;
 import AMS.AMSsideproject.web.exception.RefreshTokenInvalidException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -40,7 +41,8 @@ public class RefreshTokenService {
         return findUser.getRefreshToken();
     }
 
-    //사용자의 refreshToken 과 일치하는지 체크하는 메서드
+    //사용자의 refreshToken 과 일치하는지 체크하는 메서드 -> refreshToken 재발급 받을때만 사용(그래서 이것만 트랜잭션 따로 걸어둠)
+    @Transactional(readOnly = true)
     public String validRefreshTokenValue(Long userId, String refreshToken) {
 
         String findRefreshToken = findRefreshToken(userId).get().getRefresh_token();

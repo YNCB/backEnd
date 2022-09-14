@@ -9,5 +9,6 @@ public interface JwtProperties {
     public int ACCESSTOKEN_TIME = 300000; // (1/1000초)
     public int REFRESHTOKEN_TIME = 3000000;
     public String HEADER_STRING = "accessToken";
+    public String REFRESH_HEADER_STRING = "refreshToken";
 
 }
