@@ -2,6 +2,8 @@ package AMS.AMSsideproject.web.auth.jwt.service;
 
 import AMS.AMSsideproject.domain.token.RefreshToken;
 import AMS.AMSsideproject.domain.token.service.RefreshTokenService;
+import AMS.AMSsideproject.domain.user.User;
+import AMS.AMSsideproject.domain.user.service.UserService;
 import AMS.AMSsideproject.web.auth.jwt.JwtToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,7 @@ public class JwtService {
 
     private final RefreshTokenService refreshTokenService;
     private final JwtProvider jwtProvider;
+    private final UserService userService;
 
     //access, refresh 토큰 생성 및 저장 -> 로그인 한 경우(처음이용자 or 기존 이용자)
     @Transactional
@@ -43,7 +46,7 @@ public class JwtService {
 
     //refreshToken 의정보를 가지고 AccessToken을 생성하는 기능 -> refreshToken 재발급 받을때만 사용
     @Transactional
-    public JwtToken recreateTokenUsingToken(String token) {
+    public JwtToken recreateTokenUsingTokenInfo(String token) {
 
         Long userId = jwtProvider.getUserIdToToken(token);
         String nickName = jwtProvider.getNickNameToToken(token);
@@ -54,21 +57,13 @@ public class JwtService {
         return new JwtToken(accessToken, token);
     }
 
-//    //refreshToken 검증 기능
-//    public JwtToken validRefreshToken(Long user_id, String refreshToken) {
-//
-//        User findUser = userService.findUserByUserId(user_id);
-//
-//        //토큰의 값이 정상적인지 판별
-//        refreshTokenService.validRefreshTokenValue(user_id, refreshToken);
-//
-//        //토큰의 만료기간이 유효한지 판별
-//        jwtProvider.validTokenExpired(refreshToken);
-//
-//        //정상적인 경우
-//        String accessToken = jwtProvider.createAccessToken(findUser.getUser_id(), findUser.getNickname(), findUser.getRole());
-//        return new JwtToken(accessToken, refreshToken);
-//    }
+    //Token 에서 user 찾는 메서드
+    public User findUserToToken(String token) {
+
+        Long findUserId = jwtProvider.getUserIdToToken(token);
+        return userService.findUserByUserId(findUserId);
+    }
+
 
 }
 

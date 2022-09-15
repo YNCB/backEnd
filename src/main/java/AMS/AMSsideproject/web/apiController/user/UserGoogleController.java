@@ -4,6 +4,7 @@ import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
 import AMS.AMSsideproject.web.auth.jwt.JwtToken;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtService;
+import AMS.AMSsideproject.web.response.DataResponse;
 import AMS.AMSsideproject.web.responseDto.user.GoogleUserJoinDto;
 import AMS.AMSsideproject.web.responseDto.user.UserLoginDto;
 import AMS.AMSsideproject.web.exception.UserNullException;
@@ -14,11 +15,17 @@ import AMS.AMSsideproject.web.response.DefaultResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequiredArgsConstructor
@@ -76,7 +83,11 @@ public class UserGoogleController {
     @ApiOperation(value = "구글 로그인을 처리하는 api - google", notes = "회원가입 한 사용자이면 구글 로그인 처리 ," +
             " 회원가입을 하지않는 사용자이면 회원가입 진행, " +
             " 성공시 -> /codebox/{nickname} api 호출 ")
-    public DefaultResponse GoogleLogin(@RequestParam("code") String code) throws JsonProcessingException {
+    @ApiResponses({
+            @ApiResponse(code=200, message = "로그인 성공", response =  UserLoginDto.class),
+            @ApiResponse(code=201, message = "회원가입 진행",response = GoogleUserJoinDto.class)
+    })
+    public DataResponse<?> GoogleLogin(@RequestParam("code") String code, HttpServletResponse response) throws JsonProcessingException {
 
         //엑세스 토큰 받기
         GoogleToken googleToken = googleService.getAccessToken(code);
@@ -97,7 +108,7 @@ public class UserGoogleController {
                     .refreshToken(jwtToken.getRefreshToken())
                     .build();
 
-            return new DefaultResponse("200", "로그인을 성공하였습니다. 토큰이 발급되었습니다.", userLoginDto);
+            return new DataResponse<>("200", "로그인을 성공하였습니다. 토큰이 발급되었습니다.", userLoginDto);
 
         }catch(UserNullException e) { //회원가입하지 않은 사용자
 
@@ -106,7 +117,8 @@ public class UserGoogleController {
                     .password(userProfile.id) //소셜 로그인은 비밀번호가 중요하지 않으니 그냥 세팅
                     .social_type("Google")
                     .build();
-            return new DefaultResponse("200", "회원가입하지 않은 사용자입니다. 회원가입을 진행합니다.", userJoinDto);
+            response.setStatus(HttpStatus.CREATED.value());
+            return new DataResponse<>("201", "회원가입하지 않은 사용자입니다. 회원가입을 진행합니다.", userJoinDto);
         }
     }
 }

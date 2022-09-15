@@ -4,9 +4,11 @@ import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.web.auth.jwt.JwtToken;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtService;
 import AMS.AMSsideproject.web.custom.security.PrincipalDetails;
+import AMS.AMSsideproject.web.response.DataResponse;
 import AMS.AMSsideproject.web.responseDto.user.UserLoginDto;
 import AMS.AMSsideproject.web.response.DefaultResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -47,8 +49,8 @@ public class UserLoginSuccessCustomHandler implements AuthenticationSuccessHandl
                 .refreshToken(jwtToken.getRefreshToken())
                 .build();
 
-        DefaultResponse defaultResponse = new DefaultResponse("200", "로그인을 성공하였습니다. 토큰이 발급되었습니다.", userLoginDto);
-        String res = objectMapper.writeValueAsString(defaultResponse);
+        DataResponse dataResponse = new DataResponse("200", "로그인을 성공하였습니다. 토큰이 발급되었습니다.", userLoginDto);
+        String res = objectMapper.writeValueAsString(dataResponse);
 
         //response 에 json 객체 담기
         response.setContentType("application/json");

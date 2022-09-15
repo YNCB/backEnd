@@ -69,17 +69,12 @@ public class UserService {
         return findUser.get();
     }
 
-
-
     //회원 수정 메서드 -> 1차로 닉네임만 변경가능하게 구현
     @Transactional
     public User update(Long user_id, UserEditForm userEditForm) {
         User findUser = userRepository.findByUserId(user_id).get();
 
-        //닉네임 중복 검사
-        validDuplicateUserNickName(userEditForm.getNickname());
-
-        findUser.setNickname(userEditForm.getNickname());
+        findUser.setNickname(userEditForm.getNickName());
         findUser.setJob(userEditForm.getJob());
         findUser.setMain_lang(userEditForm.getMain_lang());
 

@@ -24,7 +24,7 @@ public class CorConfig {
         config.addExposedHeader("*");
         config.addAllowedMethod("*"); //모든 post,get,put 허용
 
-        source.registerCorsConfiguration("/api/**", config);
+        source.registerCorsConfiguration("/**", config);
 
         return new CorsFilter(source);
     }

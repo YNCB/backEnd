@@ -6,6 +6,8 @@ import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
 import AMS.AMSsideproject.web.custom.security.PrincipalDetails;
 import AMS.AMSsideproject.web.exception.JWTTokenExpireException;
 import AMS.AMSsideproject.web.exhanler.ErrorResult;
+import AMS.AMSsideproject.web.response.BaseResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.util.StringUtils;
+import reactor.netty.http.server.HttpServerResponse;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -77,21 +80,30 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 
         }catch (JWTTokenExpireException e) {
             message = "엑세스 토큰의 유효기간이 만료되었습니다. 리프레쉬 토큰을 요청해주십시오.";
-            sendErrorResponse(message, response);
+            sendRefreshResponse(message, response);
             return;
         }catch (Exception e ) {
             message = "토큰이 없거나 정상적인 값이 아닙니다.";
             sendErrorResponse(message, response);
             return;
         }
-
     }
 
     private void sendErrorResponse(String message, HttpServletResponse response) throws IOException {
-        ErrorResult errorResult = new ErrorResult(message,"BAD", "400");
+        ErrorResult errorResult = new ErrorResult(message,"BAD", "401");
         String res = objectMapper.writeValueAsString(errorResult);
 
-        response.setStatus(HttpStatus.BAD_REQUEST.value());
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(res);
+    }
+
+    private void sendRefreshResponse(String message, HttpServletResponse response) throws IOException {
+        BaseResponse baseResponse = new BaseResponse("201", message);
+        String res = objectMapper.writeValueAsString(baseResponse);
+
+        response.setStatus(HttpStatus.CREATED.value());
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(res);

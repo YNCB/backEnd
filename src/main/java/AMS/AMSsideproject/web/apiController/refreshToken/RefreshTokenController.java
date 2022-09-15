@@ -1,14 +1,18 @@
 package AMS.AMSsideproject.web.apiController.refreshToken;
 
+import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
 import AMS.AMSsideproject.web.auth.jwt.JwtToken;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtService;
+import AMS.AMSsideproject.web.exhanler.ErrorResult;
+import AMS.AMSsideproject.web.response.BaseResponse;
+import AMS.AMSsideproject.web.response.DataResponse;
 import AMS.AMSsideproject.web.response.DefaultResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/codebox")
@@ -18,23 +22,19 @@ public class RefreshTokenController {
 
     private final JwtService jwtService;
 
-    /**
-     * 여기도 따로 유저 아이디를 주는게 아니니깐!!!!!!! 해당 jwt 유효한지 판별하고나서 해당 토큰에서 아이디 얻어와서 새로운 토큰만들기!!!!!!!!!!!!!!
-     */
     @PostMapping("/refreshToken") //인증,권한이 필요한 uri
     @ApiOperation(value = "토큰 재발급 api", notes = "엑세스 토큰이 만료되었을때 리프레시 토큰으로 요청하게 되면 엑세스,리프레시 토큰을 재발급해줍니다. " +
             "리프레시 토큰이 정상적이지 않거나 기한이 만료되었으면 재로그인을 요청합니다.")
-    public DefaultResponse recreateToken(@RequestHeader("refreshToken") String refreshToken) {
+    @ApiResponses({
+            @ApiResponse(code=200, message = "엑세스,리프레시 토큰 재생성 성공"),
+            @ApiResponse(code=400, message = "리프레시토큰이 없거나 잘못된 값 또는 유효기간이 만료되었음 다시 로그인 해야함", response = ErrorResult.class)
+    })
+    public DataResponse<JwtToken> recreateToken(@RequestHeader(JwtProperties.REFRESH_HEADER_STRING) String refreshToken) {
 
-        //Long userId = (Long) request.getAttribute("userId");
+        //리프레시토큰 검증을 인터셉터에서 다 받았기 때문에 해당 컨트롤러가 호룰되는 것은 엑세스 토큰을 재발급 받아야되는 경우뿐이다!
+        JwtToken jwtToken = jwtService.recreateTokenUsingTokenInfo(refreshToken);
 
-        //엑세스 토큰 재생성
-        //엑세스 토큰도 그냥 재생성할까?!!!!!!!!!!!!!!!!! 그럼 jwtService에 "로그인토큰생성" 과 "리프레시 토큰 재생성" 메서드 나눠서 구현!!!!!!!!!!!!!!!!!!!!!!!!!
-        //엑세스 토큰만 생성하면 되자나!!!!!!
-        //리프레시토큰 검증다 받고 왔자나!!!!
-        JwtToken jwtToken = jwtService.recreateTokenUsingToken(refreshToken);
-
-        return new DefaultResponse("200", "토큰이 재발급되었습니다.",jwtToken);
+        return new DataResponse<>("200", "토큰이 재발급되었습니다.",jwtToken);
     }
 
 }

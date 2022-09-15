@@ -4,7 +4,7 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    #RDS IP 주소
+    #AWS RDS IP 주소
     url: jdbc:mysql://ams-sideproject.cplvn3gq33xj.ap-northeast-2.rds.amazonaws.com:3306/ams_sideproject?serverTimezone=UTC&characterEncoding=UTF-8
     username: admin
     password: rnqhstlr123!

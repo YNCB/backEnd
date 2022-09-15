@@ -36,6 +36,9 @@ public class SecurityConfig {
                 .antMatchers("/codebox/join", "/codebox/join/mailConfirm", "/codebox/join/validNickName")
                 .antMatchers("/codebox/refreshToken")
 
+                .antMatchers("/swagger-ui.html/**", "/swagger/**", "/v2/api-docs", "/swagger-resources/**", "/webjars/**")
+                .antMatchers("/v3/api-docs/**", "/swagger-ui/**")
+
                 .antMatchers( "/test", "/login/oauth2/code/kakao", "/login/oauth2/code/google"); //test용
     }
 
@@ -50,9 +53,9 @@ public class SecurityConfig {
 
                 .apply(new MyCustomDsl())
 
-                //.and()
-                //.authorizeRequests()
-                //.antMatchers("/test").authenticated()
+                .and()
+                .authorizeRequests()
+                .antMatchers("/setting").hasRole("USER")
 
                 //.antMatchers("/test").authenticated()
                 //.anyRequest().permitAll()
