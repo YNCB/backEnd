@@ -4,7 +4,7 @@ import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
 import AMS.AMSsideproject.web.apiController.user.requestDto.RequestValidNickName;
 import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
-import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
+import AMS.AMSsideproject.web.auth.jwt.JwtToken;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtService;
 import AMS.AMSsideproject.web.exhanler.ErrorResult;
 import AMS.AMSsideproject.web.response.BaseResponse;
@@ -12,12 +12,11 @@ import AMS.AMSsideproject.web.response.DataResponse;
 import AMS.AMSsideproject.web.responseDto.user.ResponseAuthCode;
 import AMS.AMSsideproject.web.responseDto.user.ResponseValidNickName;
 import AMS.AMSsideproject.web.apiController.user.requestDto.RequestEmailAuthDto;
-import AMS.AMSsideproject.web.responseDto.user.UserDto;
+import AMS.AMSsideproject.web.responseDto.user.UserEditSuccessDto;
 import AMS.AMSsideproject.web.responseDto.user.UserEditDto;
 import AMS.AMSsideproject.web.service.email.EmailService;
 import AMS.AMSsideproject.web.apiController.user.requestDto.UserEditForm;
 import AMS.AMSsideproject.web.apiController.user.requestDto.UserJoinForm;
-import AMS.AMSsideproject.web.response.DefaultResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -92,14 +91,15 @@ public class UserController {
         UserEditDto userEditDto = UserEditDto.createUserEditDto(findUser);
         return new DataResponse<>("200", "회원 정보입니다.", userEditDto);
     }
+
     @PutMapping("/setting")
-    @ApiOperation(value = "회원 정보 수정 api", notes = "수정된 회원정보를 받는 api 입니다.")
+    @ApiOperation(value = "회원 정보 수정 api", notes = "수정된 회원정보를 받는 api 입니다. 회원 정보가 수정되면 JWT토큰안에 회원 정보도 수정해야되기 때문에 토큰도 재발급")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
             @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = ErrorResult.class),
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class)
     })
-    public DataResponse<UserDto> UserEdit(@RequestHeader(JwtProperties.HEADER_STRING) String accessToken, @RequestBody UserEditForm userEditForm) {
+    public DataResponse<UserEditSuccessDto> UserEdit(@RequestHeader(JwtProperties.HEADER_STRING) String accessToken, @RequestBody UserEditForm userEditForm) {
 
         //해당 api를 호출 하기전에  클라이언트에서 "닉네임 중복검사 api 호출" 해야됌
 
@@ -108,6 +108,8 @@ public class UserController {
 
         User updateUser = userService.update(findUser.getUser_id(), userEditForm);
 
+        //토큰 새로 발급
+        JwtToken jwtToken = jwtService.createAndSaveToken(updateUser.getUser_id(), updateUser.getNickname(), updateUser.getRole());
         /**
          * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
          * 회원 정보가바꼈으니 JWT 토큰 값도 안바꿔도 되나?!
@@ -118,7 +120,8 @@ public class UserController {
          * 바꿔야 된다 - 회원수정 보다는 게시물 등록, 수정을 더많이 호출하잖아 그러면 회원수정에서 토큰도 새로 생성하는게 쿼리문 더 줄어들지 않을까
          *             회원수정일때 엑세스,리프레시 생성하면 쿼리문하나 발생(리프레시 토큰 업데이트).
          */
-        return new DataResponse<>("200", "회원 수정이 완료되었습니다", new UserDto(updateUser.getUser_id(), updateUser.getNickname()));
+        return new DataResponse<>("200", "회원 수정이 완료되었습니다",
+                new UserEditSuccessDto(updateUser.getUser_id(), updateUser.getNickname(), jwtToken.getAccessToken(), jwtToken.getRefreshToken()));
     }
 
 

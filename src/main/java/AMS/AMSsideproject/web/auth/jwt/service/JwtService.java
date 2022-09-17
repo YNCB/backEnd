@@ -16,7 +16,6 @@ import java.util.Optional;
  */
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class JwtService {
 
     private final RefreshTokenService refreshTokenService;
@@ -25,7 +24,7 @@ public class JwtService {
 
     //access, refresh 토큰 생성 및 저장 -> 로그인 한 경우(처음이용자 or 기존 이용자)
     @Transactional
-    public JwtToken createAndSaveTokenByLogin(Long userId, String nickName, String role) {
+    public JwtToken createAndSaveToken(Long userId, String nickName, String role) {
 
         //access, refresh 토큰 생성
         JwtToken createToken = jwtProvider.createJwtToken(userId, nickName, role);
@@ -45,7 +44,6 @@ public class JwtService {
     }
 
     //refreshToken 의정보를 가지고 AccessToken을 생성하는 기능 -> refreshToken 재발급 받을때만 사용
-    @Transactional
     public JwtToken recreateTokenUsingTokenInfo(String token) {
 
         Long userId = jwtProvider.getUserIdToToken(token);
@@ -57,12 +55,14 @@ public class JwtService {
         return new JwtToken(accessToken, token);
     }
 
-    //Token 에서 user 찾는 메서드
+    //Token 에서 user 찾는 메서드 -> refreshToken 재발급 받을때만 사용
+    @Transactional(readOnly = true)
     public User findUserToToken(String token) {
 
         Long findUserId = jwtProvider.getUserIdToToken(token);
         return userService.findUserByUserId(findUserId);
     }
+
 
 
 }

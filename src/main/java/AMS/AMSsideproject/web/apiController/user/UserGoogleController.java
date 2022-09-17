@@ -11,7 +11,6 @@ import AMS.AMSsideproject.web.exception.UserNullException;
 import AMS.AMSsideproject.web.oauth.provider.profile.GoogleProfile;
 import AMS.AMSsideproject.web.oauth.provider.token.GoogleToken;
 import AMS.AMSsideproject.web.oauth.service.GoogleService;
-import AMS.AMSsideproject.web.response.DefaultResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -24,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
 @RestController
@@ -100,7 +98,7 @@ public class UserGoogleController {
             User findUser = userService.findUserByEmail(userProfile.email);
 
             //토큰(access, refresh) 생성
-            JwtToken jwtToken = jwtService.createAndSaveTokenByLogin(findUser.getUser_id(), findUser.getNickname(), findUser.getRole());
+            JwtToken jwtToken = jwtService.createAndSaveToken(findUser.getUser_id(), findUser.getNickname(), findUser.getRole());
             UserLoginDto userLoginDto = UserLoginDto.builder()
                     .user_Id(findUser.getUser_id())
                     .nickname(findUser.getNickname())

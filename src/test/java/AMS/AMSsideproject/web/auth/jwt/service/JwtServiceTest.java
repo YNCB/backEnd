@@ -41,7 +41,7 @@ class JwtServiceTest {
         User findUser = userService.findUserByNickName("test1");
 
         //when
-        JwtToken jwtToken = jwtService.createAndSaveTokenByLogin(findUser.getUser_id(), findUser.getNickname(), findUser.getRole());
+        JwtToken jwtToken = jwtService.createAndSaveToken(findUser.getUser_id(), findUser.getNickname(), findUser.getRole());
 
         //then
         String nickName = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(jwtToken.getAccessToken()).getClaim("nickName").asString();
@@ -57,13 +57,13 @@ class JwtServiceTest {
 
         //given
         User findUser = userService.findUserByNickName("test1");
-        JwtToken firstToken = jwtService.createAndSaveTokenByLogin(findUser.getUser_id(), findUser.getNickname(), findUser.getRole());//처음 로그인시 얻은 accessToken
+        JwtToken firstToken = jwtService.createAndSaveToken(findUser.getUser_id(), findUser.getNickname(), findUser.getRole());//처음 로그인시 얻은 accessToken
         Date firstExpire = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(firstToken.getRefreshToken()).getExpiresAt();//처음 로그인시 저장한 refreshToken
 
         Thread.sleep(2000);
 
         //when
-        JwtToken secondToken = jwtService.createAndSaveTokenByLogin(findUser.getUser_id(), findUser.getNickname(), findUser.getRole());//두번째 로그인
+        JwtToken secondToken = jwtService.createAndSaveToken(findUser.getUser_id(), findUser.getNickname(), findUser.getRole());//두번째 로그인
         Date secondExpire = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(secondToken.getRefreshToken()).getExpiresAt();
 
         //then
@@ -77,7 +77,7 @@ class JwtServiceTest {
         //given - 첫번쨰 로그인
         User findUser = userService.findUserByNickName("test1");
 
-        JwtToken jwtToken1 = jwtService.createAndSaveTokenByLogin(findUser.getUser_id(), findUser.getNickname(), findUser.getRole());
+        JwtToken jwtToken1 = jwtService.createAndSaveToken(findUser.getUser_id(), findUser.getNickname(), findUser.getRole());
 
         //when - 두번째 로그인
         //JwtToken jwtToken2 = jwtService.validRefreshToken(findUser.getRefreshToken().getRefresh_token(), findUser.getUser_id());

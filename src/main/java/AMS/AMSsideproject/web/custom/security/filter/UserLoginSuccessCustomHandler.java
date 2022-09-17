@@ -6,9 +6,7 @@ import AMS.AMSsideproject.web.auth.jwt.service.JwtService;
 import AMS.AMSsideproject.web.custom.security.PrincipalDetails;
 import AMS.AMSsideproject.web.response.DataResponse;
 import AMS.AMSsideproject.web.responseDto.user.UserLoginDto;
-import AMS.AMSsideproject.web.response.DefaultResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -39,7 +37,7 @@ public class UserLoginSuccessCustomHandler implements AuthenticationSuccessHandl
         User LoginUser = principal.getUser();
 
         //토큰 생성
-        JwtToken jwtToken = jwtService.createAndSaveTokenByLogin(LoginUser.getUser_id(), LoginUser.getNickname(), LoginUser.getRole());
+        JwtToken jwtToken = jwtService.createAndSaveToken(LoginUser.getUser_id(), LoginUser.getNickname(), LoginUser.getRole());
 
         //반환 json 객체 생성
         UserLoginDto userLoginDto = UserLoginDto.builder()

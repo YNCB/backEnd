@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 public class UserJWTInterceptor implements HandlerInterceptor {
 
     /**
+     * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
      * 기본적인 JWT 토큰의 검증(request header 에 접두어 , jwt keySet, 기한)은 spring security filter 에서 다했음
      *
      * !고민할것
