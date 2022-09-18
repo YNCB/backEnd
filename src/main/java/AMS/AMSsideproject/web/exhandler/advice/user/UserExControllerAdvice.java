@@ -2,7 +2,8 @@ package AMS.AMSsideproject.web.exhandler.advice.user;
 
 
 import AMS.AMSsideproject.web.apiController.user.requestDto.ValidNickNameDto;
-import AMS.AMSsideproject.web.exception.*;
+import AMS.AMSsideproject.web.exception.user.AlreadyJoinedUser;
+import AMS.AMSsideproject.web.exception.user.DuplicationUserNickname;
 import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
 import AMS.AMSsideproject.web.exhandler.DataErrorResult;
 import org.springframework.http.HttpStatus;
@@ -36,6 +37,14 @@ public class UserExControllerAdvice {
         }
         return new DataErrorResult<>("각 필드의 조건이 맞지않습니다.", "BAD","406", result);
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(AlreadyJoinedUser.class)
+    public BaseErrorResult AlreadyJoinedUser(AlreadyJoinedUser e) {
+        return new BaseErrorResult(e.getMessage(), "400", "BAD");
+    }
+
+
 
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

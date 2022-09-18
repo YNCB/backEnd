@@ -2,7 +2,7 @@ package AMS.AMSsideproject.web.interceptor;
 
 import AMS.AMSsideproject.domain.token.service.RefreshTokenService;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
-import AMS.AMSsideproject.web.exception.JWTTokenExpireException;
+import AMS.AMSsideproject.web.exception.user.JWTTokenExpireException;
 import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;

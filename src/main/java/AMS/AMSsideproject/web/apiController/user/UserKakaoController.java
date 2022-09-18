@@ -4,11 +4,12 @@ import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
 import AMS.AMSsideproject.web.auth.jwt.JwtToken;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtService;
+import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
 import AMS.AMSsideproject.web.oauth.provider.info.KakaoInfo;
 import AMS.AMSsideproject.web.response.DataResponse;
 import AMS.AMSsideproject.web.responseDto.user.KakaoUserJoinDto;
 import AMS.AMSsideproject.web.responseDto.user.UserLoginDto;
-import AMS.AMSsideproject.web.exception.UserNullException;
+import AMS.AMSsideproject.web.exception.user.UserNullException;
 import AMS.AMSsideproject.web.oauth.provider.profile.KakaoProfile;
 import AMS.AMSsideproject.web.oauth.provider.token.KakaoToken;
 import AMS.AMSsideproject.web.oauth.service.KakaoService;
@@ -87,7 +88,8 @@ public class UserKakaoController {
             " 성공시 -> /codebox/{nickname} api 호출 ")
     @ApiResponses({
             @ApiResponse(code=200, message = "로그인 성공", response =  KakaoLogin_200.class),
-            @ApiResponse(code=201, message = "회원가입 진행",response = KakaoLogin_201.class)
+            @ApiResponse(code=201, message = "회원가입 진행",response = KakaoLogin_201.class),
+            @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     public DataResponse<?> KakaoLogin(@RequestParam("code") String code, HttpServletResponse response) throws JsonProcessingException {
 

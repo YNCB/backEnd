@@ -42,7 +42,8 @@ public class UserController {
     @ApiOperation(value = "실제 회원가입을 진행하는 api", notes = "실제 회원가입을 진행합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message = "회원가입 성공"),
-            @ApiResponse(code =406, message = "각 키값 조건 불일치", response = Join_406.class)
+            @ApiResponse(code =406, message = "각 키값 조건 불일치", response = Join_406.class),
+            @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     public BaseResponse Join(@Validated @RequestBody UserJoinForm userJoinForm) {
 
@@ -61,7 +62,8 @@ public class UserController {
     @ApiOperation(value = "추가정보 회원가입시 닉네임 중복검사하는 api", notes = "추가정보 회원가입 시 회원 닉네임에 대해서 중복 검사를 합니다.")
     @ApiResponses( {
             @ApiResponse(code=200, message = "닉네임 사용가능") ,
-            @ApiResponse(code=400, message = "닉네임 중복", response = ValidDuplicateNickName_400.class )
+            @ApiResponse(code=400, message = "닉네임 중복", response = ValidDuplicateNickName_400.class ),
+            @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     public DataResponse<ValidNickNameDto> ValidDuplicateNickName(@Validated @RequestBody ValidNickNameDto validNickName) {
 
@@ -73,6 +75,11 @@ public class UserController {
     // 회원가입시 이메일 인증 하는 부분
     @PostMapping("/join/mailConfirm")
     @ApiOperation(value = "회원가입시 이메일 인증하는 api", notes = "전달한 이메일로 인증코드를 전송합니다. 반환값으로 인증코드를 반환해줍니다.")
+    @ApiResponses({
+            @ApiResponse(code=200, message = "인증코드 전송완료"),
+            @ApiResponse(code=400, message = "이미 회원가입된 사용자", response = BaseErrorResult.class),
+            @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
+    })
     public DataResponse<ResponseAuthCode> mailConfirm(@Validated @RequestBody RequestEmailAuthDto emailDto) throws MessagingException, UnsupportedEncodingException {
 
         String authCode = emailService.sendEmail(emailDto.email);
@@ -85,7 +92,8 @@ public class UserController {
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
             @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
-            @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class)
+            @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
+            @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     public DataResponse<UserEditDto> UserEditForm(@RequestHeader(JwtProperties.HEADER_STRING) String accessToken) {
 
@@ -100,7 +108,8 @@ public class UserController {
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
             @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
-            @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class)
+            @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
+            @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     public DataResponse<UserEditSuccessDto> UserEdit(@RequestHeader(JwtProperties.HEADER_STRING) String accessToken, @RequestBody UserEditForm userEditForm) {
 

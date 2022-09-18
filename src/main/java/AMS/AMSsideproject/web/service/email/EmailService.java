@@ -1,8 +1,13 @@
 package AMS.AMSsideproject.web.service.email;
 
+import AMS.AMSsideproject.domain.user.User;
+import AMS.AMSsideproject.domain.user.service.UserService;
+import AMS.AMSsideproject.web.exception.user.AlreadyJoinedUser;
+import AMS.AMSsideproject.web.exception.user.UserNullException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 
@@ -15,6 +20,7 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class EmailService {
 
+    private final UserService userService;
     private final JavaMailSender emailSender;
     private final SpringTemplateEngine templateEngine;
     private String authNum;
@@ -64,18 +70,23 @@ public class EmailService {
     }
 
     //실제 메일 전송
+    @Transactional(readOnly = true)
     public String sendEmail(String toEmail) throws MessagingException, UnsupportedEncodingException {
 
         /**
          * 여기서 나중에 가입된 이메일 사용자는 인증 번호자체가 안보내지게??!!! 설계?!!!
          */
+        try { //이미 회원가입된 사용자 -> 인증코드 전송 안되는 경우
+            User findUser = userService.findUserByEmail(toEmail);
+            throw new AlreadyJoinedUser("이미 회원가입된 이메일 입니다.");
 
-        //메일전송에 필요한 정보 설정
-        MimeMessage emailForm = createEmailForm(toEmail);
-        //실제 메일 전송
-        emailSender.send(emailForm);
-
-        return authNum; //인증 코드 반환
+        }catch (UserNullException e) { //전송되는 경우
+            //메일전송에 필요한 정보 설정
+            MimeMessage emailForm = createEmailForm(toEmail);
+            //실제 메일 전송
+            emailSender.send(emailForm);
+            return authNum; //인증 코드 반환
+        }
     }
 
 }

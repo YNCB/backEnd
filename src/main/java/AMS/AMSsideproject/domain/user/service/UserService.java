@@ -4,8 +4,8 @@ import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.repository.UserRepository;
 import AMS.AMSsideproject.web.apiController.user.requestDto.UserEditForm;
 import AMS.AMSsideproject.web.apiController.user.requestDto.UserJoinForm;
-import AMS.AMSsideproject.web.exception.DuplicationUserNickname;
-import AMS.AMSsideproject.web.exception.UserNullException;
+import AMS.AMSsideproject.web.exception.user.DuplicationUserNickname;
+import AMS.AMSsideproject.web.exception.user.UserNullException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -65,7 +65,7 @@ public class UserService {
         Optional<User> findUser = userRepository.findByEmail(email);
 
         if(findUser.isEmpty())
-            throw new UserNullException("회원가입이 안된 사용자입니다. 회원가입을 해주시기 바랍니다.");
+            throw new UserNullException("존재하지 않은 회원입니다.");
         return findUser.get();
     }
 

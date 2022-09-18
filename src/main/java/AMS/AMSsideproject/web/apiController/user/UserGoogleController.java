@@ -4,11 +4,12 @@ import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
 import AMS.AMSsideproject.web.auth.jwt.JwtToken;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtService;
+import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
 import AMS.AMSsideproject.web.oauth.provider.info.GoogleInfo;
 import AMS.AMSsideproject.web.response.DataResponse;
 import AMS.AMSsideproject.web.responseDto.user.GoogleUserJoinDto;
 import AMS.AMSsideproject.web.responseDto.user.UserLoginDto;
-import AMS.AMSsideproject.web.exception.UserNullException;
+import AMS.AMSsideproject.web.exception.user.UserNullException;
 import AMS.AMSsideproject.web.oauth.provider.profile.GoogleProfile;
 import AMS.AMSsideproject.web.oauth.provider.token.GoogleToken;
 import AMS.AMSsideproject.web.oauth.service.GoogleService;
@@ -86,7 +87,8 @@ public class UserGoogleController {
             " 성공시 -> /codebox/{nickname} api 호출 ")
     @ApiResponses({
             @ApiResponse(code=200, message = "로그인 성공", response =  GoogleLogin_200.class),
-            @ApiResponse(code=201, message = "회원가입 진행",response = GoogleLogin_201.class)
+            @ApiResponse(code=201, message = "회원가입 진행",response = GoogleLogin_201.class),
+            @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     public DataResponse<?> GoogleLogin(@RequestParam("code") String code, HttpServletResponse response) throws JsonProcessingException {
 

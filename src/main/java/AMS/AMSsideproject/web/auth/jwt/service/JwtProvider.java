@@ -1,17 +1,13 @@
 package AMS.AMSsideproject.web.auth.jwt.service;
 
-import AMS.AMSsideproject.domain.user.service.UserService;
 import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
 import AMS.AMSsideproject.web.auth.jwt.JwtToken;
-import AMS.AMSsideproject.web.exception.JWTTokenExpireException;
+import AMS.AMSsideproject.web.exception.user.JWTTokenExpireException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;

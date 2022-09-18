@@ -8,12 +8,11 @@ import lombok.Data;
 @Builder
 public class KakaoUserJoinDto {
 
-    //private String id;
     @ApiModelProperty(example = "test@gamil.com")
     private String email;
-    @ApiModelProperty(example = "11222333")
+    @ApiModelProperty(example = "kakao1234!", notes = "kakao 회원가입은 예시와 같이 패스워드 고정")
     private String password;
-    @ApiModelProperty(example = "본식")
+    @ApiModelProperty(example = "본식", notes = "kakao 회원가입은 기본 kakao 닉네임 받을수 있음")
     private String nickname;
     @ApiModelProperty(example = "Kakao")
     private String social_type;

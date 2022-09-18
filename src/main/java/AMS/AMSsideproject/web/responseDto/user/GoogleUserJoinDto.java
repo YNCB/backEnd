@@ -10,8 +10,7 @@ public class GoogleUserJoinDto {
 
     @ApiModelProperty(example = "test@gamil.com")
     private String email;
-    //private String id; //소셜 로그인 고유 아이디
-    @ApiModelProperty(example = "11222333")
+    @ApiModelProperty(example = "google1234!",  notes = "google 회원가입은 예시와 같이 패스워드 고정")
     private String password;
     @ApiModelProperty(example = "Google")
     private String social_type;

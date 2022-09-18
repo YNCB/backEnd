@@ -3,7 +3,7 @@ package AMS.AMSsideproject.domain.token.service;
 import AMS.AMSsideproject.domain.token.RefreshToken;
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
-import AMS.AMSsideproject.web.exception.RefreshTokenInvalidException;
+import AMS.AMSsideproject.web.exception.user.RefreshTokenInvalidException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
