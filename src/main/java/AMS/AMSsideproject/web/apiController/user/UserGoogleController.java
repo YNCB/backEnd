@@ -4,6 +4,7 @@ import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
 import AMS.AMSsideproject.web.auth.jwt.JwtToken;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtService;
+import AMS.AMSsideproject.web.oauth.provider.info.GoogleInfo;
 import AMS.AMSsideproject.web.response.DataResponse;
 import AMS.AMSsideproject.web.responseDto.user.GoogleUserJoinDto;
 import AMS.AMSsideproject.web.responseDto.user.UserLoginDto;
@@ -11,6 +12,8 @@ import AMS.AMSsideproject.web.exception.UserNullException;
 import AMS.AMSsideproject.web.oauth.provider.profile.GoogleProfile;
 import AMS.AMSsideproject.web.oauth.provider.token.GoogleToken;
 import AMS.AMSsideproject.web.oauth.service.GoogleService;
+import AMS.AMSsideproject.web.swagger.userGoogleController.GoogleLogin_200;
+import AMS.AMSsideproject.web.swagger.userGoogleController.GoogleLogin_201;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -82,8 +85,8 @@ public class UserGoogleController {
             " 회원가입을 하지않는 사용자이면 회원가입 진행, " +
             " 성공시 -> /codebox/{nickname} api 호출 ")
     @ApiResponses({
-            @ApiResponse(code=200, message = "로그인 성공", response =  UserLoginDto.class),
-            @ApiResponse(code=201, message = "회원가입 진행",response = GoogleUserJoinDto.class)
+            @ApiResponse(code=200, message = "로그인 성공", response =  GoogleLogin_200.class),
+            @ApiResponse(code=201, message = "회원가입 진행",response = GoogleLogin_201.class)
     })
     public DataResponse<?> GoogleLogin(@RequestParam("code") String code, HttpServletResponse response) throws JsonProcessingException {
 
@@ -112,7 +115,7 @@ public class UserGoogleController {
 
             GoogleUserJoinDto userJoinDto = GoogleUserJoinDto.builder()
                     .email(userProfile.email)
-                    .password(userProfile.id) //소셜 로그인은 비밀번호가 중요하지 않으니 그냥 세팅
+                    .password(GoogleInfo.GoogleLoginPassWord) //소셜 로그인은 비밀번호가 중요하지 않으니 그냥 세팅
                     .social_type("Google")
                     .build();
             response.setStatus(HttpStatus.CREATED.value());

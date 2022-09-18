@@ -37,7 +37,7 @@ public class UserService {
 
         userRepository.findByNickName(nickName)
                 .ifPresent(e -> {
-                    throw new DuplicationUserNickname("이미 존재하는 닉네임 입니다.");
+                    throw new DuplicationUserNickname("이미 존재하는 닉네임 입니다.", nickName);
                 });
         return nickName;
     }

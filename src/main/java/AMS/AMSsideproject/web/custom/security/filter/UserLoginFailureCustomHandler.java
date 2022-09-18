@@ -1,6 +1,6 @@
 package AMS.AMSsideproject.web.custom.security.filter;
 
-import AMS.AMSsideproject.web.exhanler.ErrorResult;
+import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -32,7 +32,7 @@ public class UserLoginFailureCustomHandler implements AuthenticationFailureHandl
 //            errorResult = new ErrorResult("InternalAuthenticationError", "BAD", "400");
 //        }
 
-        ErrorResult errorResult = new ErrorResult(exception.getMessage(),"BAD", "400");
+        BaseErrorResult errorResult = new BaseErrorResult(exception.getMessage(),"BAD", "400");
         String res = objectMapper.writeValueAsString(errorResult);
 
         response.setStatus(HttpStatus.BAD_REQUEST.value());

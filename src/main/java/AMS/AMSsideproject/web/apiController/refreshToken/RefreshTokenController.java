@@ -3,10 +3,8 @@ package AMS.AMSsideproject.web.apiController.refreshToken;
 import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
 import AMS.AMSsideproject.web.auth.jwt.JwtToken;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtService;
-import AMS.AMSsideproject.web.exhanler.ErrorResult;
-import AMS.AMSsideproject.web.response.BaseResponse;
+import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
 import AMS.AMSsideproject.web.response.DataResponse;
-import AMS.AMSsideproject.web.response.DefaultResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -27,7 +25,7 @@ public class RefreshTokenController {
             "리프레시 토큰이 정상적이지 않거나 기한이 만료되었으면 재로그인을 요청합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message = "엑세스,리프레시 토큰 재생성 성공"),
-            @ApiResponse(code=400, message = "리프레시토큰이 없거나 잘못된 값 또는 유효기간이 만료되었음 다시 로그인 해야함", response = ErrorResult.class)
+            @ApiResponse(code=400, message = "리프레시토큰이 없거나 잘못된 값 또는 유효기간이 만료되었음 다시 로그인 해야함", response = BaseErrorResult.class)
     })
     public DataResponse<JwtToken> recreateToken(@RequestHeader(JwtProperties.REFRESH_HEADER_STRING) String refreshToken) {
 

@@ -5,18 +5,21 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     #AWS RDS IP 주소
-    url: jdbc:mysql://ams-sideproject.cplvn3gq33xj.ap-northeast-2.rds.amazonaws.com:3306/ams_sideproject?serverTimezone=UTC&characterEncoding=UTF-8
-    username: admin
-    password: rnqhstlr123!
+    #url: jdbc:mysql://ams-sideproject.cplvn3gq33xj.ap-northeast-2.rds.amazonaws.com:3306/ams_sideproject?serverTimezone=UTC&characterEncoding=UTF-8
+    #username: admin
+    #password: rnqhstlr123!
+    url: jdbc:mysql://localhost:3306/ams_sideproject?serverTimezone=UTC&characterEncoding=UTF-8
+    username: root
+    password: 1234
 
   jpa:
     hibernate:
       ddl-auto: create
-
-  properties:
-    hibernate:
-      show_sql: true
-      default_batch_fetch_size: 100
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        default_batch_fetch_size: 100
 
   # swagger 오류
   # : Spring boot 2.6버전 이후에 spring.mvc.pathmatch.matching-strategy 값이
@@ -25,18 +28,32 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
 
-    # Naver smtp server 사용
+
   mail:
-    host: smtp.naver.com
-    port: 465
-    username: rnqhstlr2297
-    password: rnqhstlr123!
+    #Naver smtp server 사용
+#    host: smtp.naver.com
+#    port: 465
+#    username: rnqhstlr2297
+#    password: rnqhstlr2297!
+#    properties:
+#      mail:
+#        smtp:
+#          starttls:
+#            enable: true
+#          auth: true
+#          ssl:
+#            trust: smtp.naver.com
+#            enable: true #반드시 필요 -> naver 에 설정되어있으면
+
+    # Google smtp server 사용
+    host: smtp.gmail.com
+    port: 587
+    username: rnqhstlr2297@gmail.com
+    password: ritbhiqxyounajye
     properties:
       mail:
         smtp:
           starttls:
             enable: true
           auth: true
-          ssl:
-            trust: smtp.naver.com
-            enable: true #반드시 필요 -> naver 에 설정되어있으면
+

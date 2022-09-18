@@ -15,7 +15,7 @@ public class KakaoUserJoinDto {
     private String password;
     @ApiModelProperty(example = "본식")
     private String nickname;
-    @ApiModelProperty(example = "Google")
+    @ApiModelProperty(example = "Kakao")
     private String social_type;
 
 }

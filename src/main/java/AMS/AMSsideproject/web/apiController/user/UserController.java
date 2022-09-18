@@ -2,26 +2,26 @@ package AMS.AMSsideproject.web.apiController.user;
 
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
-import AMS.AMSsideproject.web.apiController.user.requestDto.RequestValidNickName;
+import AMS.AMSsideproject.web.apiController.user.requestDto.ValidNickNameDto;
 import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
 import AMS.AMSsideproject.web.auth.jwt.JwtToken;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtService;
-import AMS.AMSsideproject.web.exhanler.ErrorResult;
+import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
+import AMS.AMSsideproject.web.exhandler.DataErrorResult;
 import AMS.AMSsideproject.web.response.BaseResponse;
 import AMS.AMSsideproject.web.response.DataResponse;
 import AMS.AMSsideproject.web.responseDto.user.ResponseAuthCode;
-import AMS.AMSsideproject.web.responseDto.user.ResponseValidNickName;
 import AMS.AMSsideproject.web.apiController.user.requestDto.RequestEmailAuthDto;
 import AMS.AMSsideproject.web.responseDto.user.UserEditSuccessDto;
 import AMS.AMSsideproject.web.responseDto.user.UserEditDto;
 import AMS.AMSsideproject.web.service.email.EmailService;
 import AMS.AMSsideproject.web.apiController.user.requestDto.UserEditForm;
 import AMS.AMSsideproject.web.apiController.user.requestDto.UserJoinForm;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import AMS.AMSsideproject.web.swagger.userController.Join_406;
+import AMS.AMSsideproject.web.swagger.userController.ValidDuplicateNickName_400;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
@@ -40,7 +40,11 @@ public class UserController {
     //실제 회원가입을 진행하는 부분
     @PostMapping("/join")
     @ApiOperation(value = "실제 회원가입을 진행하는 api", notes = "실제 회원가입을 진행합니다.")
-    public BaseResponse Join(@RequestBody UserJoinForm userJoinForm) {
+    @ApiResponses({
+            @ApiResponse(code=200, message = "회원가입 성공"),
+            @ApiResponse(code =406, message = "각 키값 조건 불일치", response = Join_406.class)
+    })
+    public BaseResponse Join(@Validated @RequestBody UserJoinForm userJoinForm) {
 
         User joinUser = userService.join(userJoinForm);
         //회원가입완료는 필요없지 않나
@@ -57,31 +61,30 @@ public class UserController {
     @ApiOperation(value = "추가정보 회원가입시 닉네임 중복검사하는 api", notes = "추가정보 회원가입 시 회원 닉네임에 대해서 중복 검사를 합니다.")
     @ApiResponses( {
             @ApiResponse(code=200, message = "닉네임 사용가능") ,
-            @ApiResponse(code=400, message = "닉네임 중복", response = ErrorResult.class)
+            @ApiResponse(code=400, message = "닉네임 중복", response = ValidDuplicateNickName_400.class )
     })
-    public DataResponse<ResponseValidNickName> ValidDuplicateNickName(@RequestBody RequestValidNickName validNickName) {
+    public DataResponse<ValidNickNameDto> ValidDuplicateNickName(@Validated @RequestBody ValidNickNameDto validNickName) {
 
         //이거도 굳이 리턴할필요가 있나?! 닉네임을?!
         String nickName= userService.validDuplicateUserNickName(validNickName.nickName);
-        return new DataResponse<>("200", "사용 가능한 닉네임 입니다.", new ResponseValidNickName(nickName));
+        return new DataResponse<>("200", "사용 가능한 닉네임 입니다.", new ValidNickNameDto(nickName));
     }
 
     // 회원가입시 이메일 인증 하는 부분
     @PostMapping("/join/mailConfirm")
     @ApiOperation(value = "회원가입시 이메일 인증하는 api", notes = "전달한 이메일로 인증코드를 전송합니다. 반환값으로 인증코드를 반환해줍니다.")
-    public DataResponse<ResponseAuthCode> mailConfirm(@RequestBody RequestEmailAuthDto emailDto) throws MessagingException, UnsupportedEncodingException {
+    public DataResponse<ResponseAuthCode> mailConfirm(@Validated @RequestBody RequestEmailAuthDto emailDto) throws MessagingException, UnsupportedEncodingException {
 
         String authCode = emailService.sendEmail(emailDto.email);
         return new DataResponse<>("200", "인증코드를 전송하였습니다. 생성된 인증코드 입니다.", new ResponseAuthCode(authCode));
     }
-
 
     //회원 정보 수정 -> 권한 체크 필요한 기능
     @GetMapping("/setting")
     @ApiOperation(value = "회원 정보 수정 api", notes = "회원 수정을 위해 사용자 정보를 제공해주는 api 입니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
-            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = ErrorResult.class),
+            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class)
     })
     public DataResponse<UserEditDto> UserEditForm(@RequestHeader(JwtProperties.HEADER_STRING) String accessToken) {
@@ -96,7 +99,7 @@ public class UserController {
     @ApiOperation(value = "회원 정보 수정 api", notes = "수정된 회원정보를 받는 api 입니다. 회원 정보가 수정되면 JWT토큰안에 회원 정보도 수정해야되기 때문에 토큰도 재발급")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
-            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = ErrorResult.class),
+            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class)
     })
     public DataResponse<UserEditSuccessDto> UserEdit(@RequestHeader(JwtProperties.HEADER_STRING) String accessToken, @RequestBody UserEditForm userEditForm) {
@@ -120,7 +123,7 @@ public class UserController {
          * 바꿔야 된다 - 회원수정 보다는 게시물 등록, 수정을 더많이 호출하잖아 그러면 회원수정에서 토큰도 새로 생성하는게 쿼리문 더 줄어들지 않을까
          *             회원수정일때 엑세스,리프레시 생성하면 쿼리문하나 발생(리프레시 토큰 업데이트).
          */
-        return new DataResponse<>("200", "회원 수정이 완료되었습니다",
+        return new DataResponse<>("200", "회원 수정이 완료되었습니다. 토큰이 재발급하겠습니다.",
                 new UserEditSuccessDto(updateUser.getUser_id(), updateUser.getNickname(), jwtToken.getAccessToken(), jwtToken.getRefreshToken()));
     }
 
