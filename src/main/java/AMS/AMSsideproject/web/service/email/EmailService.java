@@ -70,7 +70,6 @@ public class EmailService {
     }
 
     //실제 메일 전송
-    @Transactional(readOnly = true)
     public String sendEmail(String toEmail) throws MessagingException, UnsupportedEncodingException {
 
         /**
