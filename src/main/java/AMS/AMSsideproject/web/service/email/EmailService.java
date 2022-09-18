@@ -45,7 +45,7 @@ public class EmailService {
                     break;
             }
         }
-        authNum = key.toString();
+        this.authNum = key.toString();
     }
 
     //메일 양식 작성
