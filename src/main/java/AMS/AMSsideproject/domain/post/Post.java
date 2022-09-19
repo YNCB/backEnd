@@ -1,6 +1,7 @@
 package AMS.AMSsideproject.domain.post;
 
 import AMS.AMSsideproject.domain.user.User;
+import AMS.AMSsideproject.web.apiController.post.requestDto.PostSaveForm;
 import org.springframework.cglib.core.Local;
 
 import javax.persistence.*;
@@ -34,5 +35,25 @@ public class Post {
     private Long likeNum; //좋아요 개수
     @Column(name = "reply_num")
     private Long replyNum; //댓글 개수
-    private Integer lever; //난의도
+    private Integer level; //난의도
+
+
+    //생성 메서드
+    public static Post createPost(User user, PostSaveForm postSaveForm) {
+        Post post = new Post();
+
+        post.user = user;
+        post.title = postSaveForm.getTitle();
+        post.problem_uri = postSaveForm.getProblem_uri();
+        post.context = postSaveForm.getContent();
+
+        post.type = postSaveForm.getType();
+        post.language = postSaveForm.getLanguage();
+        post.level = postSaveForm.getLevel();
+
+        post.redate = LocalDateTime.now();
+
+        return post;
+    }
+
 }
