@@ -1,7 +1,7 @@
 package AMS.AMSsideproject.domain.user;
 
 import AMS.AMSsideproject.domain.token.RefreshToken;
-import AMS.AMSsideproject.web.apiController.user.requestDto.UserJoinForm;
+import AMS.AMSsideproject.web.apiController.user.requestDto.UserJoinForm2;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -35,7 +35,7 @@ public class User {
 
 
     //생성 메서드
-    public static User createUser(UserJoinForm joinForm) {
+    public static User createUser(UserJoinForm2 joinForm) {
         User user = new User();
         user.setEmail(joinForm.getEmail());
         user.setPassword(joinForm.getPassword());

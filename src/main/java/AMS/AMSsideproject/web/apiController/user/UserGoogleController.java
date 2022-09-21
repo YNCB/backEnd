@@ -83,8 +83,8 @@ public class UserGoogleController {
     //카카오 로그인 처리 부분
     @GetMapping("/login/token/google")
     @ApiOperation(value = "구글 로그인을 처리하는 api - google", notes = "회원가입 한 사용자이면 구글 로그인 처리 ," +
-            " 회원가입을 하지않는 사용자이면 회원가입 진행, " +
-            " 성공시 -> /codebox/{nickname} api 호출 ")
+            " 회원가입을 하지않는 사용자이면 회원가입 진행(2차 회원가입), " +
+            " 로그인 성공시 -> /codebox/{nickname} api 호출하면됌 ")
     @ApiResponses({
             @ApiResponse(code=200, message = "로그인 성공", response =  GoogleLogin_200.class),
             @ApiResponse(code=201, message = "회원가입 진행",response = GoogleLogin_201.class),

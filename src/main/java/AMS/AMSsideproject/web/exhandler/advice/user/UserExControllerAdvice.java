@@ -34,6 +34,12 @@ public class UserExControllerAdvice {
         for(FieldError fieldError : fieldErrors) {
             UserValidExceptionDto dto = new UserValidExceptionDto(fieldError.getField(),(String)fieldError.getRejectedValue(), fieldError.getDefaultMessage());
             result.add(dto);
+
+            System.out.print(fieldError.getField() + "-> code: " + fieldError.getCode());
+            for(String code: fieldError.getCodes()) {
+                System.out.print(" codes: " + code);
+            }
+            System.out.println();
         }
         return new DataErrorResult<>("각 필드의 조건이 맞지않습니다.", "BAD","406", result);
     }

@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserValidExceptionDto {
 
-    @ApiModelProperty(example = "nickname")
+    @ApiModelProperty(example = "필드 이름")
     private String key;
-    @ApiModelProperty(example = "te")
+    @ApiModelProperty(example = "사용자가 입력한 필드 값")
     private String value;
-    @ApiModelProperty(example = "3자 ~ 10자 이어야 합니다.")
+    @ApiModelProperty(example = "필드 조건 메시지")
     private String message;
 }

@@ -33,7 +33,7 @@ public class SecurityConfig {
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring()
                 .antMatchers("/codebox/login/token/kakao", "/codebox/login/token/google")
-                .antMatchers("/codebox/join", "/codebox/join/mailConfirm", "/codebox/join/validNickName")
+                .antMatchers("/codebox/join*", "/codebox/join/mailConfirm", "/codebox/join/validNickName")
                 .antMatchers("/codebox/refreshToken")
 
                 .antMatchers("/swagger-ui.html/**", "/swagger/**", "/v2/api-docs", "/swagger-resources/**", "/webjars/**")

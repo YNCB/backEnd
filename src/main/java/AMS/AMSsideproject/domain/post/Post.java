@@ -1,14 +1,19 @@
 package AMS.AMSsideproject.domain.post;
 
+import AMS.AMSsideproject.domain.tag.postTag.PostTag;
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.web.apiController.post.requestDto.PostSaveForm;
+import lombok.Getter;
 import org.springframework.cglib.core.Local;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
+@Getter
 public class Post {
 
     @Id
@@ -19,7 +24,6 @@ public class Post {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private String nickname; //작성자 닉네임
     private String title;
     private String problem_uri;
     @Column(columnDefinition = "TEXT")
@@ -33,10 +37,19 @@ public class Post {
 
     @Column(name = "like_num")
     private Long likeNum; //좋아요 개수
+
     @Column(name = "reply_num")
     private Long replyNum; //댓글 개수
+
     private Integer level; //난의도
 
+    //양방향 연관관계
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "post", cascade = CascadeType.ALL)
+    private List<PostTag> postTagList = new ArrayList<>();
+    public void addPostTag(PostTag postTag) {
+        postTag.setPost(this);
+        postTagList.add(postTag);
+    }
 
     //생성 메서드
     public static Post createPost(User user, PostSaveForm postSaveForm) {
@@ -52,8 +65,11 @@ public class Post {
         post.level = postSaveForm.getLevel();
 
         post.redate = LocalDateTime.now();
-
         return post;
+    }
+
+    public void addReplyNum() {
+        this.replyNum++;
     }
 
 }

@@ -21,21 +21,24 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     @Override
-    public Optional<Post> findByPostId(Long postId) {
-        Post post = em.find(Post.class, postId);
-        return Optional.ofNullable(post);
+    public Post save(Post post) {
+        em.persist(post);
+        return post;
     }
 
+    @Override
+    public Post findByPostId(Long postId) {
+        return em.find(Post.class, postId);
+    }
+
+    /**
+     * 필터링에 따라서 게시물을 조회
+     * !!!!해당 유저가 가지고있는 해시태그들은 항상 보여줘야되니깐 항상 모든 해시태그를 줘야된다!!
+     */
     @Override
     public List<Post> findAllBySearchForm() {
 
         return null;
-    }
-
-    @Override
-    public Post save(Post post) {
-        em.persist(post);
-        return post;
     }
 
 }

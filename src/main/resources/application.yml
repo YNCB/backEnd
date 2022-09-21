@@ -2,6 +2,10 @@ server:
   port: 8888
 
 spring:
+  #스프링 부트 메시지 설정 추가
+  messages:
+    basename: errors, messages
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     #AWS RDS IP 주소

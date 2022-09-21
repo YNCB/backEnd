@@ -2,21 +2,17 @@ package AMS.AMSsideproject.web.apiController.user;
 
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
-import AMS.AMSsideproject.web.apiController.user.requestDto.ValidNickNameDto;
+import AMS.AMSsideproject.web.apiController.user.requestDto.*;
 import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
 import AMS.AMSsideproject.web.auth.jwt.JwtToken;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtService;
 import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
-import AMS.AMSsideproject.web.exhandler.DataErrorResult;
 import AMS.AMSsideproject.web.response.BaseResponse;
 import AMS.AMSsideproject.web.response.DataResponse;
 import AMS.AMSsideproject.web.responseDto.user.ResponseAuthCode;
-import AMS.AMSsideproject.web.apiController.user.requestDto.RequestEmailAuthDto;
 import AMS.AMSsideproject.web.responseDto.user.UserEditSuccessDto;
 import AMS.AMSsideproject.web.responseDto.user.UserEditDto;
 import AMS.AMSsideproject.web.service.email.EmailService;
-import AMS.AMSsideproject.web.apiController.user.requestDto.UserEditForm;
-import AMS.AMSsideproject.web.apiController.user.requestDto.UserJoinForm;
 import AMS.AMSsideproject.web.swagger.userController.Join_406;
 import AMS.AMSsideproject.web.swagger.userController.ValidDuplicateNickName_400;
 import io.swagger.annotations.*;
@@ -37,23 +33,30 @@ public class UserController {
     private final EmailService emailService;
     private final JwtService jwtService;
 
-    //실제 회원가입을 진행하는 부분
-    @PostMapping("/join")
-    @ApiOperation(value = "실제 회원가입을 진행하는 api", notes = "실제 회원가입을 진행합니다.")
+    // 1차 회원가입
+    @PostMapping("/join1")
+    @ApiOperation(value = "1차 회원가입을 진행하는 api", notes = "1차 회원가입을 진행합니다.")
     @ApiResponses({
-            @ApiResponse(code=200, message = "회원가입 성공"),
-            @ApiResponse(code =406, message = "각 키값 조건 불일치", response = Join_406.class),
+            @ApiResponse(code=200, message = "1차 회원가입 성공"),
+            @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
-    public BaseResponse Join(@Validated @RequestBody UserJoinForm userJoinForm) {
+    public DataResponse<UserJoinForm1> Step1Join(@Validated @RequestBody UserJoinForm1 userJoinForm) {
+        return new DataResponse<>("200","1차 회원가입이 완료되었습니다.",userJoinForm);
+    }
+
+    //2차 회원가입 - 실제 회원가입하는 부분
+    @PostMapping("/join2")
+    @ApiOperation(value = "2차 회원가입을 진행하는 api", notes = "2차 회원가입을 진행합니다. 실제 회원가입이 완료됩니다. " +
+            "일반회원가입일 경우에는 social_type key 값을 Basic 으로 주시면 됩니다.")
+    @ApiResponses({
+            @ApiResponse(code=200, message = "2차 회원가입 성공"),
+            @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
+            @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
+    })
+    public BaseResponse Step2Join(@Validated @RequestBody UserJoinForm2 userJoinForm) {
 
         User joinUser = userService.join(userJoinForm);
-        //회원가입완료는 필요없지 않나
-//        UserDto joinUserDto = UserDto.builder()
-//                .user_id(joinUser.getUser_id())
-//                .email(joinUser.getEmail())
-//                .nickname(joinUser.getNickname())
-//                .build();
         return new BaseResponse("200", "회원가입이 정상적으로 완료되었습니다.");
     }
 

@@ -3,7 +3,7 @@ package AMS.AMSsideproject.domain.user.service;
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.repository.UserRepository;
 import AMS.AMSsideproject.web.apiController.user.requestDto.UserEditForm;
-import AMS.AMSsideproject.web.apiController.user.requestDto.UserJoinForm;
+import AMS.AMSsideproject.web.apiController.user.requestDto.UserJoinForm2;
 import AMS.AMSsideproject.web.exception.user.DuplicationUserNickname;
 import AMS.AMSsideproject.web.exception.user.UserNullException;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ public class UserService {
 
     //회원 가입 메서드
     @Transactional
-    public User join(UserJoinForm joinForm) {
+    public User join(UserJoinForm2 joinForm) {
 
         joinForm.setPassword(encodePwd.encode(joinForm.getPassword()));
 

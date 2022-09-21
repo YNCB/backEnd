@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 public class DataErrorResult<T> extends BaseErrorResult{
 
     private T data;

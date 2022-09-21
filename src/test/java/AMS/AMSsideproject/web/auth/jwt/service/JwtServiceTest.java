@@ -4,7 +4,7 @@ import AMS.AMSsideproject.domain.token.RefreshToken;
 import AMS.AMSsideproject.domain.token.service.RefreshTokenService;
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
-import AMS.AMSsideproject.web.apiController.user.requestDto.UserJoinForm;
+import AMS.AMSsideproject.web.apiController.user.requestDto.UserJoinForm2;
 import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
 import AMS.AMSsideproject.web.auth.jwt.JwtToken;
 import com.auth0.jwt.JWT;
@@ -29,7 +29,7 @@ class JwtServiceTest {
     @BeforeEach
     @Transactional
     public void init() {
-        UserJoinForm userJoinForm = new UserJoinForm("test1","test1", "test1", "test1", "test1", "test1");
+        UserJoinForm2 userJoinForm = new UserJoinForm2("test1","test1", "test1", "test1", "test1", "test1");
         userService.join(userJoinForm);
     }
 
