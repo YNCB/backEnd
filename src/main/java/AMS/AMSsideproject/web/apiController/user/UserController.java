@@ -61,6 +61,7 @@ public class UserController {
     }
 
     // 회원가입시 닉네임 중복 검사하는 부분
+    // "406" error 정의
     @PostMapping("/join/validNickName")
     @ApiOperation(value = "추가정보 회원가입시 닉네임 중복검사하는 api", notes = "추가정보 회원가입 시 회원 닉네임에 대해서 중복 검사를 합니다.")
     @ApiResponses( {
@@ -76,6 +77,7 @@ public class UserController {
     }
 
     // 회원가입시 이메일 인증 하는 부분
+    // "406" error 정의
     @PostMapping("/join/mailConfirm")
     @ApiOperation(value = "회원가입시 이메일 인증하는 api", notes = "전달한 이메일로 인증코드를 전송합니다. 반환값으로 인증코드를 반환해줍니다.")
     @ApiResponses({

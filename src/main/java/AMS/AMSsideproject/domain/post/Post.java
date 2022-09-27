@@ -65,6 +65,7 @@ public class Post {
         post.level = postSaveForm.getLevel();
 
         post.likeNum =0L;
+        post.replyNum =0L;
         post.redate = LocalDateTime.now();
         return post;
     }

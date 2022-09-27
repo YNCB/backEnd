@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Data
 public class PrincipalDetails implements UserDetails {
@@ -19,13 +20,12 @@ public class PrincipalDetails implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities  = new ArrayList<>();
 
-        authorities.add(new GrantedAuthority() {
-            @Override
-            public String getAuthority() {
-                return user.getRole();
-            }
-        });
+        List<String> list = new ArrayList<>();
+        list.add(user.getRole());
 
+        list.stream().forEach( r -> {
+            authorities.add(() -> r);
+        });
         return authorities;
     }
 

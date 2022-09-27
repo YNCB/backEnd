@@ -35,6 +35,7 @@ public class SecurityConfig {
                 .antMatchers("/codebox/login/token/kakao", "/codebox/login/token/google")
                 .antMatchers("/codebox/join*", "/codebox/join/mailConfirm", "/codebox/join/validNickName")
                 .antMatchers("/codebox/refreshToken")
+                //.antMatchers("/codebox/") //메인 페이지
 
                 .antMatchers("/swagger-ui.html/**", "/swagger/**", "/v2/api-docs", "/swagger-resources/**", "/webjars/**")
                 .antMatchers("/v3/api-docs/**", "/swagger-ui/**")
@@ -55,10 +56,12 @@ public class SecurityConfig {
 
                 .and()
                 .authorizeRequests()
-                .antMatchers("/setting").hasRole("USER")
+                .antMatchers("/codebox/setting").hasAuthority("USER")
+                .antMatchers("/codebox/").hasAuthority("USER")
+                .antMatchers("/codebox/*/write").hasAuthority("USER")
 
                 //.antMatchers("/test").authenticated()
-                //.anyRequest().permitAll()
+                .anyRequest().permitAll()
 
                 .and()
                 .build();

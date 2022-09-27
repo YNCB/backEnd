@@ -2,6 +2,7 @@ package AMS.AMSsideproject.web.config;
 
 import AMS.AMSsideproject.domain.token.service.RefreshTokenService;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
+import AMS.AMSsideproject.web.interceptor.PostAuthorizationInterceptor;
 import AMS.AMSsideproject.web.interceptor.RefreshTokenInterceptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -32,12 +33,18 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/codebox/refreshToken")
                 .excludePathPatterns("/css/**", "/*.ico", "/error", "/error-page/**"); //오류 페이지 경로 제외!!
 
-
+        registry.addInterceptor(postAuthorizationInterceptor())
+                .order(1)
+                .addPathPatterns("/codebox/*/write")
+                .excludePathPatterns("/css/**", "/*.ico", "/error", "/error-page/**"); //오류 페이지 경로 제외!!
     }
     @Bean
     public RefreshTokenInterceptor refreshTokenInterceptor() {
         return new RefreshTokenInterceptor();
     }
+    @Bean
+    public PostAuthorizationInterceptor postAuthorizationInterceptor() {return new PostAuthorizationInterceptor(); }
+
 
     /** DefaultMessageCodesResolver 구현체 수정 **/
 //    @Override

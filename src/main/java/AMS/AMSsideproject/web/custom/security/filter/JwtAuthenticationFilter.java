@@ -72,8 +72,6 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
                    principalDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication); //추가로 controller 단에서 해당 객체를 꺼낼수 있다.!
 
-
-
             chain.doFilter(request,response);
 
         }catch (JWTTokenExpireException e) {
