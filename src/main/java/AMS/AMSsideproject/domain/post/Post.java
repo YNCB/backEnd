@@ -64,12 +64,17 @@ public class Post {
         post.language = postSaveForm.getLanguage();
         post.level = postSaveForm.getLevel();
 
+        post.likeNum =0L;
         post.redate = LocalDateTime.now();
         return post;
     }
 
     public void addReplyNum() {
         this.replyNum++;
+    }
+
+    public void addLikeNum(Long num) {
+        this.likeNum += num;
     }
 
 }

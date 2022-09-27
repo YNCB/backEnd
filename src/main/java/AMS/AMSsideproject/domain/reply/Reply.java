@@ -31,7 +31,7 @@ public class Reply {
 
 
     public void addReplyNumAboutPost() {
-        post.addReplyNum();
+        this.post.addReplyNum();
     }
 
 }

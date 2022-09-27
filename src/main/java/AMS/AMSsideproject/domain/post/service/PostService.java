@@ -1,7 +1,9 @@
 package AMS.AMSsideproject.domain.post.service;
 
 import AMS.AMSsideproject.domain.post.Post;
+import AMS.AMSsideproject.domain.post.QPost;
 import AMS.AMSsideproject.domain.post.repository.PostRepository;
+import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutAllUser;
 import AMS.AMSsideproject.domain.tag.Tag.Tag;
 import AMS.AMSsideproject.domain.tag.Tag.repository.TagRepository;
 import AMS.AMSsideproject.domain.tag.Tag.service.TagService;
@@ -9,9 +11,17 @@ import AMS.AMSsideproject.domain.tag.postTag.PostTag;
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
 import AMS.AMSsideproject.web.apiController.post.requestDto.PostSaveForm;
+import com.querydsl.core.BooleanBuilder;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -44,7 +54,48 @@ public class PostService {
         return post;
     }
 
+    //전체 유저 게시물에 대한 게시물 조회
+    public Slice<Post> findAboutAllUserPost(SearchFormAboutAllUser searchForm) {
 
+        // 페이징, 정렬 기준 세팅하기
+        List<Sort.Order> orders = new ArrayList<>();
+        orders.add(Sort.Order.desc(searchForm.getOrderKey()));
+        Pageable pageable = PageRequest.of(0,3, Sort.by(orders)); //10개 씩
+
+        //동적쿼리 where 문 생성
+        BooleanBuilder builder = new BooleanBuilder();
+        if(searchForm.getOrderKey().equals("redate")) {
+            if(searchForm.getLastPostId() != null) {
+                builder.and(QPost.post.post_id.lt(searchForm.getLastPostId()));
+            }
+        }
+        else if(searchForm.getOrderKey().equals("likeNum")) {
+            if(searchForm.getLastLikeNum()!=null && searchForm.getLastPostId()!=null) {
+                builder.and(QPost.post.likeNum.eq(searchForm.getLastLikeNum()).and(QPost.post.post_id.gt(searchForm.getLastPostId())));
+                builder.or(QPost.post.likeNum.lt(searchForm.getLastLikeNum()));
+            }
+        }
+        else if(searchForm.getOrderKey().equals("replyNum")) {
+            if(searchForm.getLastReplyNum()!=null && searchForm.getLastPostId()!=null) {
+                builder.and(QPost.post.replyNum.eq(searchForm.getLastReplyNum()).and(QPost.post.post_id.gt(searchForm.getLastPostId())));
+                builder.or(QPost.post.replyNum.lt(searchForm.getLastReplyNum()));
+            }
+        }
+
+        return postRepository.findPostsBySearchFormAboutAllUser(searchForm.getLanguage(), searchForm.getSearchTitle(), pageable , builder);
+    }
+
+    //특정 유저에 대한 게시물 조회
+
+
+
+    //게시물 좋아요 수 증가
+    @Transactional
+    public Post addPostLikeNum(Long postId , Long num) {
+        Post findPost = postRepository.findPostByPostId(postId);
+        findPost.addLikeNum(num);
+        return findPost;
+    }
 
 
 
