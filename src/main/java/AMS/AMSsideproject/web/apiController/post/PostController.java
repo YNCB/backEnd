@@ -47,7 +47,7 @@ public class PostController {
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
-    public DataResponse<PostListResponse> main(@RequestBody SearchFormAboutAllUser form) {
+    public DataResponse<PostListResponse> mainPage(@RequestBody SearchFormAboutAllUser form) {
         Slice<Post> result = postService.findAboutAllUserPost(form);
 
         //Dto 변환
@@ -60,20 +60,17 @@ public class PostController {
         return new DataResponse<>("200", "모든 사용자들의 게시물 리스트 결과입니다.", postListResponse);
     }
 
-
     //특정 사용자 메인 페이지
     @GetMapping("/{nickname}")
     @ApiOperation(value = "회원별 메인페이지 api", notes = "해당 회원의 문제 리스트을 보여줍니다. 개발 중...")
-    public PostListResponse home(@PathVariable("nickname") String nickname ,
-                                 @RequestParam(value = "tag_name", required = false) String tagName,
-                                 @RequestParam(value = "problem_type", required = false) String problem_type) {
+    public PostListResponse userPage(@PathVariable("nickname")String nickname ) {
 
         return null;
     }
 
     // 게시물 상세조회
     @ApiOperation(value = "회원 게시물 상세조회 api", notes = "개발중 ...")
-    @GetMapping("/{nickname}/{title}")
+    @GetMapping("/{nickname}/{postId}")
     public PostListResponse post(@PathVariable("nickname") String nickname, @PathVariable("title") String title) {
         return null;
     }

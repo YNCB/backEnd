@@ -186,21 +186,5 @@ class PostServiceTest {
         Assertions.assertThat(content.size()).isEqualTo(1);
     }
 
-//    @Test
-//    @Transactional
-//    @Rollback(value = false)
-//    public void PostListDto테스트() throws Exception {
-//
-//        //when
-//        SearchFormAboutAllUser form = new SearchFormAboutAllUser("Java", "koo", "redate", null, null,null);
-//        Slice<Post> findPosts = postService.findAboutAllUserPost(form);
-//
-//        //then
-//        List<Post> posts = findPosts.getContent();
-//        for(Post p : posts) {
-//            System.out.println(p);
-//            System.out.println("======================");
-//        }
-//    }
 
 }

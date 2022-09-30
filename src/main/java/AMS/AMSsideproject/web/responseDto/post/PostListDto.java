@@ -14,6 +14,10 @@ public class PostListDto {
     private Long post_id; //게시물 고유 id
     @ApiModelProperty(example = "test")
     private String title; //제목
+
+    /**
+     * 사용자 pk 를 줄 이유가 있나?! 사용되지 않을건데..아마
+     */
     @ApiModelProperty(example = "3" , notes = "작성자 고유 아이디")
     private Long user_id; //작성자 고유 id
     @ApiModelProperty(example = "user")
