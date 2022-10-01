@@ -59,6 +59,7 @@ public class SecurityConfig {
                 .antMatchers("/codebox/setting").hasAuthority("USER")
                 .antMatchers("/codebox/").hasAuthority("USER")
                 .antMatchers("/codebox/*/write").hasAuthority("USER")
+                .antMatchers("/codebox/*/*").hasAuthority("USER")
 
                 //.antMatchers("/test").authenticated()
                 .anyRequest().permitAll()

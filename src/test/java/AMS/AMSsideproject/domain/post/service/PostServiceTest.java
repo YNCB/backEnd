@@ -2,12 +2,14 @@ package AMS.AMSsideproject.domain.post.service;
 
 import AMS.AMSsideproject.domain.post.Post;
 import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutAllUser;
+import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutSpecificUser;
 import AMS.AMSsideproject.domain.tag.Tag.Tag;
 import AMS.AMSsideproject.domain.tag.Tag.repository.TagRepository;
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
 import AMS.AMSsideproject.web.apiController.post.requestDto.PostSaveForm;
 import AMS.AMSsideproject.web.apiController.user.requestDto.UserJoinForm2;
+import AMS.AMSsideproject.web.responseDto.post.PostListDto;
 import AMS.AMSsideproject.web.test.DatabaseCleanup;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
@@ -21,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @SpringBootTest
 class PostServiceTest {
@@ -35,14 +38,14 @@ class PostServiceTest {
 
         List<String> tags = new ArrayList<>();
         tags.add("BFS"); tags.add("DFS");
-        PostSaveForm postSaveForm1 = new PostSaveForm(tags,"koo1", "koo1","koo1", "보고 푼 문제","C++",1);
-        PostSaveForm postSaveForm2 = new PostSaveForm(tags,"koo2", "koo2","koo2", "보고 푼 문제","Java",3);
-        PostSaveForm postSaveForm3 = new PostSaveForm(tags,"koo3", "koo3","koo3", "보고 푼 문제","Java",2);
-        PostSaveForm postSaveForm4 = new PostSaveForm(tags,"koo4", "koo4","koo4", "보고 푼 문제","Java",5);
-        PostSaveForm postSaveForm5 = new PostSaveForm(tags,"koo5", "koo5","koo5", "보고 푼 문제","Java",6);
-        PostSaveForm postSaveForm6 = new PostSaveForm(tags,"koo6", "koo6","koo6", "보고 푼 문제","Java",6);
-        PostSaveForm postSaveForm7 = new PostSaveForm(tags,"koo7", "koo7","koo7", "보고 푼 문제","Java",8);
-        PostSaveForm postSaveForm8 = new PostSaveForm(tags,"koo8", "koo8","koo8", "보고 푼 문제","Java",6);
+        PostSaveForm postSaveForm1 = new PostSaveForm(tags,"koo1", "koo1","koo1", "see","C++",1);
+        PostSaveForm postSaveForm2 = new PostSaveForm(tags,"koo2", "koo2","koo2", "see","Java",3);
+        PostSaveForm postSaveForm3 = new PostSaveForm(tags,"koo3", "koo3","koo3", "see","Java",2);
+        PostSaveForm postSaveForm4 = new PostSaveForm(tags,"koo4", "koo4","koo4", "see","Java",5);
+        PostSaveForm postSaveForm5 = new PostSaveForm(tags,"koo5", "koo5","koo5", "see","Java",6);
+        PostSaveForm postSaveForm6 = new PostSaveForm(tags,"koo6", "koo6","koo6", "see","Java",6);
+        PostSaveForm postSaveForm7 = new PostSaveForm(tags,"koo7", "koo7","koo7", "see","Java",8);
+        PostSaveForm postSaveForm8 = new PostSaveForm(tags,"koo8", "koo8","koo8", "see","Java",6);
 
         Post post1 = postService.registration(findUser.getUser_id(), postSaveForm1);
         postService.addPostLikeNum(post1.getPost_id(), 1L);
@@ -60,6 +63,17 @@ class PostServiceTest {
         postService.addPostLikeNum(post7.getPost_id(), 8L);
         Post post8 = postService.registration(findUser.getUser_id(), postSaveForm8);
         postService.addPostLikeNum(post8.getPost_id(), 6L);
+
+        UserJoinForm2 userJoinForm3 = new UserJoinForm2("test3@gamil.com", "test1234!", "test3", "Basic","Student","Java");
+        User findUser2 = userService.join(userJoinForm3);
+
+        PostSaveForm postSaveForm9 = new PostSaveForm(tags,"boo1", "boo1","boo1", "see","Java",1);
+        PostSaveForm postSaveForm10 = new PostSaveForm(tags,"boo2", "boo2","boo2", "see","Java",3);
+        PostSaveForm postSaveForm11 = new PostSaveForm(tags,"boo3", "boo3","boo3", "see","Java",2);
+        postService.registration(findUser2.getUser_id(), postSaveForm9);
+        postService.registration(findUser2.getUser_id(), postSaveForm10);
+        postService.registration(findUser2.getUser_id(), postSaveForm11);
+
     }
 
     @Autowired private DatabaseCleanup databaseCleanup;
@@ -76,7 +90,7 @@ class PostServiceTest {
 
         List<String> tags = new ArrayList<>();
         tags.add("BFS"); tags.add("DFS");
-        PostSaveForm postSaveForm = new PostSaveForm(tags,"test", "test","test", "보고 푼 문제","Java",4);
+        PostSaveForm postSaveForm = new PostSaveForm(tags,"test", "test","test", "SEE","Java",4);
 
         //when
         Post addPost = postService.registration(findUser.getUser_id(), postSaveForm);
@@ -95,7 +109,7 @@ class PostServiceTest {
 
         //when
         SearchFormAboutAllUser form = new SearchFormAboutAllUser("Java", "koo", "redate", null, null,null);
-        Slice<Post> findPosts = postService.findAboutAllUserPost(form);
+        Slice<Post> findPosts = postService.findPostsAboutAllUser(form);
 
         //then
         boolean hasNext = findPosts.hasNext();
@@ -111,7 +125,7 @@ class PostServiceTest {
 
         //when
         SearchFormAboutAllUser form = new SearchFormAboutAllUser("Java", "koo", "redate", 6L, null,null);
-        Slice<Post> findPosts = postService.findAboutAllUserPost(form);
+        Slice<Post> findPosts = postService.findPostsAboutAllUser(form);
 
         //then
         boolean hasNext = findPosts.hasNext();
@@ -128,7 +142,7 @@ class PostServiceTest {
 
         //when
         SearchFormAboutAllUser form = new SearchFormAboutAllUser("Java", "koo", "redate", 3L, null,null);
-        Slice<Post> findPosts = postService.findAboutAllUserPost(form);
+        Slice<Post> findPosts = postService.findPostsAboutAllUser(form);
 
         //then
         boolean hasNext = findPosts.hasNext();
@@ -144,7 +158,7 @@ class PostServiceTest {
 
         //when
         SearchFormAboutAllUser form = new SearchFormAboutAllUser("Java", "koo", "likeNum", null, null,null);
-        Slice<Post> findPosts = postService.findAboutAllUserPost(form);
+        Slice<Post> findPosts = postService.findPostsAboutAllUser(form);
 
         //then
         boolean hasNext = findPosts.hasNext();
@@ -160,7 +174,7 @@ class PostServiceTest {
 
         //when
         SearchFormAboutAllUser form = new SearchFormAboutAllUser("Java", "koo", "likeNum", 6L, null,6L);
-        Slice<Post> findPosts = postService.findAboutAllUserPost(form);
+        Slice<Post> findPosts = postService.findPostsAboutAllUser(form);
 
         //then
         boolean hasNext = findPosts.hasNext();
@@ -176,7 +190,7 @@ class PostServiceTest {
 
         //when
         SearchFormAboutAllUser form = new SearchFormAboutAllUser("Java", "koo", "likeNum", 2L, null,3L);
-        Slice<Post> findPosts = postService.findAboutAllUserPost(form);
+        Slice<Post> findPosts = postService.findPostsAboutAllUser(form);
 
         //then
         boolean hasNext = findPosts.hasNext();
@@ -186,5 +200,61 @@ class PostServiceTest {
         Assertions.assertThat(content.size()).isEqualTo(1);
     }
 
+    @Test
+    @Transactional
+    public void 특정유저게시물에대해서존재하는태그게시물조회최신순순무한스크롤첫페이지() throws Exception {
+        //given
+        List<String> list = new ArrayList<>();
+        list.add("DFS"); list.add("BFS");
+        SearchFormAboutSpecificUser form = SearchFormAboutSpecificUser.builder()
+                .tags(list)
+                .type("see")
+                .language("Java")
+                .searchTitle("boo")
+                .orderKey("redate")
+                .lastPostId(null)
+                .lastLikeNum(null)
+                .lastReplyNum(null)
+                .build();
+        //when
+        Slice<Post> findPosts = postService.findPostsAboutSpecificUser("test3", form);
+
+        //then
+        List<PostListDto> result = findPosts.getContent().stream()
+                .map(p -> new PostListDto(p))
+                .collect(Collectors.toList());
+
+        Assertions.assertThat(result.size()).isEqualTo(3);
+        System.out.println("===============");
+        for(PostListDto p : result)
+            System.out.println(p);
+    }
+
+    @Test
+    @Transactional
+    public void 특정유저게시물에대해서존재하지않는태그게시물조회최신순순무한스크롤첫페이지() throws Exception {
+        //given
+        List<String> list = new ArrayList<>();
+        list.add("FFS"); //list.add("DFS");
+        SearchFormAboutSpecificUser form = SearchFormAboutSpecificUser.builder()
+                .tags(list)
+                .type("see")
+                .language("Java")
+                .searchTitle("boo")
+                .orderKey("redate")
+                .lastPostId(null)
+                .lastLikeNum(null)
+                .lastReplyNum(null)
+                .build();
+        //when
+        Slice<Post> findPosts = postService.findPostsAboutSpecificUser("test3", form);
+
+        //then
+        List<PostListDto> result = findPosts.getContent().stream()
+                .map(p -> new PostListDto(p))
+                .collect(Collectors.toList());
+
+        Assertions.assertThat(result.size()).isEqualTo(0);
+    }
 
 }

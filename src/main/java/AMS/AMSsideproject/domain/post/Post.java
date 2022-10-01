@@ -25,12 +25,13 @@ public class Post {
     private User user;
 
     private String title;
+    @Column(columnDefinition = "TEXT")
     private String problem_uri;
     @Column(columnDefinition = "TEXT")
     private String context;
 
     private String type; //문제 유형(다시풀문제, 다푼문제)
-    private String language; //문제 푼 언어(JAVA, Python etc)
+    private String language; //문제 푼 언어(Java, Python 등)
 
     private LocalDateTime redate;
     private LocalDateTime chdate;
@@ -46,10 +47,12 @@ public class Post {
     //양방향 연관관계
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "post", cascade = CascadeType.ALL)
     private List<PostTag> postTagList = new ArrayList<>();
+
     public void addPostTag(PostTag postTag) {
         postTag.setPost(this);
         postTagList.add(postTag);
     }
+
 
     //생성 메서드
     public static Post createPost(User user, PostSaveForm postSaveForm) {

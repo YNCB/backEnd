@@ -4,6 +4,7 @@ import AMS.AMSsideproject.domain.post.Post;
 import AMS.AMSsideproject.domain.post.QPost;
 import AMS.AMSsideproject.domain.post.repository.PostRepository;
 import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutAllUser;
+import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutSpecificUser;
 import AMS.AMSsideproject.domain.tag.Tag.Tag;
 import AMS.AMSsideproject.domain.tag.Tag.repository.TagRepository;
 import AMS.AMSsideproject.domain.tag.Tag.service.TagService;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,37 +57,75 @@ public class PostService {
     }
 
     //전체 유저 게시물에 대한 게시물 조회
-    public Slice<Post> findAboutAllUserPost(SearchFormAboutAllUser searchForm) {
+    public Slice<Post> findPostsAboutAllUser(SearchFormAboutAllUser searchForm) {
 
-        // 페이징, 정렬 기준 세팅하기
-        List<Sort.Order> orders = new ArrayList<>();
-        orders.add(Sort.Order.desc(searchForm.getOrderKey()));
-        Pageable pageable = PageRequest.of(0,3, Sort.by(orders)); //10개 씩
-
-        //동적쿼리 where 문 생성
         BooleanBuilder builder = new BooleanBuilder();
-        if(searchForm.getOrderKey().equals("redate")) {
-            if(searchForm.getLastPostId() != null) {
-                builder.and(QPost.post.post_id.lt(searchForm.getLastPostId()));
-            }
-        }
-        else if(searchForm.getOrderKey().equals("likeNum")) {
-            if(searchForm.getLastLikeNum()!=null && searchForm.getLastPostId()!=null) {
-                builder.and(QPost.post.likeNum.eq(searchForm.getLastLikeNum()).and(QPost.post.post_id.gt(searchForm.getLastPostId())));
-                builder.or(QPost.post.likeNum.lt(searchForm.getLastLikeNum()));
-            }
-        }
-        else if(searchForm.getOrderKey().equals("replyNum")) {
-            if(searchForm.getLastReplyNum()!=null && searchForm.getLastPostId()!=null) {
-                builder.and(QPost.post.replyNum.eq(searchForm.getLastReplyNum()).and(QPost.post.post_id.gt(searchForm.getLastPostId())));
-                builder.or(QPost.post.replyNum.lt(searchForm.getLastReplyNum()));
-            }
-        }
+        // 페이징, 정렬 기준 세팅하기
+        Pageable pageable = null;
+        if(StringUtils.hasText(searchForm.getOrderKey())) {
 
-        return postRepository.findPostsBySearchFormAboutAllUser(searchForm.getLanguage(), searchForm.getSearchTitle(), pageable , builder);
+            List<Sort.Order> orders = new ArrayList<>();
+            orders.add(Sort.Order.desc(searchForm.getOrderKey()));
+            pageable = PageRequest.of(0, 3, Sort.by(orders)); //10개 씩
+
+            //동적쿼리 where 문 생성
+            if(searchForm.getOrderKey().equals("redate")) {
+                if(searchForm.getLastPostId() != null) {
+                    builder.and(QPost.post.post_id.lt(searchForm.getLastPostId()));
+                }
+            }
+            else if(searchForm.getOrderKey().equals("likeNum")) {
+                if(searchForm.getLastLikeNum()!=null && searchForm.getLastPostId()!=null) {
+                    builder.and(QPost.post.likeNum.eq(searchForm.getLastLikeNum()).and(QPost.post.post_id.gt(searchForm.getLastPostId())));
+                    builder.or(QPost.post.likeNum.lt(searchForm.getLastLikeNum()));
+                }
+            }
+            else if(searchForm.getOrderKey().equals("replyNum")) {
+                if(searchForm.getLastReplyNum()!=null && searchForm.getLastPostId()!=null) {
+                    builder.and(QPost.post.replyNum.eq(searchForm.getLastReplyNum()).and(QPost.post.post_id.gt(searchForm.getLastPostId())));
+                    builder.or(QPost.post.replyNum.lt(searchForm.getLastReplyNum()));
+                }
+            }
+        }else
+            pageable = PageRequest.of(0,3);
+
+        return postRepository.findPostsByAllUser(searchForm.getLanguage(), searchForm.getSearchTitle(), pageable , builder);
     }
 
     //특정 유저에 대한 게시물 조회
+    public Slice<Post> findPostsAboutSpecificUser(String nickname, SearchFormAboutSpecificUser searchForm) {
+
+        BooleanBuilder builder = new BooleanBuilder();
+        // 페이징, 정렬 기준 세팅하기
+        Pageable pageable = null;
+        if(StringUtils.hasText(searchForm.getOrderKey())) {
+
+            List<Sort.Order> orders = new ArrayList<>();
+            orders.add(Sort.Order.desc(searchForm.getOrderKey()));
+            pageable = PageRequest.of(0, 3, Sort.by(orders)); //10개 씩
+
+            //동적쿼리 where 문 생성
+            if(searchForm.getOrderKey().equals("redate")) {
+                if(searchForm.getLastPostId() != null) {
+                    builder.and(QPost.post.post_id.lt(searchForm.getLastPostId()));
+                }
+            }
+            else if(searchForm.getOrderKey().equals("likeNum")) {
+                if(searchForm.getLastLikeNum()!=null && searchForm.getLastPostId()!=null) {
+                    builder.and(QPost.post.likeNum.eq(searchForm.getLastLikeNum()).and(QPost.post.post_id.gt(searchForm.getLastPostId())));
+                    builder.or(QPost.post.likeNum.lt(searchForm.getLastLikeNum()));
+                }
+            }
+            else if(searchForm.getOrderKey().equals("replyNum")) {
+                if(searchForm.getLastReplyNum()!=null && searchForm.getLastPostId()!=null) {
+                    builder.and(QPost.post.replyNum.eq(searchForm.getLastReplyNum()).and(QPost.post.post_id.gt(searchForm.getLastPostId())));
+                    builder.or(QPost.post.replyNum.lt(searchForm.getLastReplyNum()));
+                }
+            }
+        }else
+            pageable = PageRequest.of(0,3);
+        return postRepository.findPostsBySpecificUser(nickname, searchForm, pageable, builder);
+    }
 
 
 
