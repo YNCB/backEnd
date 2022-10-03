@@ -25,6 +25,8 @@ import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.querydsl.jpa.JPAExpressions.select;
+
 @Repository
 public class PostRepositoryImpl implements PostRepository {
 
@@ -54,12 +56,12 @@ public class PostRepositoryImpl implements PostRepository {
         JPAQuery<Post> query = this.query.select(QPost.post)
                 .from(QPost.post)
                 .join(QPost.post.user, QUser.user)
+                .fetchJoin() //"패치조인"으로 성능 최적화(user 쿼리문은 안나감-프록시 초기화할때)
                 .where(
                         LanguageEq(lang),
                         TitleContains(title),
                         builder //NoOffset 사용하기
-                )
-                .fetchJoin();
+                );
         /**
          * 작성자 닉네임을 항상 가져와야 되기 때문에 "fetchJoin" 으로 "N+1" 문제 해결
          */
@@ -86,39 +88,31 @@ public class PostRepositoryImpl implements PostRepository {
          * : V4 버전에는 "Bath~" 적용안됨 -> JPA에서 DTO변환 (시간절약) => 단건 조회에서 사용 (왜냐하면 루트 쿼리의 결과 개수만큼 oneToMany 쿼리가 나가니 -> "1+N" 쿼리)
          * : V5 ~~~~  => 대량 데이터 조회에서 ("1+1" 쿼리)
          */
-//        posts.stream()
-//                .forEach( p -> {
-//                    List<String> postTags = findPostTags(p.getPost_id());
-//                    p.setTags(postTags);
-//                });
         return checkEndPage(pageable, posts);
     }
 
     //특정 유저 페이지 게시물 조회
     public Slice<Post> findPostsBySpecificUser(String nickname, SearchFormAboutSpecificUser form , Pageable pageable, BooleanBuilder builder) {
 
-        //태그에 속해있는 게시물들 부터 찾음
-        List<Long> postIds = new ArrayList<>();
-        if(!form.getTags().isEmpty())
-            postIds = findPostIds(form.getTags());
-
-        //위에 게시물들과 나머지 조건으로 게시물들 찾음
         JPAQuery<Post> query = this.query.select(QPost.post)
                 .from(QPost.post)
                 .join(QPost.post.user, QUser.user)
                 .where(
-                        PostIdIn(postIds),
+                        //서브쿼리 - 태그 필터링
+                        QPost.post.post_id.in(
+                                select(QPost.post.post_id)
+                                        .from(QPostTag.postTag)
+                                        .join(QPostTag.postTag.post, QPost.post)
+                                        .join(QPostTag.postTag.tag, QTag.tag)
+                                        .where(TagsIn(form.getTags()))
+                                        .groupBy(QPost.post.post_id)
+                        ),
                         NicknameEq(nickname),
                         TypeEq(form.getType()),
                         LanguageEq(form.getLanguage()),
                         TitleContains(form.getSearchTitle()),
                         builder
                 );
-        /**
-         * 방법?
-         * 1. post_tag 에서 검색 태그를 가지고 있는 post를 먼저 가서와서(그룹핑) 나머지 조건 걸기
-         * 2. post에서 태그 조건제외하고 필터링 후 태그 프록시 초기화 할때 거르기
-         */
 
         //동적 정렬
         for(Sort.Order o : pageable.getSort()) {
@@ -131,24 +125,6 @@ public class PostRepositoryImpl implements PostRepository {
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
         return checkEndPage(pageable, posts);
-    }
-
-    private List<Long> findPostIds(List<String> tags) {
-        List<Long> postIds = query.select(QPost.post.post_id)
-                .from(QPostTag.postTag)
-                .join(QPostTag.postTag.post, QPost.post)
-                .join(QPostTag.postTag.tag, QTag.tag)
-                .where(TagsIn(tags))
-                .groupBy(QPost.post.post_id)
-                .fetch();
-        return postIds;
-    }
-
-    private BooleanExpression PostIdIn(List<Long> postIds){
-        //태그에 해당하는 게시물이 없을때는 아무것도 검색되면 안되니!!!!!
-        //if(postIds.isEmpty())
-        //    return null;
-        return QPost.post.post_id.in(postIds);
     }
 
     private BooleanExpression TagsIn(List<String> tags) {

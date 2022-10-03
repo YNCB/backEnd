@@ -68,7 +68,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             PrincipalDetails principalDetails = new PrincipalDetails(findUser);
             Authentication authentication = new UsernamePasswordAuthenticationToken(
                    principalDetails, // 나중에 컨트롤러에서 DI해서 쓸 때 사용하기 편함.
-                   null, // 패스워드는 모르니까 null 처리, 어차피 지금 로그인 인증하는게 아니니까!!
+                   null, // 패스워드는 모르니까 null 처리, 어차피 지금 로그인 인증하는게 아니니까!!(로그인 필터를 사용하는게 아니니깐 지금)
                    principalDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication); //추가로 controller 단에서 해당 객체를 꺼낼수 있다.!
 

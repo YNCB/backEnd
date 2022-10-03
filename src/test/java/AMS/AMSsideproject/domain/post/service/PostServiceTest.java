@@ -9,7 +9,7 @@ import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
 import AMS.AMSsideproject.web.apiController.post.requestDto.PostSaveForm;
 import AMS.AMSsideproject.web.apiController.user.requestDto.UserJoinForm2;
-import AMS.AMSsideproject.web.responseDto.post.PostListDto;
+import AMS.AMSsideproject.web.responseDto.post.PostListDtoAboutAllUser;
 import AMS.AMSsideproject.web.test.DatabaseCleanup;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
@@ -108,7 +108,7 @@ class PostServiceTest {
     public void 모든유저게시물에대해서필터링조회최신순정렬무한스크롤첫페이지() throws Exception {
 
         //when
-        SearchFormAboutAllUser form = new SearchFormAboutAllUser("Java", "koo", "redate", null, null,null);
+        SearchFormAboutAllUser form = new SearchFormAboutAllUser("Java", "koo", "latest", null, null,null);
         Slice<Post> findPosts = postService.findPostsAboutAllUser(form);
 
         //then
@@ -124,7 +124,7 @@ class PostServiceTest {
     public void 모든유저게시물에대해서필터링조회최신순정렬무한스크롤중간페이지() throws Exception {
 
         //when
-        SearchFormAboutAllUser form = new SearchFormAboutAllUser("Java", "koo", "redate", 6L, null,null);
+        SearchFormAboutAllUser form = new SearchFormAboutAllUser("Java", "koo", "latest", 6L, null,null);
         Slice<Post> findPosts = postService.findPostsAboutAllUser(form);
 
         //then
@@ -141,7 +141,7 @@ class PostServiceTest {
     public void 모든유저게시물에대해서필터링조회최신순정렬무한스크롤마지막페이지() throws Exception {
 
         //when
-        SearchFormAboutAllUser form = new SearchFormAboutAllUser("Java", "koo", "redate", 3L, null,null);
+        SearchFormAboutAllUser form = new SearchFormAboutAllUser("Java", "koo", "latest", 3L, null,null);
         Slice<Post> findPosts = postService.findPostsAboutAllUser(form);
 
         //then
@@ -202,16 +202,16 @@ class PostServiceTest {
 
     @Test
     @Transactional
-    public void 특정유저게시물에대해서존재하는태그게시물조회최신순순무한스크롤첫페이지() throws Exception {
+    public void 특정유저게시물들에대해서태그게시물조회최신순순무한스크롤첫페이지() throws Exception {
         //given
         List<String> list = new ArrayList<>();
-        list.add("DFS"); list.add("BFS");
+        list.add("DFS"); list.add("FFS");
         SearchFormAboutSpecificUser form = SearchFormAboutSpecificUser.builder()
                 .tags(list)
                 .type("see")
                 .language("Java")
                 .searchTitle("boo")
-                .orderKey("redate")
+                .orderKey("latest")
                 .lastPostId(null)
                 .lastLikeNum(null)
                 .lastReplyNum(null)
@@ -220,14 +220,14 @@ class PostServiceTest {
         Slice<Post> findPosts = postService.findPostsAboutSpecificUser("test3", form);
 
         //then
-        List<PostListDto> result = findPosts.getContent().stream()
-                .map(p -> new PostListDto(p))
+        List<PostListDtoAboutAllUser> result = findPosts.getContent().stream()
+                .map(p -> new PostListDtoAboutAllUser(p))
                 .collect(Collectors.toList());
 
         Assertions.assertThat(result.size()).isEqualTo(3);
-        System.out.println("===============");
-        for(PostListDto p : result)
-            System.out.println(p);
+        //System.out.println("===============");
+        //for(PostListDto p : result)
+        //    System.out.println(p);
     }
 
     @Test
@@ -241,7 +241,7 @@ class PostServiceTest {
                 .type("see")
                 .language("Java")
                 .searchTitle("boo")
-                .orderKey("redate")
+                .orderKey("latest")
                 .lastPostId(null)
                 .lastLikeNum(null)
                 .lastReplyNum(null)
@@ -250,8 +250,8 @@ class PostServiceTest {
         Slice<Post> findPosts = postService.findPostsAboutSpecificUser("test3", form);
 
         //then
-        List<PostListDto> result = findPosts.getContent().stream()
-                .map(p -> new PostListDto(p))
+        List<PostListDtoAboutAllUser> result = findPosts.getContent().stream()
+                .map(p -> new PostListDtoAboutAllUser(p))
                 .collect(Collectors.toList());
 
         Assertions.assertThat(result.size()).isEqualTo(0);

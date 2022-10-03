@@ -32,10 +32,10 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring()
-                .antMatchers("/codebox/login/token/kakao", "/codebox/login/token/google")
-                .antMatchers("/codebox/join*", "/codebox/join/mailConfirm", "/codebox/join/validNickName")
-                .antMatchers("/codebox/refreshToken")
-                //.antMatchers("/codebox/") //메인 페이지
+                .antMatchers("/codebox/login/token/kakao", "/codebox/login/token/google") //로그인 관련
+                .antMatchers("/codebox/join*", "/codebox/join/mailConfirm", "/codebox/join/validNickName") //회원가입 관련
+                .antMatchers("/codebox/refreshToken") //리프레쉬 토큰 관련
+                //.antMatchers("/codebox/", "/codebox/*") //게시물 관련
 
                 .antMatchers("/swagger-ui.html/**", "/swagger/**", "/v2/api-docs", "/swagger-resources/**", "/webjars/**")
                 .antMatchers("/v3/api-docs/**", "/swagger-ui/**")
@@ -57,12 +57,15 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/codebox/setting").hasAuthority("USER")
-                .antMatchers("/codebox/").hasAuthority("USER")
-                .antMatchers("/codebox/*/write").hasAuthority("USER")
-                .antMatchers("/codebox/*/*").hasAuthority("USER")
+                //.antMatchers("/codebox/").hasAuthority("USER")
+                .antMatchers("/codebox/", "/codebox/*").permitAll()
 
+                .antMatchers("/codebox/*/write").hasAuthority("USER")
+                //.antMatchers("/codebox/*/*").hasAuthority("USER") //특정 게시물 조회
+                //.antMatchers("/codebox/*").hasAuthority("USER")
                 //.antMatchers("/test").authenticated()
-                .anyRequest().permitAll()
+                .antMatchers( "/codebox/*/*").permitAll()
+                //.anyRequest().permitAll()
 
                 .and()
                 .build();

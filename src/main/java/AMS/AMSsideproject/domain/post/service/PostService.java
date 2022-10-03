@@ -65,27 +65,33 @@ public class PostService {
         if(StringUtils.hasText(searchForm.getOrderKey())) {
 
             List<Sort.Order> orders = new ArrayList<>();
-            orders.add(Sort.Order.desc(searchForm.getOrderKey()));
-            pageable = PageRequest.of(0, 3, Sort.by(orders)); //10개 씩
-
             //동적쿼리 where 문 생성
-            if(searchForm.getOrderKey().equals("redate")) {
+            if(searchForm.getOrderKey().equals("latest")) { //최신순
+                orders.add(Sort.Order.desc("redate"));
                 if(searchForm.getLastPostId() != null) {
                     builder.and(QPost.post.post_id.lt(searchForm.getLastPostId()));
                 }
+            }else if(searchForm.getOrderKey().equals("oldest")){ //오래된순
+                orders.add(Sort.Order.asc("redate"));
+                if(searchForm.getLastPostId() !=null) {
+                    builder.and(QPost.post.post_id.gt(searchForm.getLastPostId()));
+                }
             }
-            else if(searchForm.getOrderKey().equals("likeNum")) {
+            else if(searchForm.getOrderKey().equals("likeNum")) { //좋아요순
+                orders.add(Sort.Order.desc(searchForm.getOrderKey()));
                 if(searchForm.getLastLikeNum()!=null && searchForm.getLastPostId()!=null) {
                     builder.and(QPost.post.likeNum.eq(searchForm.getLastLikeNum()).and(QPost.post.post_id.gt(searchForm.getLastPostId())));
                     builder.or(QPost.post.likeNum.lt(searchForm.getLastLikeNum()));
                 }
             }
-            else if(searchForm.getOrderKey().equals("replyNum")) {
+            else if(searchForm.getOrderKey().equals("replyNum")) { //댓글순
+                orders.add(Sort.Order.desc(searchForm.getOrderKey()));
                 if(searchForm.getLastReplyNum()!=null && searchForm.getLastPostId()!=null) {
                     builder.and(QPost.post.replyNum.eq(searchForm.getLastReplyNum()).and(QPost.post.post_id.gt(searchForm.getLastPostId())));
                     builder.or(QPost.post.replyNum.lt(searchForm.getLastReplyNum()));
                 }
             }
+            pageable = PageRequest.of(0, 3, Sort.by(orders)); //10개 씩
         }else
             pageable = PageRequest.of(0,3);
 
@@ -101,31 +107,39 @@ public class PostService {
         if(StringUtils.hasText(searchForm.getOrderKey())) {
 
             List<Sort.Order> orders = new ArrayList<>();
-            orders.add(Sort.Order.desc(searchForm.getOrderKey()));
-            pageable = PageRequest.of(0, 3, Sort.by(orders)); //10개 씩
-
             //동적쿼리 where 문 생성
-            if(searchForm.getOrderKey().equals("redate")) {
+            if(searchForm.getOrderKey().equals("latest")) { //최신순
+                orders.add(Sort.Order.desc("redate"));
                 if(searchForm.getLastPostId() != null) {
                     builder.and(QPost.post.post_id.lt(searchForm.getLastPostId()));
                 }
+            }else if(searchForm.getOrderKey().equals("oldest")){ //오래된순
+                orders.add(Sort.Order.asc("redate"));
+                if(searchForm.getLastPostId() !=null) {
+                    builder.and(QPost.post.post_id.gt(searchForm.getLastPostId()));
+                }
             }
-            else if(searchForm.getOrderKey().equals("likeNum")) {
+            else if(searchForm.getOrderKey().equals("likeNum")) { //좋아요순
+                orders.add(Sort.Order.desc(searchForm.getOrderKey()));
                 if(searchForm.getLastLikeNum()!=null && searchForm.getLastPostId()!=null) {
                     builder.and(QPost.post.likeNum.eq(searchForm.getLastLikeNum()).and(QPost.post.post_id.gt(searchForm.getLastPostId())));
                     builder.or(QPost.post.likeNum.lt(searchForm.getLastLikeNum()));
                 }
             }
-            else if(searchForm.getOrderKey().equals("replyNum")) {
+            else if(searchForm.getOrderKey().equals("replyNum")) { //댓글순
+                orders.add(Sort.Order.desc(searchForm.getOrderKey()));
                 if(searchForm.getLastReplyNum()!=null && searchForm.getLastPostId()!=null) {
                     builder.and(QPost.post.replyNum.eq(searchForm.getLastReplyNum()).and(QPost.post.post_id.gt(searchForm.getLastPostId())));
                     builder.or(QPost.post.replyNum.lt(searchForm.getLastReplyNum()));
                 }
             }
-        }else
+            pageable = PageRequest.of(0, 3, Sort.by(orders)); //10개 씩
+        }else //구조상 이경우는 없음.
             pageable = PageRequest.of(0,3);
         return postRepository.findPostsBySpecificUser(nickname, searchForm, pageable, builder);
     }
+
+
 
 
 

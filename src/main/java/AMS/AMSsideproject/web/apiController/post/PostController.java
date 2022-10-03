@@ -13,12 +13,14 @@ import AMS.AMSsideproject.web.response.BaseResponse;
 import AMS.AMSsideproject.web.response.DataResponse;
 import AMS.AMSsideproject.web.response.post.PostListResponse;
 import AMS.AMSsideproject.web.responseDto.post.PostDto;
-import AMS.AMSsideproject.web.responseDto.post.PostListDto;
+import AMS.AMSsideproject.web.responseDto.post.PostListDtoAboutAllUser;
+import AMS.AMSsideproject.web.responseDto.post.PostListDtoAboutSpecificUser;
+import AMS.AMSsideproject.web.swagger.postController.MainPage_200;
+import AMS.AMSsideproject.web.swagger.postController.UserPage_200;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
@@ -41,9 +43,9 @@ public class PostController {
     // - 근데 로그인 사용자랑, 비로그인 사용자는 엑세스 토큰 유무가 차이가 있는데 해당 uri에 인증을 안걸면 비로그인 사용자도 접속이 가능한데
     //   그렇게 되면 로그인 사용자에 대해서 해당 uri에서는 accessToken 기한만료등을 검사할수 없는뎅?...움....
     @GetMapping("/")
-    @ApiOperation(value = "서비스 메인페이지 , 모든 회원에 대한 게시물 리스트 조회 api", notes = "모든 회원 게시물에 대해서 필터링 조건에 맞게 리스트를 조회합니다.")
+    @ApiOperation(value = "서비스 메인페이지, 모든 회원에 대한 게시물 리스트 조회 api", notes = "모든 회원 게시물들에 대해서 필터링 조건에 맞게 리스트를 조회합니다.")
     @ApiResponses({
-            @ApiResponse(code=200, message="정상 호출"),
+            @ApiResponse(code=200, message="정상 호출", response = MainPage_200.class),
             @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
@@ -52,8 +54,8 @@ public class PostController {
         Slice<Post> result = postService.findPostsAboutAllUser(form);
 
         //Dto 변환
-        List<PostListDto> findPostDtos = result.getContent().stream()
-                .map(p -> new PostListDto(p))
+        List<PostListDtoAboutAllUser> findPostDtos = result.getContent().stream()
+                .map(p -> new PostListDtoAboutAllUser(p))
                 .collect(Collectors.toList());
 
         //response
@@ -63,20 +65,19 @@ public class PostController {
 
     //특정 사용자 페이지
     @GetMapping("/{nickname}")
-    @ApiOperation(value = "회원별 메인페이지 api", notes = "회원별 페이지의 게시물 리스트를 보여줍니다.")
+    @ApiOperation(value = "회원별 메인페이지, 특정 회원에 대한 게시물 리스트 api", notes = "특정 회원 게시물들에 대해서 필터링 조건에 맞게 리스트를 조회합니다.")
     @ApiResponses({
-            @ApiResponse(code=200, message="정상 호출"),
+            @ApiResponse(code=200, message="정상 호출", response = UserPage_200.class),
             @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     public DataResponse<PostListResponse> userPage(@PathVariable("nickname")String nickname , @RequestBody SearchFormAboutSpecificUser form) {
-
         Slice<Post> findPosts = postService.findPostsAboutSpecificUser(nickname, form);
 
         //Dto 변환
-        List<PostListDto> findPostDtos = findPosts.getContent().stream()
-                .map(p -> new PostListDto(p))
+        List<PostListDtoAboutSpecificUser> findPostDtos = findPosts.getContent().stream()
+                .map(p -> new PostListDtoAboutSpecificUser(p))
                 .collect(Collectors.toList());
 
         //response

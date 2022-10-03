@@ -50,11 +50,11 @@ public class UserExControllerAdvice {
         return new BaseErrorResult(e.getMessage(), "400", "BAD");
     }
 
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(Exception.class)
-    public BaseErrorResult Exception(Exception e) {
-        return new BaseErrorResult("Internal server error", "500", "BAD");
-    }
+    //@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    //@ExceptionHandler(Exception.class)
+    //public BaseErrorResult Exception(Exception e) {
+    //    return new BaseErrorResult("Internal server error", "500", "BAD");
+   // }
 
 
 

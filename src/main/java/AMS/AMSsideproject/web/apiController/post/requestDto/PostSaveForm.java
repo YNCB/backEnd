@@ -23,7 +23,7 @@ public class PostSaveForm {
     @ApiModelProperty(example = "test")
     private String content;
 
-    @ApiModelProperty(example = "보고 푼문제")
+    @ApiModelProperty(example = "see", notes = "see, alone")
     private String type;
     @ApiModelProperty(example = "Java")
     private String language;
