@@ -18,8 +18,8 @@ public class PostListDtoAboutAllUser {
     /**
      * 사용자 pk 를 줄 이유가 있나?! 사용되지 않을건데..아마
      */
-    @ApiModelProperty(example = "3" , notes = "작성자 고유 아이디")
-    private Long user_id; //작성자 고유 id
+//    @ApiModelProperty(example = "3" , notes = "작성자 고유 아이디")
+//    private Long user_id; //작성자 고유 id
     @ApiModelProperty(example = "user")
     private String nickname; //작성자 닉네임 -> fetch join
     @ApiModelProperty(example = "Java")
@@ -38,7 +38,7 @@ public class PostListDtoAboutAllUser {
     public PostListDtoAboutAllUser(Post post) {
         post_id = post.getPost_id();
         title = post.getTitle();
-        user_id = post.getUser().getUser_id(); //"fetchJoin" 으로 쿼리문 발생 x
+        //user_id = post.getUser().getUser_id(); //"fetchJoin" 으로 쿼리문 발생 x
         nickname = post.getUser().getNickname(); //"fetchJoin" 으로 쿼리문 발생 x
         language = post.getLanguage();
         type = post.getType();

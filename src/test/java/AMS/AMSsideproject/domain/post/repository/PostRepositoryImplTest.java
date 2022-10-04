@@ -1,24 +1,11 @@
 package AMS.AMSsideproject.domain.post.repository;
 
-import AMS.AMSsideproject.domain.post.Post;
 import AMS.AMSsideproject.domain.post.service.PostService;
-import AMS.AMSsideproject.domain.tag.Tag.repository.TagRepository;
-import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
-import AMS.AMSsideproject.web.apiController.post.requestDto.PostSaveForm;
-import AMS.AMSsideproject.web.apiController.user.requestDto.UserJoinForm2;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @SpringBootTest
 class PostRepositoryImplTest {

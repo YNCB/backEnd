@@ -6,6 +6,7 @@ import AMS.AMSsideproject.domain.tag.Tag.QTag;
 import AMS.AMSsideproject.domain.tag.postTag.QPostTag;
 import AMS.AMSsideproject.domain.user.QUser;
 import AMS.AMSsideproject.web.responseDto.post.PostDto;
+import AMS.AMSsideproject.web.responseDto.post.PostEditDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -30,7 +31,7 @@ public class PostRepositoryQueryDto {
     public PostDto findQueryPostDtoByPostId(Long postId) {
 
         PostDto findPostDto = query.select(Projections.constructor(PostDto.class,
-                        QPost.post.title, QUser.user.user_id, QUser.user.nickname, QPost.post.redate, QPost.post.likeNum, QPost.post.language,
+                        QPost.post.title, QUser.user.nickname, QPost.post.redate, QPost.post.likeNum, QPost.post.language,
                         QPost.post.type, QPost.post.level, QPost.post.context, QPost.post.replyNum
                 ))
                 .from(QPost.post)
@@ -61,5 +62,17 @@ public class PostRepositoryQueryDto {
         if(postId == null)
             return null;
         return QPost.post.post_id.eq(postId);
+    }
+
+    //수정 조회에 대해서 Dto로 성능 튜닝
+    public PostEditDto findQueryPostEditDtoByPostId(Long postId){
+        PostEditDto postEditDto = query.select(Projections.constructor(PostEditDto.class,
+                        QPost.post.title, QPost.post.problem_uri, QPost.post.context, QPost.post.type, QPost.post.language, QPost.post.level))
+                .from(QPost.post)
+                .where(postIdEqAboutPost(postId))
+                .fetchFirst();
+
+        postEditDto.setTags(findPostTags(postId));
+        return postEditDto;
     }
 }
