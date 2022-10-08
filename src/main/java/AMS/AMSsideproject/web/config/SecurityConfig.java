@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -35,7 +36,7 @@ public class SecurityConfig {
                 .antMatchers("/codebox/login/token/kakao", "/codebox/login/token/google") //로그인 관련
                 .antMatchers("/codebox/join*", "/codebox/join/mailConfirm", "/codebox/join/validNickName") //회원가입 관련
                 .antMatchers("/codebox/refreshToken") //리프레쉬 토큰 관련
-                .antMatchers("/codebox/", "/codebox/*", "/codebox/*/{postId:[\\d+]}") //게시물 관련!!!!!!!!!!!!!!!!!!!!정규식 표현
+                .antMatchers(HttpMethod.GET,"/codebox/", "/codebox/*", "/codebox/*/{postId:[\\d+]}") //게시물 관련!!!!!!!!!!!!!!!!!!!!정규식 표현
 
                 .antMatchers("/swagger-ui.html/**", "/swagger/**", "/v2/api-docs", "/swagger-resources/**", "/webjars/**")
                 .antMatchers("/v3/api-docs/**", "/swagger-ui/**")
@@ -58,9 +59,10 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/codebox/setting").hasAuthority("USER")
                 .antMatchers("/codebox/*/write").hasAuthority("USER")
+                .antMatchers("/codebox/*/*/edit").hasAuthority("USER")
+                .antMatchers(HttpMethod.DELETE, "/codebox/*/*").hasAuthority("USER")
 
                 //.antMatchers( "/codebox/*/{\\d+}").permitAll()
-
 
                 .and()
                 .build();

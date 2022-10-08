@@ -22,6 +22,15 @@ public class PostEditDto {
     private Integer level;
     private List<String> tags;
 
+    public PostEditDto(String title, String problem_uri, String content, String type, String language, Integer level) {
+        this.title = title;
+        this.problem_uri = problem_uri;
+        this.content = content;
+        this.type = type;
+        this.language = language;
+        this.level = level;
+    }
+
     static public PostEditDto create(Post post) {
         PostEditDto postEditDto = new PostEditDto();
         postEditDto.setTitle(post.getTitle());
@@ -38,4 +47,6 @@ public class PostEditDto {
         postEditDto.setTags(tags);
         return postEditDto;
     }
+
+
 }

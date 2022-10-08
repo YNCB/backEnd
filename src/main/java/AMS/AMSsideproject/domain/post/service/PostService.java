@@ -11,9 +11,11 @@ import AMS.AMSsideproject.domain.tag.Tag.service.TagService;
 import AMS.AMSsideproject.domain.tag.postTag.PostTag;
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
+import AMS.AMSsideproject.web.apiController.post.requestDto.PostEditForm;
 import AMS.AMSsideproject.web.apiController.post.requestDto.PostSaveForm;
 import com.querydsl.core.BooleanBuilder;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -28,12 +30,12 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class PostService {
 
     private final PostRepository postRepository;
     private final UserService userService;
     private final TagService tagService;
-    private final TagRepository tagRepository;
 
     //게시물 등록
     @Transactional
@@ -43,13 +45,12 @@ public class PostService {
         Post post = Post.createPost(findUser, postSaveForm);
 
         //기존에 없던 tag 는 저장시키기
-        tagService.addFromTagList(postSaveForm.getTags());
+        List<Tag> addTags = tagService.addFromTagList(postSaveForm.getTags());
 
         //없던 tag는 다 저장시켰기 때문에 전달받은 tagList에 있는 tag들은 전부 tag table에 존재
-        for(String tagName : postSaveForm.getTags()) {
-            Tag findTagName = tagRepository.findByTagName(tagName).get();
-            PostTag postTag = PostTag.createPostTag(findTagName);
-            post.addPostTag(postTag);
+        for(Tag tag : addTags) {
+            PostTag postTag = PostTag.createPostTag(tag);
+            post.addPostTag(postTag); //양방향 연관관계
         }
 
         postRepository.save(post);
@@ -139,6 +140,37 @@ public class PostService {
         return postRepository.findPostsBySpecificUser(nickname, searchForm, pageable, builder);
     }
 
+    //게시물 수정(업데이트) - "지연감지 사용!" -> 근데 쿼리문이 너무 많이 나가는데.. 이건 어쩔수 없지 않나?!
+    @Transactional
+    public void updatePost(Long postId, PostEditForm postEditForm) {
+
+        //게시물 찾기
+        Post findPost = postRepository.findPostByPostId(postId);
+
+        //기존 게시물 태그중 삭제될 태그들
+        List<PostTag> needDeleteTags = checkDeletePostTags(findPost.getPostTagList(), postEditForm.getTags());
+
+        //기존 게시물에 추가될 태그들
+        List<Tag> newAddTags = checkAddPostTags(findPost.getPostTagList(), postEditForm.getTags());
+        //추가될 태그들 추가
+        for(Tag tag : newAddTags) {
+            PostTag newPostTag = PostTag.createPostTag(tag);
+            findPost.addPostTag(newPostTag);
+        }
+
+        //삭제될 태그들 삭제
+        needDeleteTags.stream().forEach(p -> findPost.getPostTagList().remove(p));
+
+        //태그를 제외한 나머지 게시물 정보들 업데이트
+        findPost.setPost(postEditForm);
+    }
+
+    //게시물 삭제
+    @Transactional
+    public void deletePost(Long postId) {
+        Post findPost = postRepository.findPostByPostId(postId);
+        postRepository.delete(findPost);
+    }
 
 
 
@@ -151,6 +183,47 @@ public class PostService {
         return findPost;
     }
 
+
+
+
+
+
+    //게시물 수정시 기존태그중 삭제될 태그 찾기
+    private List<PostTag> checkDeletePostTags(List<PostTag> oldTags, List<String> newTags) {
+
+        List<PostTag> deleteTags = new ArrayList<>();
+        for(PostTag postTag : oldTags) {
+            //프록시 초기화 되면서 sql문 나감. "batch" 옵션으로 나감
+            String oldTagName = postTag.getTag().getName();
+            boolean contains = newTags.stream().anyMatch(t -> t.equals(oldTagName));
+
+            if(contains == false)
+                deleteTags.add(postTag);
+        }
+        return deleteTags;
+    }
+
+    //게시물 수정시 새롭게 추가될 태그 찾기
+    private List<Tag> checkAddPostTags(List<PostTag> oldTags, List<String> newTags) {
+
+        List<String> newAddTags = new ArrayList<>();
+
+        for(String newTag : newTags) {
+            //기존 게시물에 태그들이 없을수 있다.
+            if(!oldTags.isEmpty()) {
+                boolean contains = oldTags.stream().anyMatch(p -> p.getTag().getName().equals(newTag));
+
+                if(contains == false) //새롭게 추가될 태그인 경우
+                    newAddTags.add(newTag);
+
+            }else
+                newAddTags.add(newTag); //새롭게 태그 추가
+        }
+
+        //게시물에 새롭게 추가할 태그들이 "태그테이블"에 있는지 체크. 없으면 생성 및 추가
+        List<Tag> tags = tagService.addFromTagList(newAddTags);
+        return tags;
+    }
 
 
 }

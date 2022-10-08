@@ -1,12 +1,14 @@
 package AMS.AMSsideproject.domain.post.service;
 
 import AMS.AMSsideproject.domain.post.Post;
+import AMS.AMSsideproject.domain.post.repository.PostRepository;
 import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutAllUser;
 import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutSpecificUser;
 import AMS.AMSsideproject.domain.tag.Tag.Tag;
 import AMS.AMSsideproject.domain.tag.Tag.repository.TagRepository;
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
+import AMS.AMSsideproject.web.apiController.post.requestDto.PostEditForm;
 import AMS.AMSsideproject.web.apiController.post.requestDto.PostSaveForm;
 import AMS.AMSsideproject.web.apiController.user.requestDto.UserJoinForm2;
 import AMS.AMSsideproject.web.responseDto.post.PostListDtoAboutAllUser;
@@ -18,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Slice;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -27,9 +30,11 @@ import java.util.stream.Collectors;
 
 @SpringBootTest
 class PostServiceTest {
+
     @Autowired UserService userService;
     @Autowired PostService postService;
     @Autowired TagRepository tagRepository;
+    @Autowired PostRepository postRepository;
 
     @BeforeEach
     public void init() {
@@ -255,6 +260,28 @@ class PostServiceTest {
                 .collect(Collectors.toList());
 
         Assertions.assertThat(result.size()).isEqualTo(0);
+    }
+
+    @Test
+    @Transactional
+    //@Rollback(value = false)
+    public void 게시물수정테스트() throws Exception {
+        //given
+        List<String> newTags = new ArrayList<>();
+        newTags.add("GRAPH"); newTags.add("SIMULATION");
+        PostEditForm postEditForm = new PostEditForm(newTags, "edit", "edit", "edit", "alone", "Java", 4);
+
+        //when
+        postService.updatePost(1L, postEditForm);
+
+        //then
+
+        Post findPost = postRepository.findPostByPostId(1L);
+        Assertions.assertThat(findPost.getPostTagList().size()).isEqualTo(2);
+
+//        System.out.println("========================");
+//        findPost.getPostTagList().stream()
+//                .forEach(p -> System.out.println("newTags : " + p.getTag().getName()));
     }
 
 }

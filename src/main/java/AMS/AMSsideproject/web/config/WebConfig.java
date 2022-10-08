@@ -36,6 +36,8 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(postAuthorizationInterceptor())
                 .order(1)
                 .addPathPatterns("/codebox/*/write")
+                .addPathPatterns("/codebox/*/*/edit")
+                //.addPathPatterns("/codebox/*/*") //delete 에 대해서
                 .excludePathPatterns("/css/**", "/*.ico", "/error", "/error-page/**"); //오류 페이지 경로 제외!!
     }
     @Bean

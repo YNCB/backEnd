@@ -23,8 +23,9 @@ public class TagRepository {
         query = new JPAQueryFactory(em);
     }
 
-    public void save(Tag tag) {
+    public Tag save(Tag tag) {
             em.persist(tag);
+            return tag;
     }
 
     public Optional<Tag> findByTagName(String tagName) {

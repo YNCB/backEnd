@@ -11,6 +11,9 @@ public interface PostRepository {
     //게시물 저장
     public Post save(Post post);
 
+    //게시물 삭제
+    public void delete(Post post);
+
     //특정 게시물 검색
     public Post findPostByPostId(Long postId);
 

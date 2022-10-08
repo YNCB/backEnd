@@ -44,6 +44,12 @@ public class PostRepositoryImpl implements PostRepository {
         return post;
     }
 
+    //게시물 삭제
+    @Override
+    public void delete(Post post) {
+        em.remove(post);
+    }
+
     //특정 게시물 아이디로 검색
     @Override
     public Post findPostByPostId(Long postId) {

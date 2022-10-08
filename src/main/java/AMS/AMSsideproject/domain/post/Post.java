@@ -1,11 +1,14 @@
 package AMS.AMSsideproject.domain.post;
 
+import AMS.AMSsideproject.domain.tag.Tag.Tag;
 import AMS.AMSsideproject.domain.tag.postTag.PostTag;
 import AMS.AMSsideproject.domain.user.User;
+import AMS.AMSsideproject.web.apiController.post.requestDto.PostEditForm;
 import AMS.AMSsideproject.web.apiController.post.requestDto.PostSaveForm;
 import lombok.Getter;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,9 +46,10 @@ public class Post {
     private Integer level; //난의도
 
     //양방향 연관관계
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "post", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostTag> postTagList = new ArrayList<>();
 
+    //양방향 연관관계 메서드
     public void addPostTag(PostTag postTag) {
         postTag.setPost(this);
         postTagList.add(postTag);
@@ -69,6 +73,18 @@ public class Post {
         post.replyNum =0L;
         post.redate = LocalDateTime.now();
         return post;
+    }
+
+    //setter (게시물 업데이트시 사용) - 더티채킹
+    public void setPost(PostEditForm postEditForm) {
+        this.title = postEditForm.getTitle();
+        this.problem_uri = postEditForm.getProblem_uri();
+        this.context = postEditForm.getContent();
+        this.type = postEditForm.getType();
+        this.language = postEditForm.getLanguage();
+        this.level = postEditForm.getLevel();
+
+        this.chdate = LocalDateTime.now();
     }
 
     public void addReplyNum() {

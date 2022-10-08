@@ -6,6 +6,7 @@ import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutAllUser;
 import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutSpecificUser;
 import AMS.AMSsideproject.domain.post.repository.query.PostRepositoryQueryDto;
 import AMS.AMSsideproject.domain.post.service.PostService;
+import AMS.AMSsideproject.web.apiController.post.requestDto.PostEditForm;
 import AMS.AMSsideproject.web.apiController.post.requestDto.PostSaveForm;
 import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
@@ -108,6 +109,9 @@ public class PostController {
         return new DataResponse<>("200", "문제 상제 조회 결과입니다.", findPostDto);
     }
 
+    /**
+     * "nickname" 패스는 빼기!! -> 그럼 인터셉터도 필요 x , 토큰만으로 판별
+     */
     // uri 를 nickname 를 둘필요가 있나?!???????????????????????????????????????????????
     //- 또한 "context" 부분이 "마크업"으로 되야된다.!!! -> DB는 TEXT 형인데 TEXT 자료형 크기만큼 어떻게 받게 하지??!
     //- "PostSaveForm" validated 적용하기
@@ -130,33 +134,69 @@ public class PostController {
     }
 
     //게시물 수정 form
-    //이것도 추가 권한 체크 해야됌
     //이어지는 고민인 "게시물 PK"를 path 에 두는게 좋은건가!??
     @GetMapping("/{nickname}/{postId}/edit")
-    @ApiOperation(value = "게시물 수정 api", notes = "개발중....")
-    public DataResponse<PostEditDto> editForm(@PathVariable("postId")Long postId, @RequestHeader(JwtProperties.HEADER_STRING)String accessToken) {
+    @ApiOperation(value = "게시물 수정 api", notes = "게시물에서 수정가능한 항목들을 보여줍니다.")
+    @ApiResponses({
+            @ApiResponse(code=200, message="정상 호출"),
+            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
+            @ApiResponse(code=403, message = "잘못된 접근입니다. 권한이 없습니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
+    })
+    public DataResponse<PostEditDto> edit(@PathVariable("nickname")String nickname,
+                                          @PathVariable("postId")Long postId,
+                                          @RequestHeader(JwtProperties.HEADER_STRING)String accessToken) { //swagger 에 표시를 위해
 
         //1. post 조회 쿼리 1번
         //2. post tags 프록시 초기화 -> Post_tag 테이블 쿼리 한번 + tag 테이블 쿼리 한번씩 나간다.(원래는 각 2개씩 나가야되는데 betch 로 인해 각각 한번씩만일단 나감)
         //3. Dto 변환 시간
         //Post findPost = postRepository.findPostByPostId(postId);
-        //PostEditDto postEditDto = PostEditDto.create(findPost);//Dto 변환
+        //PostEditDto findPostEdit = PostEditDto.create(findPost);//Dto 변환
 
         //-성능 튜닝?!!
         //1. post 조회 쿼리 1번 -> Dto 바로 변환
         //2. Dto 의 tags 를 찾는데 쿼리 1번 만 발생
         PostEditDto findPostEdit = postRepositoryQueryDto.findQueryPostEditDtoByPostId(postId);
-
-        return new DataResponse<>("200", "게시물 수정 폼입니다.", findPostEdit);
+        return new DataResponse<>("200", "게시물 수정 항목입니다.", findPostEdit);
     }
-
+    /**
+     * Hard!!!!!
+     */
     //게시물 수정
-    //이것도 추가 권한 체크 해야됌
+    // 만약 "Tag" 테이블에서 더이상 사용하지않은 "Tag"는 삭제해야되지않나!???!!!!!!! 자동으로 하게 해야되는거 아니가?!!!!!
     @PutMapping("/{nickname}/{postId}/edit")
-    @ApiOperation(value = "게시물 수정 api", notes = "개발중....")
-    public void edit(){
+    @ApiOperation(value = "게시물 수정 api", notes = "실제 게시물을 수정하는 api 입니다.")
+    @ApiResponses({
+            @ApiResponse(code=200, message="정상 호출"),
+            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
+            @ApiResponse(code=403, message = "잘못된 접근입니다. 권한이 없습니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
+    })
+    public BaseResponse edit(@PathVariable("nickname")String nickname,
+                             @PathVariable("postId")Long postId,
+                             @RequestBody PostEditForm postEditForm,
+                             @RequestHeader(JwtProperties.HEADER_STRING) String accessToken) { //swagger 에 표시를 위해
 
+        postService.updatePost(postId, postEditForm);
+        return new BaseResponse("200", "게시물 수정이 완료되었습니다.");
+        //redirect 로 "게시물 상세 조회" 로 이동해야됌
     }
 
+
+    //게시물 삭제
+    //"postTag"는 배열에서 remove하면 옵션으로 없어지는데 만약에 tag 테이블에 사용하고 있지 않은 tag 도 삭제??!!
+
+    //인증,권한 체크 해야되는데 기존 "게시물 검색" uri랑 같은데...움
+    @DeleteMapping("/{nickname}/{postId}")
+    public BaseResponse delete(@PathVariable("nickname")String nickname,
+                               @PathVariable("postId")Long postId,
+                               @RequestHeader(JwtProperties.HEADER_STRING) String accessToken) {
+
+        postService.deletePost(postId);
+        return new BaseResponse("200", "게시물 삭제가 완료되었습니다.");
+        //redirect 로 "유저 페이지"로 이동해야됌
+    }
 
 }

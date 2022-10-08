@@ -26,6 +26,10 @@ public class PostTag {
         this.post = post;
     }
 
+    public void setTag(Tag tag) {
+        this.tag = tag;
+    }
+
     public static PostTag createPostTag(Tag tag) {
         PostTag postTag = new PostTag();
         postTag.tag = tag;

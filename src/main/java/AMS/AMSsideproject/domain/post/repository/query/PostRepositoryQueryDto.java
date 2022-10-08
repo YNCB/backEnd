@@ -64,7 +64,7 @@ public class PostRepositoryQueryDto {
         return QPost.post.post_id.eq(postId);
     }
 
-    //수정 조회에 대해서 Dto로 성능 튜닝
+    //게시물 수정 조회에 대해서 Dto로 성능 튜닝
     public PostEditDto findQueryPostEditDtoByPostId(Long postId){
         PostEditDto postEditDto = query.select(Projections.constructor(PostEditDto.class,
                         QPost.post.title, QPost.post.problem_uri, QPost.post.context, QPost.post.type, QPost.post.language, QPost.post.level))
