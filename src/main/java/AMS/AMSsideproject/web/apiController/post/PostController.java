@@ -10,6 +10,7 @@ import AMS.AMSsideproject.web.apiController.post.requestDto.PostEditForm;
 import AMS.AMSsideproject.web.apiController.post.requestDto.PostSaveForm;
 import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
+import AMS.AMSsideproject.web.custom.annotation.AddAuthRequired;
 import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
 import AMS.AMSsideproject.web.response.BaseResponse;
 import AMS.AMSsideproject.web.response.DataResponse;
@@ -118,6 +119,7 @@ public class PostController {
     //- "406" error 정의
     @ApiOperation(value = "게시물 작성 api", notes = "게시물을 작성하는 api 입니다.")
     @PostMapping("/{nickname}/write")
+    @AddAuthRequired //추가 권한 검사 대상
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
             @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
@@ -136,6 +138,7 @@ public class PostController {
     //게시물 수정 form
     //이어지는 고민인 "게시물 PK"를 path 에 두는게 좋은건가!??
     @GetMapping("/{nickname}/{postId}/edit")
+    @AddAuthRequired //추가 권한 검사 대상
     @ApiOperation(value = "게시물 수정 api", notes = "게시물에서 수정가능한 항목들을 보여줍니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
@@ -166,6 +169,7 @@ public class PostController {
     //게시물 수정
     // 만약 "Tag" 테이블에서 더이상 사용하지않은 "Tag"는 삭제해야되지않나!???!!!!!!! 자동으로 하게 해야되는거 아니가?!!!!!
     @PutMapping("/{nickname}/{postId}/edit")
+    @AddAuthRequired //추가 권한 검사 대상
     @ApiOperation(value = "게시물 수정 api", notes = "실제 게시물을 수정하는 api 입니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
@@ -188,8 +192,16 @@ public class PostController {
     //게시물 삭제
     //"postTag"는 배열에서 remove하면 옵션으로 없어지는데 만약에 tag 테이블에 사용하고 있지 않은 tag 도 삭제??!!
 
-    //인증,권한 체크 해야되는데 기존 "게시물 검색" uri랑 같은데...움
     @DeleteMapping("/{nickname}/{postId}")
+    @AddAuthRequired //추가 권한 검사 대상
+    @ApiOperation(value = "게시물 삭제 api", notes = "게시물을 삭제하는 api입니다.")
+    @ApiResponses({
+            @ApiResponse(code=200, message="정상 호출"),
+            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
+            @ApiResponse(code=403, message = "잘못된 접근입니다. 권한이 없습니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
+    })
     public BaseResponse delete(@PathVariable("nickname")String nickname,
                                @PathVariable("postId")Long postId,
                                @RequestHeader(JwtProperties.HEADER_STRING) String accessToken) {
@@ -198,5 +210,8 @@ public class PostController {
         return new BaseResponse("200", "게시물 삭제가 완료되었습니다.");
         //redirect 로 "유저 페이지"로 이동해야됌
     }
+
+
+
 
 }

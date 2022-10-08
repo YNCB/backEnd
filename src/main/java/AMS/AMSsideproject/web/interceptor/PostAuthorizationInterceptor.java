@@ -2,18 +2,21 @@ package AMS.AMSsideproject.web.interceptor;
 
 import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
+import AMS.AMSsideproject.web.custom.annotation.AddAuthRequired;
 import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
 import AMS.AMSsideproject.web.response.BaseResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Objects;
 
 @Slf4j
 public class PostAuthorizationInterceptor implements HandlerInterceptor {
@@ -30,6 +33,18 @@ public class PostAuthorizationInterceptor implements HandlerInterceptor {
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+
+        /**
+         *
+         */
+        if(!(handler instanceof HandlerMethod)){
+            return true;
+        }
+        HandlerMethod handlerMethod = (HandlerMethod) handler;
+        AddAuthRequired addAuthRequired = handlerMethod.getMethodAnnotation(AddAuthRequired.class);
+        if(Objects.isNull(addAuthRequired)) {
+            return true;
+        }
 
         //엑세스 토큰 가져옴
         String accessToken = request.getHeader(JwtProperties.HEADER_STRING);
@@ -49,16 +64,6 @@ public class PostAuthorizationInterceptor implements HandlerInterceptor {
         }
 
         return true;
-    }
-
-    @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        HandlerInterceptor.super.postHandle(request, response, handler, modelAndView);
-    }
-
-    @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-        HandlerInterceptor.super.afterCompletion(request, response, handler, ex);
     }
 
     private void sendErrorResponse(String message, HttpServletResponse response) throws IOException {

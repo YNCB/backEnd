@@ -1,6 +1,7 @@
 package AMS.AMSsideproject.web.responseDto.post;
 
 import AMS.AMSsideproject.domain.post.Post;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,13 +14,19 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PostEditDto {
-
+    @ApiModelProperty(example = "test")
     private String title;
+    @ApiModelProperty(example = "test")
     private String problem_uri;
+    @ApiModelProperty(example = "test")
     private String content;
+    @ApiModelProperty(example = "alone")
     private String type;
+    @ApiModelProperty(example = "Java")
     private String language;
+    @ApiModelProperty(example = "3")
     private Integer level;
+    @ApiModelProperty(example = "DFS", notes = "문제 태그들 여러개 가능")
     private List<String> tags;
 
     public PostEditDto(String title, String problem_uri, String content, String type, String language, Integer level) {
