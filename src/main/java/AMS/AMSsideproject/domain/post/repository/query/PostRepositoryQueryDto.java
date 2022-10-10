@@ -31,7 +31,7 @@ public class PostRepositoryQueryDto {
     public PostDto findQueryPostDtoByPostId(Long postId) {
 
         PostDto findPostDto = query.select(Projections.constructor(PostDto.class,
-                        QPost.post.title, QUser.user.nickname, QPost.post.redate, QPost.post.likeNum, QPost.post.language,
+                        QPost.post.title, QUser.user.nickname, QPost.post.redate, QPost.post.likes.size(), QPost.post.language,
                         QPost.post.type, QPost.post.level, QPost.post.context, QPost.post.replyNum
                 ))
                 .from(QPost.post)

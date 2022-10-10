@@ -1,25 +1,22 @@
 package AMS.AMSsideproject.web.responseDto.post;
 
-import AMS.AMSsideproject.domain.post.Post;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
-public class PostDto {
+@AllArgsConstructor
+@NoArgsConstructor
+public class LoginPostDto {
 
     @ApiModelProperty(example = "test")
     private String title; //제목
 
-    /**
-     * 사용자 pk 를 줄 이유가 있나?! 사용되지 않을건데..아마
-     */
-//    @ApiModelProperty(example = "3" , notes = "작성자 고유 아이디")
-//    private Long user_id; //작성자 고유 id
     @ApiModelProperty(example = "user")
     private String nickname; //작성자 닉네임
 
@@ -27,7 +24,8 @@ public class PostDto {
     private String redate; //게시물 등록 일자
     @ApiModelProperty(example = "5")
     private Integer likeNum; //좋아요수
-
+    @ApiModelProperty(example = "true")
+    private boolean likeExisting;
 
     @ApiModelProperty(example = "Java")
     private String language; //푼 언어
@@ -38,7 +36,6 @@ public class PostDto {
     @ApiModelProperty(example = "test")
     private String context;
 
-
     @ApiModelProperty(example = "10")
     private Long replyNum; //댓글수
 
@@ -46,16 +43,23 @@ public class PostDto {
     private List<String> tags; //태그들
 
 
-    public PostDto(String title, String nickname, LocalDateTime redate, Integer likeNum, String language, String type, Integer level, String context, Long replyNum) {
-        this.title = title;
-        //this.user_id = user_id;
-        this.nickname = nickname;
-        this.redate = redate.format(DateTimeFormatter.ISO_LOCAL_DATE);
-        this.likeNum = likeNum;
-        this.language = language;
-        this.type = type;
-        this.level = level;
-        this.context = context;
-        this.replyNum = replyNum;
+    public static LoginPostDto create(PostDto postDto, boolean existing) {
+        LoginPostDto loginPostDto = new LoginPostDto();
+        loginPostDto.title = postDto.getTitle();
+        loginPostDto.nickname = postDto.getNickname();
+        loginPostDto.redate = postDto.getRedate();
+        loginPostDto.likeNum = postDto.getLikeNum();
+
+        loginPostDto.likeExisting = existing;
+
+        loginPostDto.language = postDto.getLanguage();
+        loginPostDto.type = postDto.getType();
+        loginPostDto.level = postDto.getLevel();
+        loginPostDto.context = postDto.getContext();
+
+        loginPostDto.replyNum = postDto.getReplyNum();
+        return loginPostDto;
     }
+
+
 }

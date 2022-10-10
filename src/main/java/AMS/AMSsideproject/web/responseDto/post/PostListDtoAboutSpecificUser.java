@@ -21,7 +21,7 @@ public class PostListDtoAboutSpecificUser {
     private String type; //보고푼문제, 혼자 푼문제
 
     @ApiModelProperty(example = "5")
-    private Long likeNum; //댓글수
+    private Integer likeNum; //댓글수
     @ApiModelProperty(example = "10")
     private Long replyNum; //좋아요수
 
@@ -33,7 +33,10 @@ public class PostListDtoAboutSpecificUser {
         title = post.getTitle();
         language = post.getLanguage();
         type = post.getType();
-        likeNum = post.getLikeNum();
+
+        //likeNum = post.getLikeNum();
+        likeNum = post.getLikes().size();
+
         replyNum = post.getReplyNum();
 
         tags = post.getPostTagList().stream()

@@ -1,5 +1,6 @@
 package AMS.AMSsideproject.domain.post;
 
+import AMS.AMSsideproject.domain.like.Like;
 import AMS.AMSsideproject.domain.tag.Tag.Tag;
 import AMS.AMSsideproject.domain.tag.postTag.PostTag;
 import AMS.AMSsideproject.domain.user.User;
@@ -36,17 +37,25 @@ public class Post {
 
     private LocalDateTime redate;
     private LocalDateTime chdate;
+    private Integer level; //난의도
 
-    @Column(name = "like_num")
-    private Long likeNum; //좋아요 개수
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            mappedBy = "post",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    private List<Like> likes = new ArrayList<>(); //좋아요들
+    private Long likeNum; //지우기!!!!!!!!!
 
     @Column(name = "reply_num")
     private Long replyNum; //댓글 개수
 
-    private Integer level; //난의도
-
     //양방향 연관관계
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            mappedBy = "post",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
     private List<PostTag> postTagList = new ArrayList<>();
 
     //양방향 연관관계 메서드
@@ -86,6 +95,11 @@ public class Post {
 
         this.chdate = LocalDateTime.now();
     }
+
+
+
+
+
 
     public void addReplyNum() {
         this.replyNum++;

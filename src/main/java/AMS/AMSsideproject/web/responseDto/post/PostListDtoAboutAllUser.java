@@ -28,7 +28,7 @@ public class PostListDtoAboutAllUser {
     private String type; //see, alone
 
     @ApiModelProperty(example = "5")
-    private Long likeNum; //댓글수
+    private Integer likeNum; //댓글수
     @ApiModelProperty(example = "10")
     private Long replyNum; //좋아요수
 
@@ -42,7 +42,10 @@ public class PostListDtoAboutAllUser {
         nickname = post.getUser().getNickname(); //"fetchJoin" 으로 쿼리문 발생 x
         language = post.getLanguage();
         type = post.getType();
-        likeNum = post.getLikeNum();
+
+        //likeNum = post.getLikeNum();
+        likeNum = post.getLikes().size();
+
         replyNum = post.getReplyNum();
 
         tags = post.getPostTagList().stream()

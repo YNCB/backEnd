@@ -61,6 +61,7 @@ public class SecurityConfig {
                 .antMatchers("/codebox/*/write").hasAuthority("USER")
                 .antMatchers("/codebox/*/*/edit").hasAuthority("USER")
                 .antMatchers(HttpMethod.DELETE, "/codebox/*/*").hasAuthority("USER")
+                .antMatchers(HttpMethod.POST, "/codebox/*/*/like").hasAuthority("USER")
 
                 //.antMatchers( "/codebox/*/{\\d+}").permitAll()
 
