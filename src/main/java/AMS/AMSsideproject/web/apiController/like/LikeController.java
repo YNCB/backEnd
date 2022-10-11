@@ -33,7 +33,7 @@ public class LikeController {
     //게시물 좋아요 , 삭제
     //좋아요는 로그인 해야지 가능!
     @PostMapping("/{nickname}/{postId}/like")
-    @ApiOperation(value = "게시물 좋아요 추가, 삭제 api", notes = "게시물 좋아요 추가, 삭제를 합니다.")
+    @ApiOperation(value = "게시물 좋아요 api", notes = "게시물 좋아요 추가, 삭제를 합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
             @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
