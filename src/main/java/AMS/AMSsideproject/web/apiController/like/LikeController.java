@@ -1,5 +1,6 @@
 package AMS.AMSsideproject.web.apiController.like;
 
+import AMS.AMSsideproject.domain.like.repository.query.LikeDtoRepository;
 import AMS.AMSsideproject.domain.like.service.LikeService;
 import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
@@ -7,12 +8,15 @@ import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
 import AMS.AMSsideproject.web.response.BaseResponse;
 import AMS.AMSsideproject.web.response.DataResponse;
 import AMS.AMSsideproject.web.responseDto.like.LikeDto;
+import AMS.AMSsideproject.web.responseDto.like.LikeNickNamesDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,6 +26,8 @@ public class LikeController {
 
     private final JwtProvider jwtProvider;
     private final LikeService likeService;
+
+    private final LikeDtoRepository likeDtoRepository;
 
     /**
      * 1. api 한개 두고 클릭하면 좋아요누른건지 , 취고한건지 판별
@@ -47,6 +53,19 @@ public class LikeController {
         LikeDto likeDto = likeService.like(postId, findUserId);
 
         return new DataResponse("200", "좋아요 추가 또는 삭제가 완료되었습니다.", likeDto);
+    }
+
+    //게시물 좋아요 리스트 보기
+    // 좋아요 리스트 보는거는 로그인 해야되나?!!!!!!!!!!!!!!!!!!!!??????????????
+    @GetMapping("/{nickname}/{postId}/like")
+    public DataResponse likeList(@PathVariable("nickname") String nickname, @PathVariable("postId") Long postId
+                                 ) {
+        /**
+         * 1. 프록시 초기화 하는거는 쿼리문 2개?!
+         * 2. 그냥 바로 sql문으로 쿼리문 1개?!
+         */
+        List<String> likes = likeDtoRepository.findLikes(postId);
+        return new DataResponse("200", "게시물 좋아요 닉네임 리스트 입니다.", new LikeNickNamesDto(likes));
     }
 
 }

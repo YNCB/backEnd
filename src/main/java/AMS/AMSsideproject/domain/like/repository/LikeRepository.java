@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -45,5 +46,11 @@ public class LikeRepository {
             return null;
         return QLike.like.user_id.eq(userId);
     }
+
+
+//    //게시물 좋아요 리스트 검색
+//    public List<Like> findLikes(Long posId) {
+//        query.select()
+//    }
 
 }

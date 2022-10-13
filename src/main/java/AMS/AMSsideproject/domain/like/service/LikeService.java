@@ -49,7 +49,9 @@ public class LikeService {
             check = false;
         }else { //추가되야 되는 경우
             Like createLike = Like.create(findPost, userId);
-            findPost.getLikes().add(createLike);
+
+            //findPost.getLikes().add(createLike);
+            findPost.addLike(createLike);
             check = true;
         }
 

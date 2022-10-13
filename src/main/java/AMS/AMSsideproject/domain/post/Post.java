@@ -64,6 +64,12 @@ public class Post {
         postTagList.add(postTag);
     }
 
+    //양방향 연관관계 메서드
+    public void addLike(Like like){
+        like.setPost(this);
+        likes.add(like);
+    }
+
 
     //생성 메서드
     public static Post createPost(User user, PostSaveForm postSaveForm) {
