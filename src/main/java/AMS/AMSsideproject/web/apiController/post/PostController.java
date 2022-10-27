@@ -66,7 +66,11 @@ public class PostController {
         return new DataResponse<>("200", "모든 사용자들의 게시물 리스트 결과입니다.", postListResponse);
     }
 
-    //특정 사용자 페이지
+    //특정 사용자 페이지(내 페이지, 상대방 페이지)
+
+    /**
+     * 내 페이지 ,상대방 페이지가 구분되어 있는데 어트케 구분 하지...
+     */
     @GetMapping("/{nickname}")
     @ApiOperation(value = "회원별 메인페이지, 특정 회원에 대한 게시물 리스트 api", notes = "특정 회원 게시물들에 대해서 필터링 조건에 맞게 리스트를 조회합니다.")
     @ApiResponses({
@@ -76,6 +80,7 @@ public class PostController {
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     public DataResponse<PostListResponse> userPage(@PathVariable("nickname")String nickname , @RequestBody SearchFormAboutSpecificUser form) {
+
         Slice<Post> findPosts = postService.findPostsAboutSpecificUser(nickname, form);
 
         //Dto 변환
@@ -114,7 +119,7 @@ public class PostController {
      *               아니면 비로그인 사용자는 토큰을 "null"??로 ?? 움 이건 이상한데....
      */
     @ApiOperation(value = "비로그인 게시물 상세조회 api", notes = "게시물의 상세 정보를 보여줍니다.")
-    @GetMapping("/{nickname}/{postId}")
+    @GetMapping(value = "/{nickname}/{postId}", params = {"postId"})
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
             //@ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
@@ -127,25 +132,28 @@ public class PostController {
         PostDto findPostDto = postRepositoryQueryDto.findQueryPostDtoByPostId(postId);
         return new DataResponse<>("200", "문제 상제 조회 결과입니다.", findPostDto);
     }
-//    @ApiOperation(value = "로그인 게시물 상세조회 api", notes = "게시물의 상세 정보를 보여줍니다.")
-//    @GetMapping("/{nickname}/{postId}")
-//    @ApiResponses({
-//            @ApiResponse(code=200, message="정상 호출"),
-//            //@ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
-//            //@ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
-//            @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
-//    })
-//    public DataResponse<LoginPostDto> postPage(@PathVariable("postId") Long postId,
-//                                          @RequestHeader(JwtProperties.HEADER_STRING)String accessToken) {
-//
-//        Long findUserId = jwtProvider.getUserIdToToken(accessToken);
-//        Boolean existing = likeService.checkExisting(postId, findUserId);
-//
-//        //최적화 Dto 버전 사용
-//        PostDto findPostDto = postRepositoryQueryDto.findQueryPostDtoByPostId(postId);
-//        LoginPostDto loginPostDto = LoginPostDto.create(findPostDto, existing);
-//        return new DataResponse<>("200", "문제 상제 조회 결과입니다.", loginPostDto);
-//    }
+    /**
+     * 이렇게 분리하면 된다!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     */
+    @ApiOperation(value = "로그인 게시물 상세조회 api", notes = "게시물의 상세 정보를 보여줍니다.")
+    @GetMapping(value = "/{nickname}/{postId}",params = {"postId", JwtProperties.HEADER_STRING })
+    @ApiResponses({
+            @ApiResponse(code=200, message="정상 호출"),
+            //@ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
+            //@ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
+            @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
+    })
+    public DataResponse<LoginPostDto> postPage(@PathVariable("postId") Long postId,
+                                          @RequestHeader(JwtProperties.HEADER_STRING)String accessToken) {
+
+        Long findUserId = jwtProvider.getUserIdToToken(accessToken);
+        Boolean existing = likeService.checkExisting(postId, findUserId);
+
+        //최적화 Dto 버전 사용
+        PostDto findPostDto = postRepositoryQueryDto.findQueryPostDtoByPostId(postId);
+        LoginPostDto loginPostDto = LoginPostDto.create(findPostDto, existing);
+        return new DataResponse<>("200", "문제 상제 조회 결과입니다.", loginPostDto);
+    }
 
 
 
