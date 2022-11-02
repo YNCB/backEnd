@@ -4,14 +4,12 @@ import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
 import AMS.AMSsideproject.web.custom.annotation.AddAuthRequired;
 import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
-import AMS.AMSsideproject.web.response.BaseResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,7 +17,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 @Slf4j
-public class PostAuthorizationInterceptor implements HandlerInterceptor {
+public class PostAddAuthInterceptor implements HandlerInterceptor {
 
     @Autowired private JwtProvider jwtProvider;
     @Autowired private ObjectMapper objectMapper;
@@ -34,9 +32,6 @@ public class PostAuthorizationInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
-        /**
-         *
-         */
         if(!(handler instanceof HandlerMethod)){
             return true;
         }

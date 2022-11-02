@@ -3,10 +3,9 @@ package AMS.AMSsideproject.domain.post.service;
 import AMS.AMSsideproject.domain.post.Post;
 import AMS.AMSsideproject.domain.post.QPost;
 import AMS.AMSsideproject.domain.post.repository.PostRepository;
-import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutAllUser;
+import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutAllUserPost;
 import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutSpecificUser;
 import AMS.AMSsideproject.domain.tag.Tag.Tag;
-import AMS.AMSsideproject.domain.tag.Tag.repository.TagRepository;
 import AMS.AMSsideproject.domain.tag.Tag.service.TagService;
 import AMS.AMSsideproject.domain.tag.postTag.PostTag;
 import AMS.AMSsideproject.domain.user.User;
@@ -58,7 +57,7 @@ public class PostService {
     }
 
     //전체 유저 게시물에 대한 게시물 조회
-    public Slice<Post> findPostsAboutAllUser(SearchFormAboutAllUser searchForm) {
+    public Slice<Post> findPostsAboutAllUser(SearchFormAboutAllUserPost searchForm) {
 
         BooleanBuilder builder = new BooleanBuilder();
         // 페이징, 정렬 기준 세팅하기
@@ -137,8 +136,10 @@ public class PostService {
             pageable = PageRequest.of(0, 3, Sort.by(orders)); //10개 씩
         }else //구조상 이경우는 없음.
             pageable = PageRequest.of(0,3);
+
         return postRepository.findPostsBySpecificUser(nickname, searchForm, pageable, builder);
     }
+
 
     //게시물 수정(업데이트) - "지연감지 사용!" -> 근데 쿼리문이 너무 많이 나가는데.. 이건 어쩔수 없지 않나?!
     @Transactional

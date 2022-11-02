@@ -1,9 +1,8 @@
 package AMS.AMSsideproject.web.apiController.post;
 
-import AMS.AMSsideproject.domain.like.repository.LikeRepository;
 import AMS.AMSsideproject.domain.like.service.LikeService;
 import AMS.AMSsideproject.domain.post.Post;
-import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutAllUser;
+import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutAllUserPost;
 import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutSpecificUser;
 import AMS.AMSsideproject.domain.post.repository.query.PostRepositoryQueryDto;
 import AMS.AMSsideproject.domain.post.service.PostService;
@@ -12,6 +11,7 @@ import AMS.AMSsideproject.web.apiController.post.requestDto.PostSaveForm;
 import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
 import AMS.AMSsideproject.web.custom.annotation.AddAuthRequired;
+import AMS.AMSsideproject.web.custom.annotation.LoginAuthRequired;
 import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
 import AMS.AMSsideproject.web.response.BaseResponse;
 import AMS.AMSsideproject.web.response.DataResponse;
@@ -41,19 +41,37 @@ public class PostController {
     private final JwtProvider jwtProvider;
     private final LikeService likeService;
 
-    //메인 페이지 (모든 사용자들의 게시물)
-    // - 비 로그인 사용자도 여기는 접속할수 있어야함!!!!
-    // - 근데 로그인 사용자랑, 비로그인 사용자는 엑세스 토큰 유무가 차이가 있는데 해당 uri에 인증을 안걸면 비로그인 사용자도 접속이 가능한데
-    //   그렇게 되면 로그인 사용자에 대해서 해당 uri에서는 accessToken 기한만료등을 검사할수 없는뎅?...움....
-    @GetMapping("/")
-    @ApiOperation(value = "서비스 메인페이지, 모든 회원에 대한 게시물 리스트 조회 api", notes = "모든 회원 게시물들에 대해서 필터링 조건에 맞게 리스트를 조회합니다.")
+    //모든 사용자들의 게시물 리스트 조회 (로그인, 비로그인)
+    @GetMapping(value = "/")
+    @ApiOperation(value = "서비스 메인페이지, 비회원 - 게시물 리스트 조회 api", notes = "모든 회원 게시물들에 대해서 필터링 조건에 맞게 게시물을 조회합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출", response = MainPage_200.class),
-            //@ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
-            //@ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
-    public DataResponse<PostListResponse> mainPage(@RequestBody SearchFormAboutAllUser form) {
+    public DataResponse<PostListResponse> mainPage(@RequestBody SearchFormAboutAllUserPost form) {
+        Slice<Post> result = postService.findPostsAboutAllUser(form);
+
+        //Dto 변환
+        List<PostListDtoAboutAllUser> findPostDtos = result.getContent().stream()
+                .map(p -> new PostListDtoAboutAllUser(p))
+                .collect(Collectors.toList());
+
+        //response
+        PostListResponse postListResponse = new PostListResponse(findPostDtos, result.getNumberOfElements(), result.hasNext());
+        return new DataResponse<>("200", "모든 사용자들의 게시물 리스트 결과입니다.", postListResponse);
+    }
+    @GetMapping(value = "/", headers = JwtProperties.HEADER_STRING)
+    @LoginAuthRequired //로그인 전용 인증 체크
+    //권한 체크도 해야되는거 아니야!?????????!!!!!!!!!!(USER.....)
+    @ApiOperation(value = "서비스 메인페이지, 로그인 회원 - 게시물 리스트 조회 api", notes = "모든 회원 게시물들에 대해서 필터링 조건에 맞게 게시물을 조회합니다.")
+    @ApiResponses({
+            @ApiResponse(code=200, message="정상 호출", response = MainPage_200.class),
+            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
+            @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
+    })
+    public DataResponse<PostListResponse> mainPage(@RequestBody SearchFormAboutAllUserPost form,
+                                                   @RequestHeader(JwtProperties.HEADER_STRING) String accessToken) {
         Slice<Post> result = postService.findPostsAboutAllUser(form);
 
         //Dto 변환
@@ -66,12 +84,22 @@ public class PostController {
         return new DataResponse<>("200", "모든 사용자들의 게시물 리스트 결과입니다.", postListResponse);
     }
 
-    //특정 사용자 페이지(내 페이지, 상대방 페이지)
-
     /**
-     * 내 페이지 ,상대방 페이지가 구분되어 있는데 어트케 구분 하지...
+     * 내페이지 - 반드시 토큰이 있어야함, 없어도 되지?! -> 로그인 하지 않아도 페이지는 들어갈수 있어야되지 uri쳐서!!!
+     * 다른 유저 페이지 - 토큰이 있어도 되고 없어도 됌
+     *
+     * 인터셉터를 사용해서 토큰의 닉네임으로 내 페이지에 들어왔는데 다른 유저 페이지에 들어왔는지 구분해서 컨트롤러에 알려줌!?
+     * -로그인 하지 않음(토큰이 없음)-
+     * -> 로그인 하지 않고 내 페이지에 들어오면 똑같이 다른 유저 페이지라고 생각하면되지
+     * -> 토큰이 없으면 그냥 다른 유저 페이지에 들어왔다고 생각하면 되지
+     * -> 다른 사용자 전용 폼 사용
+     *
+     * -로그인 한 사용자(토큰이 있음)-
+     * -> 내 페이지에 접속시 내 페이지 전용 폼 사용
+     * -> 다른 사용자 페이지 접속시 다른 사용자 전용 폼 사용
      */
-    @GetMapping("/{nickname}")
+    //비로그인 사용자 - 특정 사용자 페이지(내 페이지, 상대방 페이지)
+    @GetMapping(value = "/{nickname}")
     @ApiOperation(value = "회원별 메인페이지, 특정 회원에 대한 게시물 리스트 api", notes = "특정 회원 게시물들에 대해서 필터링 조건에 맞게 리스트를 조회합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출", response = UserPage_200.class),
@@ -92,38 +120,30 @@ public class PostController {
         PostListResponse postListResponse = new PostListResponse(findPostDtos, findPosts.getNumberOfElements(), findPosts.hasNext());
         return new DataResponse<>("200", "특정 사용자의 게시물 리스트 입니다.",postListResponse);
     }
+    //로그인 사용자 - 특정 사용자 페이지
+    @GetMapping(value = "/{nickname}", headers = JwtProperties.HEADER_STRING)
+    public DataResponse<PostListResponse> userPage(@PathVariable("nickname")String nickname,
+                                                   @RequestHeader(JwtProperties.HEADER_STRING) String accessToken) {
+        return null;
+    }
 
-    // 게시물 상세조회
+
+
+
+
+
+
+
+
+    // 게시물 상세조회(로그인, 비로그인)
     /**
      * 1. 게시물 조회할때 uri 에 "postId" 로 해서 바로 사용하는 게 좋을까?! : 정보가 노출되면 좋지 않은뎅...
      * 2. api 에는 게시물 제목이 있고 json 으로 추가로 "postId"를 요청 받을까?!움....
-     *
-     *
-     * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-     * !!!!!!!!!!!좋아요 개수는 총 list 개수 리턴하면 되는데
-     * !!!!!!! 1) 게시물 조회에서 좋아요 버튼은 "로그인"만 한 사용자가 할수 있는데 로그인 하지 않은 사용자가 게시물을 봤을때
-     *             자기가 좋아요를 누른 게시물이면 좋아요 버튼이 활성화 되어있어야 되는데 -> 이럴러면 "JWT"토큰이 필요하게 되는데
-     *             그럼 "인증" 처리를 해야되는데.....
-     *         2) 그리고 만약에 어떤 사용자가 좋아요 누른 게시물이면 표시를 뜨게 "response"에 담아줘야함
-     *         => 아래 똑같은 메서드를 2개 만들고 "매개변수만" 다르게 하면 되는거 아니야!!!!!!!!!????????-> 오버로딩!!!!!!!!!!!!!!!!!!!
-     *         => 위에 "JWT" 인증이 필요없는 "api"도 전부다 "오버로딩"으로 하면 매개변수별로 달라지게 함수를 정의해놓기!!!!!!!!!!!!!!!!!!!
-     *            그러면 "로그인한 사용자"에 대해서 "JWT"처리 가능?!
-     *
-     *            !!!!! 그러나 이렇게 되면 "JWT"토큰 기한만료!!를 "spring security filter" 에서 하는데  같은 api이니깐 안타지않나...
-     *            그러면 "커스텀 어노테이션"으로 "인터셉터"를 구현해서 "인증처리"??!!!!!!!!
-     *            -> 근데 같은 "http method" 여서 안되는데(error)
-     *            -> 그럼 어떻게 보여주지....움!!!!!!!!!!!!!!!!!!!!!!!!!!
-     *            => 그러면 그냥 "인터셉터"로 "인증처리"기능을 넣어서 로그인 한 사용자 이면 인터셉터에서 컨트롤러로 "파라미터"(토큰)넘겨서
-     *               값이 있으면 로그인한 사용자라고 인식해서 처리?!!!!!
-     *               파리미터에 "엑세스토큰"은 표시못함(swagger) , 있으면 반드시 줘야되는 파라미터라서 비로그인 사용자는 접근 못함...움...
-     *               아니면 비로그인 사용자는 토큰을 "null"??로 ?? 움 이건 이상한데....
      */
-    @ApiOperation(value = "비로그인 게시물 상세조회 api", notes = "게시물의 상세 정보를 보여줍니다.")
-    @GetMapping(value = "/{nickname}/{postId}", params = {"postId"})
+    @ApiOperation(value = "비로그인 사용자 - 게시물 상세조회 api", notes = "게시물의 상세 정보를 보여줍니다.")
+    @GetMapping(value = "/{nickname}/{postId}")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
-            //@ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
-            //@ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     public DataResponse<PostDto> postPage(@PathVariable("postId") Long postId) {
@@ -132,15 +152,14 @@ public class PostController {
         PostDto findPostDto = postRepositoryQueryDto.findQueryPostDtoByPostId(postId);
         return new DataResponse<>("200", "문제 상제 조회 결과입니다.", findPostDto);
     }
-    /**
-     * 이렇게 분리하면 된다!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-     */
-    @ApiOperation(value = "로그인 게시물 상세조회 api", notes = "게시물의 상세 정보를 보여줍니다.")
-    @GetMapping(value = "/{nickname}/{postId}",params = {"postId", JwtProperties.HEADER_STRING })
+    @ApiOperation(value = "로그인 사용자 - 게시물 상세조회 api", notes = "게시물의 상세 정보를 보여줍니다.")
+    @GetMapping(value = "/{nickname}/{postId}", headers = JwtProperties.HEADER_STRING)
+    @LoginAuthRequired//로그인 전용 인증 체크
+    //권한 체크도 해야되는거 아니야!?????????!!!!!!!!!!(USER.....)
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
-            //@ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
-            //@ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
+            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     public DataResponse<LoginPostDto> postPage(@PathVariable("postId") Long postId,
@@ -172,6 +191,7 @@ public class PostController {
             @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
             @ApiResponse(code=403, message = "잘못된 접근입니다. 권한이 없습니다.", response = BaseErrorResult.class),
+            //스프링 시큐리티 (USER 권한에 대한 에러도 처리해야되는거 아니야?!!!!!!!!!!!!
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     public BaseResponse writePost(@RequestHeader(JwtProperties.HEADER_STRING)String accessToken, //swagger 에 표시를 위해

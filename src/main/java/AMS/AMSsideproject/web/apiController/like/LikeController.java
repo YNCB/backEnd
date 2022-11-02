@@ -55,6 +55,9 @@ public class LikeController {
         return new DataResponse("200", "좋아요 추가 또는 삭제가 완료되었습니다.", likeDto);
     }
 
+
+
+
     //게시물 좋아요 리스트 보기
     // 좋아요 리스트 보는거는 로그인 해야되나?!!!!!!!!!!!!!!!!!!!!??????????????
     @GetMapping("/{nickname}/{postId}/like")

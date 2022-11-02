@@ -133,6 +133,7 @@ public class PostRepositoryImpl implements PostRepository {
         return checkEndPage(pageable, posts);
     }
 
+
     private BooleanExpression TagsIn(List<String> tags) {
         if(tags.isEmpty())
             return null;

@@ -58,6 +58,7 @@ public class LoginPostDto {
         loginPostDto.context = postDto.getContext();
 
         loginPostDto.replyNum = postDto.getReplyNum();
+        loginPostDto.tags = postDto.getTags();
         return loginPostDto;
     }
 

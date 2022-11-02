@@ -1,16 +1,12 @@
 package AMS.AMSsideproject.web.config;
 
-import AMS.AMSsideproject.domain.token.service.RefreshTokenService;
-import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
-import AMS.AMSsideproject.web.interceptor.PostAuthorizationInterceptor;
+import AMS.AMSsideproject.web.interceptor.PostAddAuthInterceptor;
+import AMS.AMSsideproject.web.interceptor.LoginAuthInterceptor;
 import AMS.AMSsideproject.web.interceptor.RefreshTokenInterceptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.validation.DefaultMessageCodesResolver;
-import org.springframework.validation.MessageCodesResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -39,13 +35,18 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/codebox/*/*/edit")
                 .addPathPatterns("/codebox/*/*") //delete 에 대해서
                 .excludePathPatterns("/css/**", "/*.ico", "/error", "/error-page/**"); //오류 페이지 경로 제외!!
+
+        registry.addInterceptor(LoginAuthInterceptor())
+                .order(1)
+                .addPathPatterns("/codebox/", "/codebox/*/{postId:[\\d+]}")
+                .excludePathPatterns("/css/**", "/*.ico", "/error", "/error-page/**"); //오류 페이지 경로 제외!!
     }
     @Bean
-    public RefreshTokenInterceptor refreshTokenInterceptor() {
-        return new RefreshTokenInterceptor();
-    }
+    public RefreshTokenInterceptor refreshTokenInterceptor() {return new RefreshTokenInterceptor();}
     @Bean
-    public PostAuthorizationInterceptor postAuthorizationInterceptor() {return new PostAuthorizationInterceptor(); }
+    public PostAddAuthInterceptor postAuthorizationInterceptor() {return new PostAddAuthInterceptor(); }
+    @Bean
+    public LoginAuthInterceptor LoginAuthInterceptor() {return new LoginAuthInterceptor();}
 
 
     /** DefaultMessageCodesResolver 구현체 수정 **/

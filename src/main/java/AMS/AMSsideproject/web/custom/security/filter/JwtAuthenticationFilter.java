@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * 인증 처리 -> 인증이 필요한 uri 일경우에 header 에서 JWT 토큰 검증
+ * 기본 인증 처리 -> 기본적으로 인증이 필요한 uri 일경우에 header 에서 JWT 토큰 검증
  */
 public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 

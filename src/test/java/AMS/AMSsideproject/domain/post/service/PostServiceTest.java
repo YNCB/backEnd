@@ -2,7 +2,7 @@ package AMS.AMSsideproject.domain.post.service;
 
 import AMS.AMSsideproject.domain.post.Post;
 import AMS.AMSsideproject.domain.post.repository.PostRepository;
-import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutAllUser;
+import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutAllUserPost;
 import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutSpecificUser;
 import AMS.AMSsideproject.domain.tag.Tag.Tag;
 import AMS.AMSsideproject.domain.tag.Tag.repository.TagRepository;
@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Slice;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -113,7 +112,7 @@ class PostServiceTest {
     public void 모든유저게시물에대해서필터링조회최신순정렬무한스크롤첫페이지() throws Exception {
 
         //when
-        SearchFormAboutAllUser form = new SearchFormAboutAllUser("Java", "koo", "latest", null, null,null);
+        SearchFormAboutAllUserPost form = new SearchFormAboutAllUserPost("Java", "koo", "latest", null, null,null);
         Slice<Post> findPosts = postService.findPostsAboutAllUser(form);
 
         //then
@@ -129,7 +128,7 @@ class PostServiceTest {
     public void 모든유저게시물에대해서필터링조회최신순정렬무한스크롤중간페이지() throws Exception {
 
         //when
-        SearchFormAboutAllUser form = new SearchFormAboutAllUser("Java", "koo", "latest", 6L, null,null);
+        SearchFormAboutAllUserPost form = new SearchFormAboutAllUserPost("Java", "koo", "latest", 6L, null,null);
         Slice<Post> findPosts = postService.findPostsAboutAllUser(form);
 
         //then
@@ -146,7 +145,7 @@ class PostServiceTest {
     public void 모든유저게시물에대해서필터링조회최신순정렬무한스크롤마지막페이지() throws Exception {
 
         //when
-        SearchFormAboutAllUser form = new SearchFormAboutAllUser("Java", "koo", "latest", 3L, null,null);
+        SearchFormAboutAllUserPost form = new SearchFormAboutAllUserPost("Java", "koo", "latest", 3L, null,null);
         Slice<Post> findPosts = postService.findPostsAboutAllUser(form);
 
         //then
@@ -162,7 +161,7 @@ class PostServiceTest {
     public void 모든유저게시물에대해서필터링조회좋아요순정렬무한스크롤첫페이지() throws Exception {
 
         //when
-        SearchFormAboutAllUser form = new SearchFormAboutAllUser("Java", "koo", "likeNum", null, null,null);
+        SearchFormAboutAllUserPost form = new SearchFormAboutAllUserPost("Java", "koo", "likeNum", null, null,null);
         Slice<Post> findPosts = postService.findPostsAboutAllUser(form);
 
         //then
@@ -178,7 +177,7 @@ class PostServiceTest {
     public void 모든유저게시물에대해서필터링조회좋아요순정렬무한스크롤중간페이지() throws Exception {
 
         //when
-        SearchFormAboutAllUser form = new SearchFormAboutAllUser("Java", "koo", "likeNum", 6L, null,6L);
+        SearchFormAboutAllUserPost form = new SearchFormAboutAllUserPost("Java", "koo", "likeNum", 6L, null,6L);
         Slice<Post> findPosts = postService.findPostsAboutAllUser(form);
 
         //then
@@ -194,7 +193,7 @@ class PostServiceTest {
     public void 모든유저게시물에대해서필터링조회좋아요순정렬무한스크롤마지막페이지() throws Exception {
 
         //when
-        SearchFormAboutAllUser form = new SearchFormAboutAllUser("Java", "koo", "likeNum", 2L, null,3L);
+        SearchFormAboutAllUserPost form = new SearchFormAboutAllUserPost("Java", "koo", "likeNum", 2L, null,3L);
         Slice<Post> findPosts = postService.findPostsAboutAllUser(form);
 
         //then
