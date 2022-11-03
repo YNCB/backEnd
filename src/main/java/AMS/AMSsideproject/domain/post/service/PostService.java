@@ -4,7 +4,8 @@ import AMS.AMSsideproject.domain.post.Post;
 import AMS.AMSsideproject.domain.post.QPost;
 import AMS.AMSsideproject.domain.post.repository.PostRepository;
 import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutAllUserPost;
-import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutSpecificUser;
+import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutOneSelfPost;
+import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutOtherUser;
 import AMS.AMSsideproject.domain.tag.Tag.Tag;
 import AMS.AMSsideproject.domain.tag.Tag.service.TagService;
 import AMS.AMSsideproject.domain.tag.postTag.PostTag;
@@ -99,7 +100,7 @@ public class PostService {
     }
 
     //특정 유저에 대한 게시물 조회
-    public Slice<Post> findPostsAboutSpecificUser(String nickname, SearchFormAboutSpecificUser searchForm) {
+    public Slice<Post> findPostsAboutOtherUser(String nickname, SearchFormAboutOtherUser searchForm) {
 
         BooleanBuilder builder = new BooleanBuilder();
         // 페이징, 정렬 기준 세팅하기
@@ -121,6 +122,7 @@ public class PostService {
             }
             else if(searchForm.getOrderKey().equals("likeNum")) { //좋아요순
                 orders.add(Sort.Order.desc(searchForm.getOrderKey()));
+                orders.add(Sort.Order.asc("post_id")); //같은 likeNum에 대해서는 post_id로 오름차순 정렬 기준으로 정의
                 if(searchForm.getLastLikeNum()!=null && searchForm.getLastPostId()!=null) {
                     builder.and(QPost.post.likeNum.eq(searchForm.getLastLikeNum()).and(QPost.post.post_id.gt(searchForm.getLastPostId())));
                     builder.or(QPost.post.likeNum.lt(searchForm.getLastLikeNum()));
@@ -128,6 +130,7 @@ public class PostService {
             }
             else if(searchForm.getOrderKey().equals("replyNum")) { //댓글순
                 orders.add(Sort.Order.desc(searchForm.getOrderKey()));
+                orders.add(Sort.Order.asc("post_id")); //같은 replyNum에 대해서는 post_id로 오름차순 정렬 기준으로 정의
                 if(searchForm.getLastReplyNum()!=null && searchForm.getLastPostId()!=null) {
                     builder.and(QPost.post.replyNum.eq(searchForm.getLastReplyNum()).and(QPost.post.post_id.gt(searchForm.getLastPostId())));
                     builder.or(QPost.post.replyNum.lt(searchForm.getLastReplyNum()));
@@ -137,8 +140,60 @@ public class PostService {
         }else //구조상 이경우는 없음.
             pageable = PageRequest.of(0,3);
 
-        return postRepository.findPostsBySpecificUser(nickname, searchForm, pageable, builder);
+        return postRepository.findPostsByOtherUser(nickname, searchForm.getLanguage(), searchForm.getSearchTitle(), pageable, builder);
     }
+
+    //내페이지에 대한 게시물 조회
+    public Slice<Post> findPostsAboutOneSelf(String nickname, SearchFormAboutOneSelfPost searchForm) {
+
+        BooleanBuilder builder = new BooleanBuilder();
+        // 페이징, 정렬 기준 세팅하기
+        Pageable pageable = null;
+        if(StringUtils.hasText(searchForm.getOrderKey())) {
+
+            List<Sort.Order> orders = new ArrayList<>();
+            //동적쿼리 where 문 생성
+            if(searchForm.getOrderKey().equals("latest")) { //최신순
+                orders.add(Sort.Order.desc("redate"));
+                if(searchForm.getLastPostId() != null) {
+                    builder.and(QPost.post.post_id.lt(searchForm.getLastPostId()));
+                }
+            }else if(searchForm.getOrderKey().equals("oldest")){ //오래된순
+                orders.add(Sort.Order.asc("redate"));
+                if(searchForm.getLastPostId() !=null) {
+                    builder.and(QPost.post.post_id.gt(searchForm.getLastPostId()));
+                }
+            }
+            else if(searchForm.getOrderKey().equals("likeNum")) { //좋아요순
+                orders.add(Sort.Order.desc(searchForm.getOrderKey()));
+                orders.add(Sort.Order.asc("post_id")); //같은 likeNum에 대해서는 post_id로 오름차순 정렬 기준으로 정의
+                if(searchForm.getLastLikeNum()!=null && searchForm.getLastPostId()!=null) {
+                    builder.and(QPost.post.likeNum.eq(searchForm.getLastLikeNum()).and(QPost.post.post_id.gt(searchForm.getLastPostId()))); //같은 개수를 가진 게시물 처리
+                    builder.or(QPost.post.likeNum.lt(searchForm.getLastLikeNum()));
+                }
+            }
+            else if(searchForm.getOrderKey().equals("replyNum")) { //댓글순
+                orders.add(Sort.Order.desc(searchForm.getOrderKey()));
+                orders.add(Sort.Order.asc("post_id")); //같은 replyNum에 대해서는 post_id로 오름차순 정렬 기준으로 정의
+                if(searchForm.getLastReplyNum()!=null && searchForm.getLastPostId()!=null) {
+                    builder.and(QPost.post.replyNum.eq(searchForm.getLastReplyNum()).and(QPost.post.post_id.gt(searchForm.getLastPostId())));
+                    builder.or(QPost.post.replyNum.lt(searchForm.getLastReplyNum()));
+                }
+            }
+            pageable = PageRequest.of(0, 3, Sort.by(orders)); //10개 씩
+        }else //구조상 이경우는 없음.
+            pageable = PageRequest.of(0,3);
+
+        return postRepository.findPostsByOneSelf(nickname, searchForm.getTags(), searchForm.getType(), searchForm.getSearchTitle(), pageable, builder);
+    }
+
+
+
+
+
+
+
+
 
 
     //게시물 수정(업데이트) - "지연감지 사용!" -> 근데 쿼리문이 너무 많이 나가는데.. 이건 어쩔수 없지 않나?!
@@ -176,13 +231,13 @@ public class PostService {
 
 
 
-    //게시물 좋아요 수 증가
-    @Transactional
-    public Post addPostLikeNum(Long postId , Long num) {
-        Post findPost = postRepository.findPostByPostId(postId);
-        findPost.addLikeNum(num);
-        return findPost;
-    }
+//    //게시물 좋아요 수 증가
+//    @Transactional
+//    public Post addPostLikeNum(Long postId , Long num) {
+//        Post findPost = postRepository.findPostByPostId(postId);
+//        findPost.addLikeNum(num);
+//        return findPost;
+//    }
 
 
 

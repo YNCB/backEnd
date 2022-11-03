@@ -3,7 +3,8 @@ package AMS.AMSsideproject.web.apiController.post;
 import AMS.AMSsideproject.domain.like.service.LikeService;
 import AMS.AMSsideproject.domain.post.Post;
 import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutAllUserPost;
-import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutSpecificUser;
+import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutOneSelfPost;
+import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutOtherUser;
 import AMS.AMSsideproject.domain.post.repository.query.PostRepositoryQueryDto;
 import AMS.AMSsideproject.domain.post.service.PostService;
 import AMS.AMSsideproject.web.apiController.post.requestDto.PostEditForm;
@@ -12,6 +13,7 @@ import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
 import AMS.AMSsideproject.web.custom.annotation.AddAuthRequired;
 import AMS.AMSsideproject.web.custom.annotation.LoginAuthRequired;
+import AMS.AMSsideproject.web.custom.annotation.VerityUserType;
 import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
 import AMS.AMSsideproject.web.response.BaseResponse;
 import AMS.AMSsideproject.web.response.DataResponse;
@@ -27,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -98,19 +101,18 @@ public class PostController {
      * -> 내 페이지에 접속시 내 페이지 전용 폼 사용
      * -> 다른 사용자 페이지 접속시 다른 사용자 전용 폼 사용
      */
-    //비로그인 사용자 - 특정 사용자 페이지(내 페이지, 상대방 페이지)
+    //비로그인 사용자 - 특정 사용자 페이지(내 페이지, 상대방 페이지 -> 같음)
     @GetMapping(value = "/{nickname}")
-    @ApiOperation(value = "회원별 메인페이지, 특정 회원에 대한 게시물 리스트 api", notes = "특정 회원 게시물들에 대해서 필터링 조건에 맞게 리스트를 조회합니다.")
+    @ApiOperation(value = "회원별 페이지, 비로그인 회원-특정 회원에 대한 게시물 리스트 조회", notes = "특정 회원 게시물들에 대해서 필터링 조건에 맞게 리스트를 조회합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출", response = UserPage_200.class),
-            //@ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
-            //@ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
-    public DataResponse<PostListResponse> userPage(@PathVariable("nickname")String nickname , @RequestBody SearchFormAboutSpecificUser form) {
+    public DataResponse<PostListResponse> userPage(@PathVariable("nickname")String nickname , @RequestBody SearchFormAboutOtherUser form) {
 
-        Slice<Post> findPosts = postService.findPostsAboutSpecificUser(nickname, form);
+        Slice<Post> findPosts = postService.findPostsAboutOtherUser(nickname, form);
 
+        System.out.println("1111111111111111111111111111111111111");
         //Dto 변환
         List<PostListDtoAboutSpecificUser> findPostDtos = findPosts.getContent().stream()
                 .map(p -> new PostListDtoAboutSpecificUser(p))
@@ -120,11 +122,45 @@ public class PostController {
         PostListResponse postListResponse = new PostListResponse(findPostDtos, findPosts.getNumberOfElements(), findPosts.hasNext());
         return new DataResponse<>("200", "특정 사용자의 게시물 리스트 입니다.",postListResponse);
     }
-    //로그인 사용자 - 특정 사용자 페이지
+    //로그인 사용자 - 특정 사용자 페이지(내 페이지, 다른 사용자 페이지 -> 다름)
     @GetMapping(value = "/{nickname}", headers = JwtProperties.HEADER_STRING)
+    @LoginAuthRequired
+    @VerityUserType //자신이 자신의 페이지에 접속했는지 다른 사용자 페이지에 접속했는지 구분
+    @ApiOperation(value = "회원별 페이지, 비로그인 회원-특정 회원에 대한 게시물 리스트 조회", notes = "특정 회원 게시물들에 대해서 필터링 조건에 맞게 리스트를 조회합니다.")
+    @ApiResponses({
+            @ApiResponse(code=200, message="정상 호출", response = UserPage_200.class),
+            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
+            @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
+    })
     public DataResponse<PostListResponse> userPage(@PathVariable("nickname")String nickname,
-                                                   @RequestHeader(JwtProperties.HEADER_STRING) String accessToken) {
-        return null;
+                                                   @RequestHeader(JwtProperties.HEADER_STRING) String accessToken,
+                                                   @RequestBody(required = false) SearchFormAboutOneSelfPost oneSelfPostForm,
+                                                   @RequestBody(required = false) SearchFormAboutOtherUser otherUserPostForm,
+                                                   HttpServletRequest request) {
+
+        /**
+         * @RequestBody에 대해서 자세히좀 공부하기
+         * 폼을 통합해서 공통으로 처리?!!! 경우에따라 필요한거를 내가 선택?!
+         */
+        System.out.println("2222222222222222222222222222222222222");
+        Slice<Post> findPosts = null;
+
+        Boolean verity = (Boolean)request.getAttribute("verity");
+        if(verity == true) { //내 페이지에 접속한 경우
+            findPosts = postService.findPostsAboutOneSelf(nickname, oneSelfPostForm);
+
+        }else { //다른 사용자의 페이지에 접속한 경우
+            findPosts = postService.findPostsAboutOtherUser(nickname, otherUserPostForm);
+        }
+
+        List<PostListDtoAboutSpecificUser> findPostDtos = findPosts.getContent().stream()
+                .map(p -> new PostListDtoAboutSpecificUser(p))
+                .collect(Collectors.toList());
+
+        //response
+        PostListResponse postListResponse = new PostListResponse(findPostDtos, findPosts.getNumberOfElements(), findPosts.hasNext());
+        return new DataResponse<>("200", "특정 사용자의 게시물 리스트 입니다.",postListResponse);
     }
 
 

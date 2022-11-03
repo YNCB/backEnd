@@ -2,7 +2,7 @@ package AMS.AMSsideproject.domain.post.repository;
 
 import AMS.AMSsideproject.domain.post.Post;
 import AMS.AMSsideproject.domain.post.QPost;
-import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutSpecificUser;
+import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutOtherUser;
 import AMS.AMSsideproject.domain.tag.Tag.QTag;
 import AMS.AMSsideproject.domain.tag.postTag.QPostTag;
 import AMS.AMSsideproject.domain.user.QUser;
@@ -22,7 +22,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.querydsl.jpa.JPAExpressions.select;
@@ -98,25 +97,15 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     //특정 유저 페이지 게시물 조회
-    public Slice<Post> findPostsBySpecificUser(String nickname, SearchFormAboutSpecificUser form , Pageable pageable, BooleanBuilder builder) {
+    public Slice<Post> findPostsByOtherUser(String nickname, String language, String title , Pageable pageable, BooleanBuilder builder) {
 
         JPAQuery<Post> query = this.query.select(QPost.post)
                 .from(QPost.post)
                 .join(QPost.post.user, QUser.user)
                 .where(
-                        //서브쿼리 - 태그 필터링
-                        QPost.post.post_id.in(
-                                select(QPost.post.post_id)
-                                        .from(QPostTag.postTag)
-                                        .join(QPostTag.postTag.post, QPost.post)
-                                        .join(QPostTag.postTag.tag, QTag.tag)
-                                        .where(TagsIn(form.getTags()))
-                                        .groupBy(QPost.post.post_id)
-                        ),
                         NicknameEq(nickname),
-                        TypeEq(form.getType()),
-                        LanguageEq(form.getLanguage()),
-                        TitleContains(form.getSearchTitle()),
+                        LanguageEq(language),
+                        TitleContains(title),
                         builder
                 );
 
@@ -131,6 +120,42 @@ public class PostRepositoryImpl implements PostRepository {
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
         return checkEndPage(pageable, posts);
+    }
+
+    //내 페이지에 대한 게시물 조회
+    @Override
+    public Slice<Post> findPostsByOneSelf(String nickname, List<String> tags, String type, String title, Pageable pageable, BooleanBuilder builder) {
+
+        JPAQuery<Post> query = this.query.select(QPost.post)
+                .from(QPost.post)
+                .join(QPost.post.user, QUser.user)
+                .where(
+                        QPost.post.post_id.in(
+                                select(QPost.post.post_id)
+                                        .from(QPostTag.postTag)
+                                        .join(QPostTag.postTag.post, QPost.post)
+                                        .join(QPostTag.postTag.tag, QTag.tag)
+                                        .where(TagsIn(tags))
+                                        .groupBy(QPost.post.post_id)
+                        ),
+                        NicknameEq(nickname),
+                        TypeEq(type),
+                        TitleContains(title),
+                        builder
+                );
+
+        //동적 정렬
+        for(Sort.Order o : pageable.getSort()) {
+            PathBuilder pathBuilder = new PathBuilder(QPost.post.getType(), QPost.post.getMetadata());
+            query.orderBy(new OrderSpecifier(o.isAscending() ? Order.ASC: Order.DESC, pathBuilder.get(o.getProperty())));
+        }
+
+        //무한 스크롤 페이징 처리
+        List<Post> posts = query
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
+        return checkEndPage(pageable, posts);
+
     }
 
 
@@ -155,7 +180,7 @@ public class PostRepositoryImpl implements PostRepository {
     private Slice<Post> checkEndPage(Pageable pageable, List<Post> results) {
         boolean hasNext = false;
 
-        if(results.size() > pageable.getPageSize()) {
+        if(results.size() > pageable.getPageSize()) { //다음 게시물이 있는 경우
             hasNext = true;
             results.remove(pageable.getPageSize()); //한개더 가져왔으니 더 가져온 데이터 삭제
         }

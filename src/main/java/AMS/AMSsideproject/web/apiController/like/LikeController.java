@@ -52,6 +52,10 @@ public class LikeController {
         Long findUserId = jwtProvider.getUserIdToToken(accessToken);
         LikeDto likeDto = likeService.like(postId, findUserId);
 
+        /**
+         * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+         * 근데 여기서 게시물에 좋아요를 눌렸을때 게시물 좋아요 상태만 리턴하면 되나?!!! 해당 게시물 속성도 다시 리턴해줘야되는거 아니야?!!!!!
+         */
         return new DataResponse("200", "좋아요 추가 또는 삭제가 완료되었습니다.", likeDto);
     }
 

@@ -3,6 +3,7 @@ package AMS.AMSsideproject.web.config;
 import AMS.AMSsideproject.web.interceptor.PostAddAuthInterceptor;
 import AMS.AMSsideproject.web.interceptor.LoginAuthInterceptor;
 import AMS.AMSsideproject.web.interceptor.RefreshTokenInterceptor;
+import AMS.AMSsideproject.web.interceptor.VerityUserInterceptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,8 +39,14 @@ public class WebConfig implements WebMvcConfigurer {
 
         registry.addInterceptor(LoginAuthInterceptor())
                 .order(1)
-                .addPathPatterns("/codebox/", "/codebox/*/{postId:[\\d+]}")
+                .addPathPatterns("/codebox/", "/codebox/*", "/codebox/*/{postId:[\\d+]}")
                 .excludePathPatterns("/css/**", "/*.ico", "/error", "/error-page/**"); //오류 페이지 경로 제외!!
+
+        registry.addInterceptor(verityUserInterceptor())
+                .order(2)
+                .addPathPatterns("/codebox/*")
+                .excludePathPatterns("/css/**", "/*.ico", "/error", "/error-page/**"); //오류 페이지 경로 제외!!
+
     }
     @Bean
     public RefreshTokenInterceptor refreshTokenInterceptor() {return new RefreshTokenInterceptor();}
@@ -47,6 +54,8 @@ public class WebConfig implements WebMvcConfigurer {
     public PostAddAuthInterceptor postAuthorizationInterceptor() {return new PostAddAuthInterceptor(); }
     @Bean
     public LoginAuthInterceptor LoginAuthInterceptor() {return new LoginAuthInterceptor();}
+    @Bean
+    public VerityUserInterceptor verityUserInterceptor() {return new VerityUserInterceptor();}
 
 
     /** DefaultMessageCodesResolver 구현체 수정 **/

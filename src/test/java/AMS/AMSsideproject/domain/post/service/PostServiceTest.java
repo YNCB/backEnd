@@ -3,7 +3,7 @@ package AMS.AMSsideproject.domain.post.service;
 import AMS.AMSsideproject.domain.post.Post;
 import AMS.AMSsideproject.domain.post.repository.PostRepository;
 import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutAllUserPost;
-import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutSpecificUser;
+import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutOtherUser;
 import AMS.AMSsideproject.domain.tag.Tag.Tag;
 import AMS.AMSsideproject.domain.tag.Tag.repository.TagRepository;
 import AMS.AMSsideproject.domain.user.User;
@@ -52,21 +52,21 @@ class PostServiceTest {
         PostSaveForm postSaveForm8 = new PostSaveForm(tags,"koo8", "koo8","koo8", "see","Java",6);
 
         Post post1 = postService.registration(findUser.getUser_id(), postSaveForm1);
-        postService.addPostLikeNum(post1.getPost_id(), 1L);
+        //postService.addPostLikeNum(post1.getPost_id(), 1L);
         Post post2 = postService.registration(findUser.getUser_id(), postSaveForm2);
-        postService.addPostLikeNum(post2.getPost_id(), 3L);
+        //postService.addPostLikeNum(post2.getPost_id(), 3L);
         Post post3 = postService.registration(findUser.getUser_id(), postSaveForm3);
-        postService.addPostLikeNum(post3.getPost_id(), 2L);
+       // postService.addPostLikeNum(post3.getPost_id(), 2L);
         Post post4 = postService.registration(findUser.getUser_id(), postSaveForm4);
-        postService.addPostLikeNum(post4.getPost_id(), 5L);
+       // postService.addPostLikeNum(post4.getPost_id(), 5L);
         Post post5 = postService.registration(findUser.getUser_id(), postSaveForm5);
-        postService.addPostLikeNum(post5.getPost_id(), 6L);
+       // postService.addPostLikeNum(post5.getPost_id(), 6L);
         Post post6 = postService.registration(findUser.getUser_id(), postSaveForm6);
-        postService.addPostLikeNum(post6.getPost_id(), 6L);
+       // postService.addPostLikeNum(post6.getPost_id(), 6L);
         Post post7 = postService.registration(findUser.getUser_id(), postSaveForm7);
-        postService.addPostLikeNum(post7.getPost_id(), 8L);
+      //  postService.addPostLikeNum(post7.getPost_id(), 8L);
         Post post8 = postService.registration(findUser.getUser_id(), postSaveForm8);
-        postService.addPostLikeNum(post8.getPost_id(), 6L);
+      //  postService.addPostLikeNum(post8.getPost_id(), 6L);
 
         UserJoinForm2 userJoinForm3 = new UserJoinForm2("test3@gamil.com", "test1234!", "test3", "Basic","Student","Java");
         User findUser2 = userService.join(userJoinForm3);
@@ -210,9 +210,9 @@ class PostServiceTest {
         //given
         List<String> list = new ArrayList<>();
         list.add("DFS"); list.add("FFS");
-        SearchFormAboutSpecificUser form = SearchFormAboutSpecificUser.builder()
-                .tags(list)
-                .type("see")
+        SearchFormAboutOtherUser form = SearchFormAboutOtherUser.builder()
+                //.tags(list)
+                //.type("see")
                 .language("Java")
                 .searchTitle("boo")
                 .orderKey("latest")
@@ -221,7 +221,7 @@ class PostServiceTest {
                 .lastReplyNum(null)
                 .build();
         //when
-        Slice<Post> findPosts = postService.findPostsAboutSpecificUser("test3", form);
+        Slice<Post> findPosts = postService.findPostsAboutOtherUser("test3", form);
 
         //then
         List<PostListDtoAboutAllUser> result = findPosts.getContent().stream()
@@ -240,9 +240,9 @@ class PostServiceTest {
         //given
         List<String> list = new ArrayList<>();
         list.add("FFS"); //list.add("DFS");
-        SearchFormAboutSpecificUser form = SearchFormAboutSpecificUser.builder()
-                .tags(list)
-                .type("see")
+        SearchFormAboutOtherUser form = SearchFormAboutOtherUser.builder()
+                //.tags(list)
+                //.type("see")
                 .language("Java")
                 .searchTitle("boo")
                 .orderKey("latest")
@@ -251,7 +251,7 @@ class PostServiceTest {
                 .lastReplyNum(null)
                 .build();
         //when
-        Slice<Post> findPosts = postService.findPostsAboutSpecificUser("test3", form);
+        Slice<Post> findPosts = postService.findPostsAboutOtherUser("test3", form);
 
         //then
         List<PostListDtoAboutAllUser> result = findPosts.getContent().stream()

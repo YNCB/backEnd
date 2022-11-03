@@ -37,7 +37,7 @@ public class Post {
 
     private LocalDateTime redate;
     private LocalDateTime chdate;
-    private Integer level; //난의도
+    private Integer level; //난이도
 
     @OneToMany(
             fetch = FetchType.LAZY,
@@ -45,7 +45,9 @@ public class Post {
             cascade = CascadeType.ALL,
             orphanRemoval = true)
     private List<Like> likes = new ArrayList<>(); //좋아요들
-    private Long likeNum; //지우기!!!!!!!!!
+    @Column(name = "like_num")
+    private Integer likeNum; //좋아요 총개수
+
 
     @Column(name = "reply_num")
     private Long replyNum; //댓글 개수
@@ -70,6 +72,10 @@ public class Post {
         likes.add(like);
     }
 
+    public void setLikeNum(){
+        this.likeNum = this.likes.size();
+    }
+
 
     //생성 메서드
     public static Post createPost(User user, PostSaveForm postSaveForm) {
@@ -84,7 +90,7 @@ public class Post {
         post.language = postSaveForm.getLanguage();
         post.level = postSaveForm.getLevel();
 
-        post.likeNum =0L;
+        post.likeNum =0;
         post.replyNum =0L;
         post.redate = LocalDateTime.now();
         return post;
@@ -111,8 +117,8 @@ public class Post {
         this.replyNum++;
     }
 
-    public void addLikeNum(Long num) {
-        this.likeNum += num;
-    }
+//    public void addLikeNum(Long num) {
+//        this.likeNum += num;
+//    }
 
 }

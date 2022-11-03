@@ -17,22 +17,16 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SearchFormAboutMyUser {
+public class SearchFormAboutOneSelfPost {
 
-    /**
-     * 내 페이지만 있는것
-     */
+
     @ApiModelProperty(example = "BFS,DFS")
     private List<String> tags; //tags
     @ApiModelProperty(example = "see", notes = "see(보고푼문제), alone(혼자푼문제), null")
     private String type; //ALL, SEE, ALONE
-
-
-    /**
-     * 공통
-     */
     @ApiModelProperty(example = "test", notes = "게시물 제목 대상")
     private String searchTitle; //제목 검색
+
     @ApiModelProperty(example = "latest(최신순)", notes = "정렬기준 -> latest(최신순), oldest(오래된순), likeNum(좋아요순), replyNum(댓글많은순)")
     private String orderKey; // 정렬 기준 -> latest(최신순), oldest(오래된순), likeNum(좋아요순), replyNum(댓글많은순)
     @ApiModelProperty(example = "1", notes = "무한스크롤 방식을 위한것, 마지막 게시물의 게시물 고유 PK id(post_id)입니다. " +

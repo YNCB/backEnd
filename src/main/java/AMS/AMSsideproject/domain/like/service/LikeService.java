@@ -55,6 +55,7 @@ public class LikeService {
             check = true;
         }
 
+        findPost.setLikeNum(); //!!!!!!!!!!!!!!!!
         return new LikeDto(check, findPost.getLikes().size());
     }
 
