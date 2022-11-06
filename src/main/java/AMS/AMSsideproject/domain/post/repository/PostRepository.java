@@ -1,7 +1,6 @@
 package AMS.AMSsideproject.domain.post.repository;
 
 import AMS.AMSsideproject.domain.post.Post;
-import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutOtherUser;
 import com.querydsl.core.BooleanBuilder;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -26,7 +25,7 @@ public interface PostRepository {
     public Slice<Post> findPostsByOtherUser(String nickname, String language, String title , Pageable pageable, BooleanBuilder builder);
 
     //자신의 전체 게시물 검색(필터링 조건)
-    public Slice<Post> findPostsByOneSelf(String nickname, List<String> tags, String type, String title , Pageable pageable, BooleanBuilder builder);
+    public Slice<Post> findPostsByOneSelf(String nickname, List<String> tags, String type, String language, String title , Pageable pageable, BooleanBuilder builder);
 
 
 }

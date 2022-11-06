@@ -1,4 +1,4 @@
-package AMS.AMSsideproject.web.apiController.post.requestDto;
+package AMS.AMSsideproject.web.apiController.post.requestForm;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;

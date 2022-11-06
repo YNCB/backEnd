@@ -11,6 +11,4 @@ public interface JwtProperties {
     public String HEADER_STRING = "accessToken";
     public String REFRESH_HEADER_STRING = "refreshToken";
 
-
-
 }

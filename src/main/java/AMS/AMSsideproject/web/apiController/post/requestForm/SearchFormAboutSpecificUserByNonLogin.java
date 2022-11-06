@@ -1,12 +1,10 @@
-package AMS.AMSsideproject.domain.post.repository.form;
+package AMS.AMSsideproject.web.apiController.post.requestForm;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 /**
  * 특정 user 페이지 api는 -> "/codebox/user1" 인데
@@ -17,7 +15,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SearchFormAboutOtherUser {
+public class SearchFormAboutSpecificUserByNonLogin {
 
     @ApiModelProperty(example = "Java")
     private String language;

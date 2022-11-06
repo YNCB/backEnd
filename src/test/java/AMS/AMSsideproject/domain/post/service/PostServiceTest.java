@@ -2,14 +2,14 @@ package AMS.AMSsideproject.domain.post.service;
 
 import AMS.AMSsideproject.domain.post.Post;
 import AMS.AMSsideproject.domain.post.repository.PostRepository;
-import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutAllUserPost;
-import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutOtherUser;
+import AMS.AMSsideproject.web.apiController.post.requestForm.SearchFormAboutAllUserPost;
+import AMS.AMSsideproject.domain.post.service.form.SearchFormOtherUser;
 import AMS.AMSsideproject.domain.tag.Tag.Tag;
 import AMS.AMSsideproject.domain.tag.Tag.repository.TagRepository;
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
-import AMS.AMSsideproject.web.apiController.post.requestDto.PostEditForm;
-import AMS.AMSsideproject.web.apiController.post.requestDto.PostSaveForm;
+import AMS.AMSsideproject.web.apiController.post.requestForm.PostEditForm;
+import AMS.AMSsideproject.web.apiController.post.requestForm.PostSaveForm;
 import AMS.AMSsideproject.web.apiController.user.requestDto.UserJoinForm2;
 import AMS.AMSsideproject.web.responseDto.post.PostListDtoAboutAllUser;
 import AMS.AMSsideproject.web.test.DatabaseCleanup;
@@ -210,7 +210,7 @@ class PostServiceTest {
         //given
         List<String> list = new ArrayList<>();
         list.add("DFS"); list.add("FFS");
-        SearchFormAboutOtherUser form = SearchFormAboutOtherUser.builder()
+        SearchFormOtherUser form = SearchFormOtherUser.builder()
                 //.tags(list)
                 //.type("see")
                 .language("Java")
@@ -240,7 +240,7 @@ class PostServiceTest {
         //given
         List<String> list = new ArrayList<>();
         list.add("FFS"); //list.add("DFS");
-        SearchFormAboutOtherUser form = SearchFormAboutOtherUser.builder()
+        SearchFormOtherUser form = SearchFormOtherUser.builder()
                 //.tags(list)
                 //.type("see")
                 .language("Java")
@@ -250,6 +250,7 @@ class PostServiceTest {
                 .lastLikeNum(null)
                 .lastReplyNum(null)
                 .build();
+
         //when
         Slice<Post> findPosts = postService.findPostsAboutOtherUser("test3", form);
 

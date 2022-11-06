@@ -1,15 +1,13 @@
 package AMS.AMSsideproject.domain.post;
 
 import AMS.AMSsideproject.domain.like.Like;
-import AMS.AMSsideproject.domain.tag.Tag.Tag;
 import AMS.AMSsideproject.domain.tag.postTag.PostTag;
 import AMS.AMSsideproject.domain.user.User;
-import AMS.AMSsideproject.web.apiController.post.requestDto.PostEditForm;
-import AMS.AMSsideproject.web.apiController.post.requestDto.PostSaveForm;
+import AMS.AMSsideproject.web.apiController.post.requestForm.PostEditForm;
+import AMS.AMSsideproject.web.apiController.post.requestForm.PostSaveForm;
 import lombok.Getter;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

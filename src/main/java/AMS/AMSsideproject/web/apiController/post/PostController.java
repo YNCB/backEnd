@@ -2,13 +2,15 @@ package AMS.AMSsideproject.web.apiController.post;
 
 import AMS.AMSsideproject.domain.like.service.LikeService;
 import AMS.AMSsideproject.domain.post.Post;
-import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutAllUserPost;
-import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutOneSelfPost;
-import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutOtherUser;
+import AMS.AMSsideproject.web.apiController.post.requestForm.SearchFormAboutAllUserPost;
+import AMS.AMSsideproject.web.apiController.post.requestForm.SearchFormAboutSpecificUserByLogin;
+import AMS.AMSsideproject.web.apiController.post.requestForm.SearchFormAboutSpecificUserByNonLogin;
 import AMS.AMSsideproject.domain.post.repository.query.PostRepositoryQueryDto;
 import AMS.AMSsideproject.domain.post.service.PostService;
-import AMS.AMSsideproject.web.apiController.post.requestDto.PostEditForm;
-import AMS.AMSsideproject.web.apiController.post.requestDto.PostSaveForm;
+import AMS.AMSsideproject.domain.post.service.form.SearchFormOneSelf;
+import AMS.AMSsideproject.domain.post.service.form.SearchFormOtherUser;
+import AMS.AMSsideproject.web.apiController.post.requestForm.PostEditForm;
+import AMS.AMSsideproject.web.apiController.post.requestForm.PostSaveForm;
 import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
 import AMS.AMSsideproject.web.custom.annotation.AddAuthRequired;
@@ -26,6 +28,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,6 +38,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 @Api(tags = "게시물 관련 api")
 @RequestMapping("/codebox")
 public class PostController {
@@ -87,32 +91,22 @@ public class PostController {
         return new DataResponse<>("200", "모든 사용자들의 게시물 리스트 결과입니다.", postListResponse);
     }
 
-    /**
-     * 내페이지 - 반드시 토큰이 있어야함, 없어도 되지?! -> 로그인 하지 않아도 페이지는 들어갈수 있어야되지 uri쳐서!!!
-     * 다른 유저 페이지 - 토큰이 있어도 되고 없어도 됌
-     *
-     * 인터셉터를 사용해서 토큰의 닉네임으로 내 페이지에 들어왔는데 다른 유저 페이지에 들어왔는지 구분해서 컨트롤러에 알려줌!?
-     * -로그인 하지 않음(토큰이 없음)-
-     * -> 로그인 하지 않고 내 페이지에 들어오면 똑같이 다른 유저 페이지라고 생각하면되지
-     * -> 토큰이 없으면 그냥 다른 유저 페이지에 들어왔다고 생각하면 되지
-     * -> 다른 사용자 전용 폼 사용
-     *
-     * -로그인 한 사용자(토큰이 있음)-
-     * -> 내 페이지에 접속시 내 페이지 전용 폼 사용
-     * -> 다른 사용자 페이지 접속시 다른 사용자 전용 폼 사용
-     */
     //비로그인 사용자 - 특정 사용자 페이지(내 페이지, 상대방 페이지 -> 같음)
     @GetMapping(value = "/{nickname}")
-    @ApiOperation(value = "회원별 페이지, 비로그인 회원-특정 회원에 대한 게시물 리스트 조회", notes = "특정 회원 게시물들에 대해서 필터링 조건에 맞게 리스트를 조회합니다.")
+    @ApiOperation(value = "회원별 페이지, 비로그인 회원-특정 회원에 대한 게시물 리스트 조회",
+            notes = "특정 회원 게시물들에 대해서 필터링 조건에 맞게 리스트를 조회합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출", response = UserPage_200.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
-    public DataResponse<PostListResponse> userPage(@PathVariable("nickname")String nickname , @RequestBody SearchFormAboutOtherUser form) {
+    public DataResponse<PostListResponse> userPage(@PathVariable("nickname")String nickname ,
+                                                   @RequestBody SearchFormAboutSpecificUserByNonLogin form) {
 
-        Slice<Post> findPosts = postService.findPostsAboutOtherUser(nickname, form);
+        SearchFormOtherUser searchForm = new SearchFormOtherUser(form.getLanguage(), form.getSearchTitle(), form.getOrderKey(), form.getLastPostId(),
+                form.getLastReplyNum(), form.getLastLikeNum());
 
-        System.out.println("1111111111111111111111111111111111111");
+        Slice<Post> findPosts = postService.findPostsAboutOtherUser(nickname, searchForm);
+
         //Dto 변환
         List<PostListDtoAboutSpecificUser> findPostDtos = findPosts.getContent().stream()
                 .map(p -> new PostListDtoAboutSpecificUser(p))
@@ -126,7 +120,8 @@ public class PostController {
     @GetMapping(value = "/{nickname}", headers = JwtProperties.HEADER_STRING)
     @LoginAuthRequired
     @VerityUserType //자신이 자신의 페이지에 접속했는지 다른 사용자 페이지에 접속했는지 구분
-    @ApiOperation(value = "회원별 페이지, 비로그인 회원-특정 회원에 대한 게시물 리스트 조회", notes = "특정 회원 게시물들에 대해서 필터링 조건에 맞게 리스트를 조회합니다.")
+    @ApiOperation(value = "회원별 페이지, 비로그인 회원-특정 회원(나,다른유저)에 대한 게시물 리스트 조회",
+            notes = "특정 회원 게시물들에 대해서 필터링 조건에 맞게 리스트를 조회합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출", response = UserPage_200.class),
             @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
@@ -135,23 +130,23 @@ public class PostController {
     })
     public DataResponse<PostListResponse> userPage(@PathVariable("nickname")String nickname,
                                                    @RequestHeader(JwtProperties.HEADER_STRING) String accessToken,
-                                                   @RequestBody(required = false) SearchFormAboutOneSelfPost oneSelfPostForm,
-                                                   @RequestBody(required = false) SearchFormAboutOtherUser otherUserPostForm,
+                                                   @RequestBody SearchFormAboutSpecificUserByLogin form,
                                                    HttpServletRequest request) {
 
-        /**
-         * @RequestBody에 대해서 자세히좀 공부하기
-         * 폼을 통합해서 공통으로 처리?!!! 경우에따라 필요한거를 내가 선택?!
-         */
-        System.out.println("2222222222222222222222222222222222222");
-        Slice<Post> findPosts = null;
 
+        Slice<Post> findPosts = null;
         Boolean verity = (Boolean)request.getAttribute("verity");
         if(verity == true) { //내 페이지에 접속한 경우
-            findPosts = postService.findPostsAboutOneSelf(nickname, oneSelfPostForm);
+            SearchFormOneSelf searchFormOneSelf = new SearchFormOneSelf(form.getTags(), form.getType(), form.getLanguage(), form.getSearchTitle()
+                    , form.getOrderKey(), form.getLastPostId(), form.getLastPostId(), form.getLastLikeNum());
+
+            findPosts = postService.findPostsAboutOneSelf(nickname, searchFormOneSelf);
 
         }else { //다른 사용자의 페이지에 접속한 경우
-            findPosts = postService.findPostsAboutOtherUser(nickname, otherUserPostForm);
+            SearchFormOtherUser searchFormOtherUser = new SearchFormOtherUser(form.getLanguage(), form.getSearchTitle(), form.getOrderKey(),
+                    form.getLastPostId(), form.getLastReplyNum(), form.getLastLikeNum());
+
+            findPosts = postService.findPostsAboutOtherUser(nickname, searchFormOtherUser);
         }
 
         List<PostListDtoAboutSpecificUser> findPostDtos = findPosts.getContent().stream()
@@ -164,17 +159,16 @@ public class PostController {
     }
 
 
-
-
-
-
-
-
-
     // 게시물 상세조회(로그인, 비로그인)
     /**
      * 1. 게시물 조회할때 uri 에 "postId" 로 해서 바로 사용하는 게 좋을까?! : 정보가 노출되면 좋지 않은뎅...
      * 2. api 에는 게시물 제목이 있고 json 으로 추가로 "postId"를 요청 받을까?!움....
+     *
+     * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     * 1.로그인한 경우에 대한 처리에서 게시물을 찾고 "post" 의 "likes" 프록시를 초기화 하고 나서 "likes" 배열에 대해서 누른지 확인하는 방법
+     *   -> 근데 이것도 프록시 초기화에서 결국 쿼리 2개 아니야?!!!!!!!!!!!!!!
+     *
+     * 2.기존 방식으로 하면 쿼리문 2개 아니야?!!!!!!!!!!!!!
      */
     @ApiOperation(value = "비로그인 사용자 - 게시물 상세조회 api", notes = "게시물의 상세 정보를 보여줍니다.")
     @GetMapping(value = "/{nickname}/{postId}")

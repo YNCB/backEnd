@@ -2,7 +2,6 @@ package AMS.AMSsideproject.domain.post.repository;
 
 import AMS.AMSsideproject.domain.post.Post;
 import AMS.AMSsideproject.domain.post.QPost;
-import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutOtherUser;
 import AMS.AMSsideproject.domain.tag.Tag.QTag;
 import AMS.AMSsideproject.domain.tag.postTag.QPostTag;
 import AMS.AMSsideproject.domain.user.QUser;
@@ -124,7 +123,8 @@ public class PostRepositoryImpl implements PostRepository {
 
     //내 페이지에 대한 게시물 조회
     @Override
-    public Slice<Post> findPostsByOneSelf(String nickname, List<String> tags, String type, String title, Pageable pageable, BooleanBuilder builder) {
+    public Slice<Post> findPostsByOneSelf(String nickname, List<String> tags, String type, String language, String title,
+                                          Pageable pageable, BooleanBuilder builder) {
 
         JPAQuery<Post> query = this.query.select(QPost.post)
                 .from(QPost.post)
@@ -138,6 +138,7 @@ public class PostRepositoryImpl implements PostRepository {
                                         .where(TagsIn(tags))
                                         .groupBy(QPost.post.post_id)
                         ),
+                        LanguageEq(language),
                         NicknameEq(nickname),
                         TypeEq(type),
                         TitleContains(title),

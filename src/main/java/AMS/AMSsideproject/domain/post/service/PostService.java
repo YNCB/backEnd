@@ -3,16 +3,17 @@ package AMS.AMSsideproject.domain.post.service;
 import AMS.AMSsideproject.domain.post.Post;
 import AMS.AMSsideproject.domain.post.QPost;
 import AMS.AMSsideproject.domain.post.repository.PostRepository;
-import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutAllUserPost;
-import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutOneSelfPost;
-import AMS.AMSsideproject.domain.post.repository.form.SearchFormAboutOtherUser;
+import AMS.AMSsideproject.web.apiController.post.requestForm.SearchFormAboutAllUserPost;
+import AMS.AMSsideproject.domain.post.service.form.NoOffsetPage;
+import AMS.AMSsideproject.domain.post.service.form.SearchFormOneSelf;
+import AMS.AMSsideproject.domain.post.service.form.SearchFormOtherUser;
 import AMS.AMSsideproject.domain.tag.Tag.Tag;
 import AMS.AMSsideproject.domain.tag.Tag.service.TagService;
 import AMS.AMSsideproject.domain.tag.postTag.PostTag;
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
-import AMS.AMSsideproject.web.apiController.post.requestDto.PostEditForm;
-import AMS.AMSsideproject.web.apiController.post.requestDto.PostSaveForm;
+import AMS.AMSsideproject.web.apiController.post.requestForm.PostEditForm;
+import AMS.AMSsideproject.web.apiController.post.requestForm.PostSaveForm;
 import com.querydsl.core.BooleanBuilder;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -60,135 +61,33 @@ public class PostService {
     //전체 유저 게시물에 대한 게시물 조회
     public Slice<Post> findPostsAboutAllUser(SearchFormAboutAllUserPost searchForm) {
 
-        BooleanBuilder builder = new BooleanBuilder();
-        // 페이징, 정렬 기준 세팅하기
-        Pageable pageable = null;
-        if(StringUtils.hasText(searchForm.getOrderKey())) {
+        NoOffsetPage noOffsetPage = NoOffsetPageNation(searchForm.getOrderKey(), searchForm.getLastPostId(),
+                searchForm.getLastLikeNum(), searchForm.getLastReplyNum());
 
-            List<Sort.Order> orders = new ArrayList<>();
-            //동적쿼리 where 문 생성
-            if(searchForm.getOrderKey().equals("latest")) { //최신순
-                orders.add(Sort.Order.desc("redate"));
-                if(searchForm.getLastPostId() != null) {
-                    builder.and(QPost.post.post_id.lt(searchForm.getLastPostId()));
-                }
-            }else if(searchForm.getOrderKey().equals("oldest")){ //오래된순
-                orders.add(Sort.Order.asc("redate"));
-                if(searchForm.getLastPostId() !=null) {
-                    builder.and(QPost.post.post_id.gt(searchForm.getLastPostId()));
-                }
-            }
-            else if(searchForm.getOrderKey().equals("likeNum")) { //좋아요순
-                orders.add(Sort.Order.desc(searchForm.getOrderKey()));
-                if(searchForm.getLastLikeNum()!=null && searchForm.getLastPostId()!=null) {
-                    builder.and(QPost.post.likeNum.eq(searchForm.getLastLikeNum()).and(QPost.post.post_id.gt(searchForm.getLastPostId())));
-                    builder.or(QPost.post.likeNum.lt(searchForm.getLastLikeNum()));
-                }
-            }
-            else if(searchForm.getOrderKey().equals("replyNum")) { //댓글순
-                orders.add(Sort.Order.desc(searchForm.getOrderKey()));
-                if(searchForm.getLastReplyNum()!=null && searchForm.getLastPostId()!=null) {
-                    builder.and(QPost.post.replyNum.eq(searchForm.getLastReplyNum()).and(QPost.post.post_id.gt(searchForm.getLastPostId())));
-                    builder.or(QPost.post.replyNum.lt(searchForm.getLastReplyNum()));
-                }
-            }
-            pageable = PageRequest.of(0, 3, Sort.by(orders)); //10개 씩
-        }else
-            pageable = PageRequest.of(0,3);
-
-        return postRepository.findPostsByAllUser(searchForm.getLanguage(), searchForm.getSearchTitle(), pageable , builder);
+        return postRepository.findPostsByAllUser(searchForm.getLanguage(), searchForm.getSearchTitle(),
+                noOffsetPage.getPageable(), noOffsetPage.getBooleanBuilder());
     }
 
     //특정 유저에 대한 게시물 조회
-    public Slice<Post> findPostsAboutOtherUser(String nickname, SearchFormAboutOtherUser searchForm) {
+    public Slice<Post> findPostsAboutOtherUser(String nickname, SearchFormOtherUser searchForm) {
 
-        BooleanBuilder builder = new BooleanBuilder();
-        // 페이징, 정렬 기준 세팅하기
-        Pageable pageable = null;
-        if(StringUtils.hasText(searchForm.getOrderKey())) {
+        NoOffsetPage noOffsetPage = NoOffsetPageNation(searchForm.getOrderKey(), searchForm.getLastPostId(), searchForm.getLastLikeNum(),
+                searchForm.getLastReplyNum());
 
-            List<Sort.Order> orders = new ArrayList<>();
-            //동적쿼리 where 문 생성
-            if(searchForm.getOrderKey().equals("latest")) { //최신순
-                orders.add(Sort.Order.desc("redate"));
-                if(searchForm.getLastPostId() != null) {
-                    builder.and(QPost.post.post_id.lt(searchForm.getLastPostId()));
-                }
-            }else if(searchForm.getOrderKey().equals("oldest")){ //오래된순
-                orders.add(Sort.Order.asc("redate"));
-                if(searchForm.getLastPostId() !=null) {
-                    builder.and(QPost.post.post_id.gt(searchForm.getLastPostId()));
-                }
-            }
-            else if(searchForm.getOrderKey().equals("likeNum")) { //좋아요순
-                orders.add(Sort.Order.desc(searchForm.getOrderKey()));
-                orders.add(Sort.Order.asc("post_id")); //같은 likeNum에 대해서는 post_id로 오름차순 정렬 기준으로 정의
-                if(searchForm.getLastLikeNum()!=null && searchForm.getLastPostId()!=null) {
-                    builder.and(QPost.post.likeNum.eq(searchForm.getLastLikeNum()).and(QPost.post.post_id.gt(searchForm.getLastPostId())));
-                    builder.or(QPost.post.likeNum.lt(searchForm.getLastLikeNum()));
-                }
-            }
-            else if(searchForm.getOrderKey().equals("replyNum")) { //댓글순
-                orders.add(Sort.Order.desc(searchForm.getOrderKey()));
-                orders.add(Sort.Order.asc("post_id")); //같은 replyNum에 대해서는 post_id로 오름차순 정렬 기준으로 정의
-                if(searchForm.getLastReplyNum()!=null && searchForm.getLastPostId()!=null) {
-                    builder.and(QPost.post.replyNum.eq(searchForm.getLastReplyNum()).and(QPost.post.post_id.gt(searchForm.getLastPostId())));
-                    builder.or(QPost.post.replyNum.lt(searchForm.getLastReplyNum()));
-                }
-            }
-            pageable = PageRequest.of(0, 3, Sort.by(orders)); //10개 씩
-        }else //구조상 이경우는 없음.
-            pageable = PageRequest.of(0,3);
-
-        return postRepository.findPostsByOtherUser(nickname, searchForm.getLanguage(), searchForm.getSearchTitle(), pageable, builder);
+        return postRepository.findPostsByOtherUser(nickname, searchForm.getLanguage(), searchForm.getSearchTitle(),
+                noOffsetPage.getPageable(), noOffsetPage.getBooleanBuilder());
     }
 
     //내페이지에 대한 게시물 조회
-    public Slice<Post> findPostsAboutOneSelf(String nickname, SearchFormAboutOneSelfPost searchForm) {
+    public Slice<Post> findPostsAboutOneSelf(String nickname, SearchFormOneSelf searchForm) {
 
-        BooleanBuilder builder = new BooleanBuilder();
-        // 페이징, 정렬 기준 세팅하기
-        Pageable pageable = null;
-        if(StringUtils.hasText(searchForm.getOrderKey())) {
 
-            List<Sort.Order> orders = new ArrayList<>();
-            //동적쿼리 where 문 생성
-            if(searchForm.getOrderKey().equals("latest")) { //최신순
-                orders.add(Sort.Order.desc("redate"));
-                if(searchForm.getLastPostId() != null) {
-                    builder.and(QPost.post.post_id.lt(searchForm.getLastPostId()));
-                }
-            }else if(searchForm.getOrderKey().equals("oldest")){ //오래된순
-                orders.add(Sort.Order.asc("redate"));
-                if(searchForm.getLastPostId() !=null) {
-                    builder.and(QPost.post.post_id.gt(searchForm.getLastPostId()));
-                }
-            }
-            else if(searchForm.getOrderKey().equals("likeNum")) { //좋아요순
-                orders.add(Sort.Order.desc(searchForm.getOrderKey()));
-                orders.add(Sort.Order.asc("post_id")); //같은 likeNum에 대해서는 post_id로 오름차순 정렬 기준으로 정의
-                if(searchForm.getLastLikeNum()!=null && searchForm.getLastPostId()!=null) {
-                    builder.and(QPost.post.likeNum.eq(searchForm.getLastLikeNum()).and(QPost.post.post_id.gt(searchForm.getLastPostId()))); //같은 개수를 가진 게시물 처리
-                    builder.or(QPost.post.likeNum.lt(searchForm.getLastLikeNum()));
-                }
-            }
-            else if(searchForm.getOrderKey().equals("replyNum")) { //댓글순
-                orders.add(Sort.Order.desc(searchForm.getOrderKey()));
-                orders.add(Sort.Order.asc("post_id")); //같은 replyNum에 대해서는 post_id로 오름차순 정렬 기준으로 정의
-                if(searchForm.getLastReplyNum()!=null && searchForm.getLastPostId()!=null) {
-                    builder.and(QPost.post.replyNum.eq(searchForm.getLastReplyNum()).and(QPost.post.post_id.gt(searchForm.getLastPostId())));
-                    builder.or(QPost.post.replyNum.lt(searchForm.getLastReplyNum()));
-                }
-            }
-            pageable = PageRequest.of(0, 3, Sort.by(orders)); //10개 씩
-        }else //구조상 이경우는 없음.
-            pageable = PageRequest.of(0,3);
+        NoOffsetPage noOffsetPage = NoOffsetPageNation(searchForm.getOrderKey(), searchForm.getLastPostId(), searchForm.getLastLikeNum(),
+                searchForm.getLastReplyNum());
 
-        return postRepository.findPostsByOneSelf(nickname, searchForm.getTags(), searchForm.getType(), searchForm.getSearchTitle(), pageable, builder);
+        return postRepository.findPostsByOneSelf(nickname, searchForm.getTags(), searchForm.getType(), searchForm.getLanguage(),
+                searchForm.getSearchTitle(), noOffsetPage.getPageable(), noOffsetPage.getBooleanBuilder());
     }
-
-
-
 
 
 
@@ -239,10 +138,51 @@ public class PostService {
 //        return findPost;
 //    }
 
+    //무한 스크롤 함수
+    private NoOffsetPage NoOffsetPageNation(String orderKey, Long lastPostId, Long lastLikeNum, Long lastReplyNum) {
 
+        BooleanBuilder builder = new BooleanBuilder();
+        Pageable pageable = null;
 
+        // 페이징, 정렬 기준 세팅하기
+        if(StringUtils.hasText(orderKey)) {
 
+            List<Sort.Order> orders = new ArrayList<>();
+            //동적쿼리 where 문 생성
+            if(orderKey.equals("latest")) { //최신순
+                orders.add(Sort.Order.desc("redate"));
+                if(lastPostId != null) {
+                    builder.and(QPost.post.post_id.lt(lastPostId));
+                }
+            }else if(orderKey.equals("oldest")){ //오래된순
+                orders.add(Sort.Order.asc("redate"));
+                if(lastPostId !=null) {
+                    builder.and(QPost.post.post_id.gt(lastPostId));
+                }
+            }
+            else if(orderKey.equals("likeNum")) { //좋아요순
+                orders.add(Sort.Order.desc(orderKey));
+                orders.add(Sort.Order.asc("post_id")); //같은 likeNum에 대해서는 post_id로 오름차순 정렬 기준으로 정의
+                if(lastLikeNum!=null && lastPostId!=null) {
+                    builder.and(QPost.post.likeNum.eq(lastLikeNum).and(QPost.post.post_id.gt(lastPostId))); //같은 개수를 가진 게시물 처리
+                    builder.or(QPost.post.likeNum.lt(lastLikeNum));
+                }
+            }
+            else if(orderKey.equals("replyNum")) { //댓글순
+                orders.add(Sort.Order.desc(orderKey));
+                orders.add(Sort.Order.asc("post_id")); //같은 replyNum에 대해서는 post_id로 오름차순 정렬 기준으로 정의
+                if(lastReplyNum!=null && lastPostId!=null) {
+                    builder.and(QPost.post.replyNum.eq(lastReplyNum).and(QPost.post.post_id.gt(lastPostId)));
+                    builder.or(QPost.post.replyNum.lt(lastReplyNum));
+                }
+            }
+            pageable = PageRequest.of(0, 3, Sort.by(orders)); //10개 씩
 
+        }else //구조상 이경우는 없음.
+            pageable = PageRequest.of(0,3);
+
+        return new NoOffsetPage(pageable, builder);
+    }
 
     //게시물 수정시 기존태그중 삭제될 태그 찾기
     private List<PostTag> checkDeletePostTags(List<PostTag> oldTags, List<String> newTags) {
