@@ -23,7 +23,7 @@ public class PostListDtoAboutSpecificUser {
     @ApiModelProperty(example = "5")
     private Integer likeNum; //댓글수
     @ApiModelProperty(example = "10")
-    private Long replyNum; //좋아요수
+    private Integer replyNum; //좋아요수
 
     @ApiModelProperty(example = "DFS", notes = "문제 태그들")
     private List<String> tags; //태그들

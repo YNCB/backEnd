@@ -43,8 +43,8 @@ public class SearchFormAboutSpecificUserByLogin {
     private Long lastPostId; //최신순 사용 , 댓글순 사용, 좋아요순 사용
     @ApiModelProperty(example = "3", notes = "무한스크롤 방식을 위한것, 마지막 게시물의 게시물 댓글수 입니다. " +
             "replyNum(댓글많은순)이 해당합니다.")
-    private Long lastReplyNum; //댓글순 사용
+    private Integer lastReplyNum; //댓글순 사용
     @ApiModelProperty(example = "5", notes = "무한스크롤 방식을 위한것, 마지막 게시물의 게시물 좋아요개수 입니다. " +
             "likeNum(좋아요순)이 해당합니다.")
-    private Long lastLikeNum; //좋아요순 사용
+    private Integer lastLikeNum; //좋아요순 사용
 }

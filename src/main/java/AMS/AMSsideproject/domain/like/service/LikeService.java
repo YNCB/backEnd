@@ -4,6 +4,8 @@ import AMS.AMSsideproject.domain.like.Like;
 import AMS.AMSsideproject.domain.like.repository.LikeRepository;
 import AMS.AMSsideproject.domain.post.Post;
 import AMS.AMSsideproject.domain.post.repository.PostRepository;
+import AMS.AMSsideproject.domain.user.User;
+import AMS.AMSsideproject.domain.user.repository.UserRepository;
 import AMS.AMSsideproject.web.responseDto.like.LikeDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,8 @@ public class LikeService {
     private final PostRepository postRepository;
     private final LikeRepository likeRepository;
 
+    private final UserRepository userRepository;
+
     //좋아요 클릭(추가, 삭제) 요청 왔을때 내부적으로 판단해서 해당 "post" "List<Like>"에 추가 삭제 기능
     @Transactional
     public LikeDto like(Long postId, Long userId) {
@@ -37,7 +41,7 @@ public class LikeService {
         boolean check = false;
         Like deleteLike = null;
         for(Like like : likes) {
-            if(like.getUser_id() == userId) {
+            if(like.getUser().getUser_id() == userId) {
                 deleteLike = like;
                 check = true;
                 break;
@@ -48,10 +52,12 @@ public class LikeService {
             findPost.getLikes().remove(deleteLike);
             check = false;
         }else { //추가되야 되는 경우
-            Like createLike = Like.create(findPost, userId);
+            User findUser = userRepository.findByUserId(userId).get(); //움 여기가 조금 ......움....
+
+            Like createLike = Like.create(findPost, findUser);
 
             //findPost.getLikes().add(createLike);
-            findPost.addLike(createLike);
+            findPost.addLike(createLike); //위에 create 에서 이미 양방향 연관관계가 된거 아닌가?!
             check = true;
         }
 
@@ -60,10 +66,14 @@ public class LikeService {
     }
 
 
+
+
+
+
     //게시물 상세조회에서 게시물 좋아요 누른 사용자 인지 판별
     public Boolean checkExisting(Long postId, Long userId) {
 
-        Optional<Like> existing = likeRepository.findLike(postId, userId);
+        Optional<Like> existing = likeRepository.findLikeCheck(postId, userId);
         if(existing.isEmpty())
             return false;
         return true;

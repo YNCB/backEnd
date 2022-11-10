@@ -1,7 +1,8 @@
 package AMS.AMSsideproject.domain.post.repository.query;
 
-import AMS.AMSsideproject.domain.post.Post;
+import AMS.AMSsideproject.domain.like.QLike;
 import AMS.AMSsideproject.domain.post.QPost;
+import AMS.AMSsideproject.domain.post.repository.query.form.LikeDto;
 import AMS.AMSsideproject.domain.tag.Tag.QTag;
 import AMS.AMSsideproject.domain.tag.postTag.QPostTag;
 import AMS.AMSsideproject.domain.user.QUser;
@@ -31,7 +32,7 @@ public class PostRepositoryQueryDto {
     public PostDto findQueryPostDtoByPostId(Long postId) {
 
         PostDto findPostDto = query.select(Projections.constructor(PostDto.class,
-                        QPost.post.title, QUser.user.nickname, QPost.post.redate, QPost.post.likes.size(), QPost.post.language,
+                        QPost.post.title, QUser.user.nickname, QPost.post.redate, QPost.post.likeNum, QPost.post.language,
                         QPost.post.type, QPost.post.level, QPost.post.context, QPost.post.replyNum
                 ))
                 .from(QPost.post)
@@ -40,19 +41,31 @@ public class PostRepositoryQueryDto {
                 .fetchFirst(); //일치하는 게시물은 반드시 한개
 
         findPostDto.setTags(findPostTags(postId)); //tags 초기화!!!
+        findPostDto.setLikes(findLikes(postId)); //likes 초기화!!!
         return findPostDto;
     }
 
-    //단건 조회에서 사용하는 법(게시물 한개)
+    //단건 조회에서 사용하는 법(게시물 한개) - 게시물 태그 검색
     private List<String> findPostTags(Long postId) {
         return query.select(QTag.tag.name)
                 .from(QPostTag.postTag)
                 .join(QPostTag.postTag.tag, QTag.tag)
-                .where(PostIdEqAboutPostTag(postId))
+                .where(postIdEqAboutPostTag(postId))
                 .fetch();
     }
 
-    private BooleanExpression PostIdEqAboutPostTag(Long postId) {
+    //단건 조회(게시물 한개) - 게시물 좋아요 검색
+    private List<LikeDto> findLikes(Long postId) {
+        return query.select(Projections.constructor(LikeDto.class,
+                        QUser.user.user_id, QUser.user.nickname))
+                .from(QLike.like)
+                .join(QLike.like.user, QUser.user)
+                .where(postIdEqAboutLike(postId))
+                .orderBy(QLike.like.redate.desc()) //내림차순 정렬
+                .fetch();
+    }
+
+    private BooleanExpression postIdEqAboutPostTag(Long postId) {
         if(postId==null)
             return null;
         return QPostTag.postTag.post.post_id.eq(postId);
@@ -62,6 +75,12 @@ public class PostRepositoryQueryDto {
         if(postId == null)
             return null;
         return QPost.post.post_id.eq(postId);
+    }
+
+    private BooleanExpression postIdEqAboutLike(Long postId) {
+        if(postId ==null)
+            return null;
+        return QLike.like.post.post_id.eq(postId);
     }
 
     //게시물 수정 조회에 대해서 Dto로 성능 튜닝

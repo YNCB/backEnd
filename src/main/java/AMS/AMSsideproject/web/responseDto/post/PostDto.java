@@ -1,6 +1,7 @@
 package AMS.AMSsideproject.web.responseDto.post;
 
 import AMS.AMSsideproject.domain.post.Post;
+import AMS.AMSsideproject.domain.post.repository.query.form.LikeDto;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -40,13 +41,16 @@ public class PostDto {
 
 
     @ApiModelProperty(example = "10")
-    private Long replyNum; //댓글수
+    private Integer replyNum; //댓글수
 
     @ApiModelProperty(example = "DFS", notes = "문제 태그들")
     private List<String> tags; //태그들
 
+    //!!!!!!!!!!!!!!!!!!!!
+    private List<LikeDto> likes; //좋아요들
 
-    public PostDto(String title, String nickname, LocalDateTime redate, Integer likeNum, String language, String type, Integer level, String context, Long replyNum) {
+
+    public PostDto(String title, String nickname, LocalDateTime redate, Integer likeNum, String language, String type, Integer level, String context, Integer replyNum) {
         this.title = title;
         //this.user_id = user_id;
         this.nickname = nickname;

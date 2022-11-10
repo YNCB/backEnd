@@ -40,7 +40,7 @@ public class LikeDtoRepository {
                 .where(postIdEq(posId))
                 .join(QLike.like.post, QPost.post)
 
-                .join(QUser.user).on(QLike.like.user_id.eq(QUser.user.user_id))
+                .join(QUser.user).on(QLike.like.user.user_id.eq(QUser.user.user_id))
                 //이거 "객체 연결 테이블"표시 안하고 그냥 임의로 "컬럼명"으로 내가 조인해서 사용해도 좋나?!!!!!!!!!!!!!!!!!!
                 .fetch();
 

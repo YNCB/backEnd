@@ -1,6 +1,7 @@
 package AMS.AMSsideproject.domain.like;
 
 import AMS.AMSsideproject.domain.post.Post;
+import AMS.AMSsideproject.domain.user.User;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -15,7 +16,9 @@ public class Like {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long like_id;
 
-    private Long user_id; //좋아요 누른 사용자 아이디
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user; //좋아요 누른 사용자 아이디
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
@@ -24,18 +27,14 @@ public class Like {
     private LocalDateTime redate; //좋아요 누른 시간
 
 
-
-
-
-
     public void setPost(Post post) {
         this.post = post;
     }
 
-    public static Like create(Post post, Long userId) {
+    public static Like create(Post post, User user) {
         Like like = new Like();
         like.post = post;
-        like.user_id = userId;
+        like.user = user;
         like.redate = LocalDateTime.now();
         return like;
     }

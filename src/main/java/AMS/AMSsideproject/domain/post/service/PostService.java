@@ -93,8 +93,6 @@ public class PostService {
 
 
 
-
-
     //게시물 수정(업데이트) - "지연감지 사용!" -> 근데 쿼리문이 너무 많이 나가는데.. 이건 어쩔수 없지 않나?!
     @Transactional
     public void updatePost(Long postId, PostEditForm postEditForm) {
@@ -139,7 +137,7 @@ public class PostService {
 //    }
 
     //무한 스크롤 함수
-    private NoOffsetPage NoOffsetPageNation(String orderKey, Long lastPostId, Long lastLikeNum, Long lastReplyNum) {
+    private NoOffsetPage NoOffsetPageNation(String orderKey, Long lastPostId, Integer lastLikeNum, Integer lastReplyNum) {
 
         BooleanBuilder builder = new BooleanBuilder();
         Pageable pageable = null;

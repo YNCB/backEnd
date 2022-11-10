@@ -2,6 +2,8 @@ package AMS.AMSsideproject.domain.like.repository;
 
 import AMS.AMSsideproject.domain.like.Like;
 import AMS.AMSsideproject.domain.like.QLike;
+import AMS.AMSsideproject.domain.post.QPost;
+import AMS.AMSsideproject.domain.user.QUser;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +26,7 @@ public class LikeRepository {
     }
 
     //게시물 아이디, 회원 아이디 요청했을때 좋아요 누른 유무 판별
-    public Optional<Like> findLike(Long postId, Long userId) {
+    public Optional<Like> findLikeCheck(Long postId, Long userId) {
         Like like = query.select(QLike.like)
                 .from(QLike.like)
                 .where(
@@ -35,6 +37,20 @@ public class LikeRepository {
         return Optional.ofNullable(like);
     }
 
+    //게시물 아이디, 회원 아이디 요청했을때 좋아요 리스트 반환
+//    public List<Like> findLikes(Long postId, Long userId) {
+//        List<Like> likes = query.select(QLike.like)
+//                .from(QLike.like)
+//                .join(QLike.like.user, QUser.user)
+//                .join(QLike.like.post, QPost.post)
+//                .where(
+//                        postIdEq(postId),
+//                        userIdEq(userId))
+//                .fetch();
+//
+//        return likes;
+//    }
+
     private BooleanExpression postIdEq(Long postId) {
         if(Objects.isNull(postId))
             return null;
@@ -44,7 +60,7 @@ public class LikeRepository {
     private BooleanExpression userIdEq(Long userId) {
         if(Objects.isNull(userId))
             return null;
-        return QLike.like.user_id.eq(userId);
+        return QLike.like.user.user_id.eq(userId);
     }
 
 

@@ -2,6 +2,7 @@ package AMS.AMSsideproject.web.apiController.post;
 
 import AMS.AMSsideproject.domain.like.service.LikeService;
 import AMS.AMSsideproject.domain.post.Post;
+import AMS.AMSsideproject.domain.post.repository.query.form.LikeDto;
 import AMS.AMSsideproject.web.apiController.post.requestForm.SearchFormAboutAllUserPost;
 import AMS.AMSsideproject.web.apiController.post.requestForm.SearchFormAboutSpecificUserByLogin;
 import AMS.AMSsideproject.web.apiController.post.requestForm.SearchFormAboutSpecificUserByNonLogin;
@@ -133,12 +134,11 @@ public class PostController {
                                                    @RequestBody SearchFormAboutSpecificUserByLogin form,
                                                    HttpServletRequest request) {
 
-
         Slice<Post> findPosts = null;
         Boolean verity = (Boolean)request.getAttribute("verity");
         if(verity == true) { //내 페이지에 접속한 경우
             SearchFormOneSelf searchFormOneSelf = new SearchFormOneSelf(form.getTags(), form.getType(), form.getLanguage(), form.getSearchTitle()
-                    , form.getOrderKey(), form.getLastPostId(), form.getLastPostId(), form.getLastLikeNum());
+                    , form.getOrderKey(), form.getLastPostId(), form.getLastReplyNum(), form.getLastLikeNum());
 
             findPosts = postService.findPostsAboutOneSelf(nickname, searchFormOneSelf);
 
@@ -161,14 +161,7 @@ public class PostController {
 
     // 게시물 상세조회(로그인, 비로그인)
     /**
-     * 1. 게시물 조회할때 uri 에 "postId" 로 해서 바로 사용하는 게 좋을까?! : 정보가 노출되면 좋지 않은뎅...
-     * 2. api 에는 게시물 제목이 있고 json 으로 추가로 "postId"를 요청 받을까?!움....
-     *
-     * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-     * 1.로그인한 경우에 대한 처리에서 게시물을 찾고 "post" 의 "likes" 프록시를 초기화 하고 나서 "likes" 배열에 대해서 누른지 확인하는 방법
-     *   -> 근데 이것도 프록시 초기화에서 결국 쿼리 2개 아니야?!!!!!!!!!!!!!!
-     *
-     * 2.기존 방식으로 하면 쿼리문 2개 아니야?!!!!!!!!!!!!!
+     * - 게시물 조회할때 uri 에 "postId" 로 해서 바로 사용하는 게 좋을까?! : 정보가 노출되면 좋지 않은데.....
      */
     @ApiOperation(value = "비로그인 사용자 - 게시물 상세조회 api", notes = "게시물의 상세 정보를 보여줍니다.")
     @GetMapping(value = "/{nickname}/{postId}")
@@ -196,18 +189,33 @@ public class PostController {
                                           @RequestHeader(JwtProperties.HEADER_STRING)String accessToken) {
 
         Long findUserId = jwtProvider.getUserIdToToken(accessToken);
-        Boolean existing = likeService.checkExisting(postId, findUserId);
+
+        //굳이 쿼리문을 하나더 생성할 필요가 없지!!!!!!!!!!!!!
+        //Boolean existing = likeService.checkExisting(postId, findUserId);
 
         //최적화 Dto 버전 사용
         PostDto findPostDto = postRepositoryQueryDto.findQueryPostDtoByPostId(postId);
+
+        Boolean existing = checkLikeExisting(findPostDto, findUserId);
         LoginPostDto loginPostDto = LoginPostDto.create(findPostDto, existing);
         return new DataResponse<>("200", "문제 상제 조회 결과입니다.", loginPostDto);
+    }
+    //굳이 postService 에 정의할필요없다고 생각해서!
+    private Boolean checkLikeExisting(PostDto postDto, Long userId) {
+        List<LikeDto> likes = postDto.getLikes();
+        for(LikeDto likeDto : likes) {
+            if(likeDto.user_id==userId){
+                return true;
+            }
+        }
+        return false;
     }
 
 
 
+
     /**
-     * "nickname" 패스는 빼기!! -> 그럼 인터셉터도 필요 x , 토큰만으로 판별
+     * "nickname" 패스는 빼면 -> 그럼 인터셉터도 사용안함 , 토큰으로만 판별(토큰에서 사용자 정보를 추출해서 누가쓰는지 알아냄!)
      */
     // uri 를 nickname 를 둘필요가 있나?!???????????????????????????????????????????????
     //- 또한 "context" 부분이 "마크업"으로 되야된다.!!! -> DB는 TEXT 형인데 TEXT 자료형 크기만큼 어떻게 받게 하지??!
@@ -231,6 +239,8 @@ public class PostController {
         Post savaPost = postService.registration(userId, form);
         return new BaseResponse("200", "게시물이 저장되었습니다.");
     }
+
+
 
     //게시물 수정 form
     //이어지는 고민인 "게시물 PK"를 path 에 두는게 좋은건가!??

@@ -49,6 +49,8 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             if(!StringUtils.hasText(token))  //토큰이 없는 경우
                 throw new Exception();
 
+            System.out.println("11111111111111111111111111111111111111111111111111111111" +
+                    "");
             //JWT 토큰 만료기간 검증
             jwtProvider.validTokenExpired(token);
 
@@ -56,6 +58,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             if(!jwtProvider.validTokenHeaderUser(token))  //jwt 토큰안에 지정한 keyset 이 없는경우 - jwt토큰이 위조된 경우
                 throw new Exception();
 
+            System.out.println("222222222222222222222222222222222222222222222222222");
 
             /**
              * 권한을 그냥 "USER" 체크 할까?? -> 그럼 spring security context 안에 넣어서 스프링 시큐리티에게 권한처리 위임하면 되는데....

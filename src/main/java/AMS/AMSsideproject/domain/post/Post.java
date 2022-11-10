@@ -43,12 +43,13 @@ public class Post {
             cascade = CascadeType.ALL,
             orphanRemoval = true)
     private List<Like> likes = new ArrayList<>(); //좋아요들
+
     @Column(name = "like_num")
-    private Integer likeNum; //좋아요 총개수
+    private Integer likeNum; //좋아요 총 개수
 
 
     @Column(name = "reply_num")
-    private Long replyNum; //댓글 개수
+    private Integer replyNum; //댓글 개수
 
     //양방향 연관관계
     @OneToMany(
@@ -89,7 +90,7 @@ public class Post {
         post.level = postSaveForm.getLevel();
 
         post.likeNum =0;
-        post.replyNum =0L;
+        post.replyNum =0;
         post.redate = LocalDateTime.now();
         return post;
     }
