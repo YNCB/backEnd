@@ -16,8 +16,11 @@ public class UserLoginDto {
     private Long user_Id;
     @ApiModelProperty(example = "test")
     private String nickname;
+
     @ApiModelProperty(example = "xxxxxx")
     private String accessToken;
     @ApiModelProperty(example = "xxxxxx")
     private String refreshToken;
+    @ApiModelProperty(example = "xxxxxx")
+    private String my_session;
 }

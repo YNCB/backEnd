@@ -4,6 +4,8 @@ import AMS.AMSsideproject.domain.like.Like;
 import AMS.AMSsideproject.domain.like.QLike;
 import AMS.AMSsideproject.domain.post.QPost;
 import AMS.AMSsideproject.domain.user.QUser;
+import AMS.AMSsideproject.web.responseDto.like.LikesDto;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,14 +35,16 @@ public class LikeDtoRepository {
      * 이거 "객체 연결 테이블"표시 안하고 그냥 임의로 "컬럼명"으로 내가 조인해서 사용해도 좋나?!!!!!!!!!!!!!!!!!!
      */
     //게시물 좋아요 리스트 검색(Dto로 성능 향상)
-    public List<String> findLikes(Long posId) {
+    public List<LikesDto> findLikes(Long postId) {
 
-        List<String> nicknames = query.select(QUser.user.nickname)
+        List<LikesDto> nicknames = query.select(Projections.constructor(LikesDto.class,
+                        QUser.user.user_id, QUser.user.nickname))
                 .from(QLike.like)
-                .where(postIdEq(posId))
+                .where(postIdEq(postId))
                 .join(QLike.like.post, QPost.post)
 
-                .join(QUser.user).on(QLike.like.user.user_id.eq(QUser.user.user_id))
+                .join(QLike.like.user, QUser.user)
+                //.join(QUser.user).on(QLike.like.user.user_id.eq(QUser.user.user_id))
                 //이거 "객체 연결 테이블"표시 안하고 그냥 임의로 "컬럼명"으로 내가 조인해서 사용해도 좋나?!!!!!!!!!!!!!!!!!!
                 .fetch();
 
@@ -52,4 +56,5 @@ public class LikeDtoRepository {
             return null;
         return QLike.like.post.post_id.eq(postId);
     }
+
 }

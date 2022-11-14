@@ -37,6 +37,7 @@ public class SecurityConfig {
                 .antMatchers("/codebox/join*", "/codebox/join/mailConfirm", "/codebox/join/validNickName") //회원가입 관련
                 .antMatchers("/codebox/refreshToken") //리프레쉬 토큰 관련
                 .antMatchers(HttpMethod.GET,"/codebox/", "/codebox/*", "/codebox/*/{postId:[\\d+]}") //게시물 관련!!!!!!!!!!!!!!!!!!!!정규식 표현
+                .antMatchers(HttpMethod.GET, "/codebox/*/*/like")
 
                 .antMatchers("/swagger-ui.html/**", "/swagger/**", "/v2/api-docs", "/swagger-resources/**", "/webjars/**")
                 .antMatchers("/v3/api-docs/**", "/swagger-ui/**")

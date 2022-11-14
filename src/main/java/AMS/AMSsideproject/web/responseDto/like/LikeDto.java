@@ -15,4 +15,5 @@ public class LikeDto {
     private boolean existing;
     @ApiModelProperty(example = "4", notes = "게시물 좋아요 개수")
     private Integer num;
+
 }

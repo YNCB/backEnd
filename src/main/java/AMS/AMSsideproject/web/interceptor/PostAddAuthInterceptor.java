@@ -42,7 +42,7 @@ public class PostAddAuthInterceptor implements HandlerInterceptor {
         }
 
         //엑세스 토큰 가져옴
-        String accessToken = request.getHeader(JwtProperties.HEADER_STRING);
+        String accessToken = request.getHeader(JwtProperties.ACCESS_HEADER_STRING);
 
         //토큰에서 사용자 고유 아이디 추츨
         String findNickName = jwtProvider.getNickNameToToken(accessToken);

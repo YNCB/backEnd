@@ -30,8 +30,10 @@ public class LikeService {
     @Transactional
     public LikeDto like(Long postId, Long userId) {
 
-        //1. 프록시 초기화 방법이 빠르나
-        //2. 그냥 쿼리문 으로 하는게 빠르나...움
+        /**!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+         * 1. post 쿼리1, post.likes 프록시 쿼리 1~x, ((추가 쿼리1 + user 쿼리1) or 삭제 쿼리 1) -> "양방향"
+         * 2. post 쿼리1, user 쿼리1, like 판단 쿼리1, (추가 쿼리1 or 삭제 쿼리1) -> "단방향"
+         */
 
         Post findPost = postRepository.findPostByPostId(postId);
         //여기서 프록시 초기화 되면서 게시물에 있는 좋아요 객체들을 하나의 쿼리로 가져옴
@@ -69,7 +71,7 @@ public class LikeService {
 
 
 
-
+    //!!!!!!!!!!!!!!!이곤 모징!!!!!!!!!!!!!!
     //게시물 상세조회에서 게시물 좋아요 누른 사용자 인지 판별
     public Boolean checkExisting(Long postId, Long userId) {
 

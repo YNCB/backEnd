@@ -8,7 +8,8 @@ public interface JwtProperties {
     public String SECRET = "CODEBOX-sideProject";
     public int ACCESSTOKEN_TIME = 10000000; // (1/1000초)
     public int REFRESHTOKEN_TIME = 3000000;
-    public String HEADER_STRING = "accessToken";
+    public String ACCESS_HEADER_STRING = "accessToken";
     public String REFRESH_HEADER_STRING = "refreshToken";
+    public String MYSESSION_HEADER_STRING = "my_session";
 
 }

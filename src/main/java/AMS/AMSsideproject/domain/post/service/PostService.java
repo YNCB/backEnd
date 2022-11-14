@@ -3,17 +3,13 @@ package AMS.AMSsideproject.domain.post.service;
 import AMS.AMSsideproject.domain.post.Post;
 import AMS.AMSsideproject.domain.post.QPost;
 import AMS.AMSsideproject.domain.post.repository.PostRepository;
-import AMS.AMSsideproject.web.apiController.post.requestForm.SearchFormAboutAllUserPost;
+import AMS.AMSsideproject.web.apiController.post.requestForm.*;
 import AMS.AMSsideproject.domain.post.service.form.NoOffsetPage;
-import AMS.AMSsideproject.domain.post.service.form.SearchFormOneSelf;
-import AMS.AMSsideproject.domain.post.service.form.SearchFormOtherUser;
 import AMS.AMSsideproject.domain.tag.Tag.Tag;
 import AMS.AMSsideproject.domain.tag.Tag.service.TagService;
 import AMS.AMSsideproject.domain.tag.postTag.PostTag;
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
-import AMS.AMSsideproject.web.apiController.post.requestForm.PostEditForm;
-import AMS.AMSsideproject.web.apiController.post.requestForm.PostSaveForm;
 import com.querydsl.core.BooleanBuilder;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -68,8 +64,8 @@ public class PostService {
                 noOffsetPage.getPageable(), noOffsetPage.getBooleanBuilder());
     }
 
-    //특정 유저에 대한 게시물 조회
-    public Slice<Post> findPostsAboutOtherUser(String nickname, SearchFormOtherUser searchForm) {
+    //다른 유저에 대한 게시물 조회
+    public Slice<Post> findPostsAboutOtherUser(String nickname, SearchFormAboutOtherUserPost searchForm) {
 
         NoOffsetPage noOffsetPage = NoOffsetPageNation(searchForm.getOrderKey(), searchForm.getLastPostId(), searchForm.getLastLikeNum(),
                 searchForm.getLastReplyNum());
@@ -79,8 +75,7 @@ public class PostService {
     }
 
     //내페이지에 대한 게시물 조회
-    public Slice<Post> findPostsAboutOneSelf(String nickname, SearchFormOneSelf searchForm) {
-
+    public Slice<Post> findPostsAboutOneSelf(String nickname, SearchFormAboutSelfUserPost searchForm) {
 
         NoOffsetPage noOffsetPage = NoOffsetPageNation(searchForm.getOrderKey(), searchForm.getLastPostId(), searchForm.getLastLikeNum(),
                 searchForm.getLastReplyNum());

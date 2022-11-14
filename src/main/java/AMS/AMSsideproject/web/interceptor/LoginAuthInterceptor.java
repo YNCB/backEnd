@@ -48,8 +48,10 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
             //JWT 토큰 만료기간 검증
             jwtProvider.validTokenExpired(token);
 
-            //JWT 토큰 값이 정상적인 검증
-            if(!jwtProvider.validTokenHeaderUser(token))  //jwt 토큰안에 지정한 keyset 이 없는경우 - jwt토큰이 위조된 경우
+            /**
+             * refreshToken이 탈취당하였을때 refreshToken을 accessToken인척 사용할수 있기 때문에 구분해주기 위해서!!!
+             */
+            if(!jwtProvider.validTokenHeaderUser(token))
                 throw new Exception();
 
             return true;

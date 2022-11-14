@@ -45,6 +45,7 @@ public class UserLoginSuccessCustomHandler implements AuthenticationSuccessHandl
                 .nickname(LoginUser.getNickname())
                 .accessToken(jwtToken.getAccessToken())
                 .refreshToken(jwtToken.getRefreshToken())
+                .my_session(jwtToken.getMy_session())
                 .build();
 
         DataResponse dataResponse = new DataResponse("200", "로그인을 성공하였습니다. 토큰이 발급되었습니다.", userLoginDto);

@@ -59,6 +59,7 @@ public class Post {
             orphanRemoval = true)
     private List<PostTag> postTagList = new ArrayList<>();
 
+
     //양방향 연관관계 메서드
     public void addPostTag(PostTag postTag) {
         postTag.setPost(this);
@@ -74,7 +75,6 @@ public class Post {
     public void setLikeNum(){
         this.likeNum = this.likes.size();
     }
-
 
     //생성 메서드
     public static Post createPost(User user, PostSaveForm postSaveForm) {

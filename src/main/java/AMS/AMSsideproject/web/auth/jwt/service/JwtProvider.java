@@ -23,10 +23,9 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class JwtProvider {
 
-    //access token, refresh token 생성
+    //access token, refresh token, my_session 생성
     public JwtToken createJwtToken(Long user_id, String nickname ,String role) {
-
-        //여기다 권한을 넣을야되나?!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 스프링 시큐리티에게 권한 체크를 위임하지 않을거니깐!!!!
+        //엑세스 토큰
         String accessToken = JWT.create()
                 .withSubject(String.valueOf(user_id))
                 .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.ACCESSTOKEN_TIME))
@@ -35,16 +34,22 @@ public class JwtProvider {
                 .withClaim("role", role)
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
 
+        //리프레시 토큰
         String refreshToken = JWT.create()
-                .withSubject(String.valueOf(user_id))
+                .withSubject(String.valueOf(user_id) + "_refresh")
                 .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.REFRESHTOKEN_TIME))
                 .withClaim("userId", user_id)
-                .withClaim("nickName", nickname)
-                .withClaim("role", role)
+//                .withClaim("nickName", nickname)
+//                .withClaim("role", role)
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
 
+        //마이페이지 토큰 -> 나의 페이지에 접속할때 사용되는 토큰!!!!!!!!(나의 페이지와 다른 유저 페이지가 기능이 달라 구분되어야 되기때문에)
+        String my_session = JWT.create()
+                .withSubject(String.valueOf(user_id) + "_mySession")
+                .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.ACCESSTOKEN_TIME))
+                .sign(Algorithm.HMAC512(JwtProperties.SECRET));
 
-        return new JwtToken(accessToken, refreshToken);
+        return new JwtToken(accessToken, refreshToken, my_session);
     }
 
     //access token 만 생성 -> refresh 토큰 요청이 왔을때
@@ -57,7 +62,13 @@ public class JwtProvider {
                 .withClaim("nickName", nickname)
                 .withClaim("role", role)
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
-
+    }
+    //my_session token 만 생성 -> refresh 토큰 요청이 왔을때
+    public String createMySessionToken(Long user_id) {
+        return JWT.create()
+                .withSubject(String.valueOf(user_id) + "_mySession")
+                .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.ACCESSTOKEN_TIME))
+                .sign(Algorithm.HMAC512(JwtProperties.SECRET));
     }
 
 
@@ -77,7 +88,7 @@ public class JwtProvider {
     //JWT 엑세스 토큰이 헤더에 있는지 검증
     public String validAccessTokenHeader(HttpServletRequest request) {
 
-        String token = request.getHeader(JwtProperties.HEADER_STRING);
+        String token = request.getHeader(JwtProperties.ACCESS_HEADER_STRING);
 
         if(!StringUtils.hasText(token)) //토큰이 없는 경우
             return null;

@@ -9,7 +9,9 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LikeNickNamesDto {
+public class LikesDto {
 
-    private List<String> nicknames;
+    private Long userId;
+    private String nickname;
+
 }

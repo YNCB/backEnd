@@ -8,7 +8,7 @@ import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
 import AMS.AMSsideproject.web.response.BaseResponse;
 import AMS.AMSsideproject.web.response.DataResponse;
 import AMS.AMSsideproject.web.responseDto.like.LikeDto;
-import AMS.AMSsideproject.web.responseDto.like.LikeNickNamesDto;
+import AMS.AMSsideproject.web.responseDto.like.LikesDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -35,9 +35,8 @@ public class LikeController {
      *    ->이거는 JWT토큰으로 user 정보 빼서 "like"테이블에서 "post_id", "user정보" 를 가지고 눌렸는지 판별해서 response에 여부 추가해주기
      * 3. api를 "/nickname/postId"로 그냥 post가 낫지않나?!
      */
-
-    //게시물 좋아요 , 삭제
-    //좋아요는 로그인 해야지 가능!
+    //게시물 좋아요 ,삭제
+    //좋아요는 로그인 해야지 가능
     @PostMapping("/{nickname}/{postId}/like")
     @ApiOperation(value = "게시물 좋아요 api", notes = "게시물 좋아요 추가, 삭제를 합니다.")
     @ApiResponses({
@@ -47,7 +46,7 @@ public class LikeController {
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     public DataResponse<LikeDto> like(@PathVariable("nickname")String nickname, @PathVariable("postId")Long postId,
-                                          @RequestHeader(JwtProperties.HEADER_STRING)String accessToken ) {
+                                          @RequestHeader(JwtProperties.ACCESS_HEADER_STRING)String accessToken ) {
 
         Long findUserId = jwtProvider.getUserIdToToken(accessToken);
         LikeDto likeDto = likeService.like(postId, findUserId);
@@ -60,19 +59,18 @@ public class LikeController {
     }
 
 
-
-
     //게시물 좋아요 리스트 보기
-    // 좋아요 리스트 보는거는 로그인 해야되나?!!!!!!!!!!!!!!!!!!!!??????????????
+    /**
+     * 일단은 좋아요 리스트 보는거는 로그인하지 않아도 가능하게 구현.
+     */
     @GetMapping("/{nickname}/{postId}/like")
-    public DataResponse likeList(@PathVariable("nickname") String nickname, @PathVariable("postId") Long postId
-                                 ) {
+    public DataResponse likeList(@PathVariable("nickname") String nickname, @PathVariable("postId") Long postId) {
         /**
          * 1. 프록시 초기화 하는거는 쿼리문 2개?!
          * 2. 그냥 바로 sql문으로 쿼리문 1개?!
          */
-        List<String> likes = likeDtoRepository.findLikes(postId);
-        return new DataResponse("200", "게시물 좋아요 닉네임 리스트 입니다.", new LikeNickNamesDto(likes));
+        List<LikesDto> likes = likeDtoRepository.findLikes(postId);
+        return new DataResponse("200", "게시물 좋아요 닉네임 리스트 입니다.", likes);
     }
 
 }

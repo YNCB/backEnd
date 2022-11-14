@@ -30,7 +30,7 @@ public class RefreshTokenController {
     })
     public DataResponse<JwtToken> recreateToken(@RequestHeader(JwtProperties.REFRESH_HEADER_STRING) String refreshToken) {
 
-        //리프레시토큰 검증을 인터셉터에서 다 받았기 때문에 해당 컨트롤러가 호룰되는 것은 엑세스 토큰을 재발급 받아야되는 경우뿐이다!
+        //리프레시토큰 검증을 인터셉터에서 다 받았기 때문에 해당 컨트롤러가 호출되는 것은 accessToken 만 재발급 받아야되는 경우뿐이다!!!
         JwtToken jwtToken = jwtService.recreateTokenUsingTokenInfo(refreshToken);
 
         return new DataResponse<>("200", "토큰이 재발급되었습니다.",jwtToken);

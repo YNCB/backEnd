@@ -3,13 +3,13 @@ package AMS.AMSsideproject.domain.post.service;
 import AMS.AMSsideproject.domain.post.Post;
 import AMS.AMSsideproject.domain.post.repository.PostRepository;
 import AMS.AMSsideproject.web.apiController.post.requestForm.SearchFormAboutAllUserPost;
-import AMS.AMSsideproject.domain.post.service.form.SearchFormOtherUser;
 import AMS.AMSsideproject.domain.tag.Tag.Tag;
 import AMS.AMSsideproject.domain.tag.Tag.repository.TagRepository;
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
 import AMS.AMSsideproject.web.apiController.post.requestForm.PostEditForm;
 import AMS.AMSsideproject.web.apiController.post.requestForm.PostSaveForm;
+import AMS.AMSsideproject.web.apiController.post.requestForm.SearchFormAboutOtherUserPost;
 import AMS.AMSsideproject.web.apiController.user.requestDto.UserJoinForm2;
 import AMS.AMSsideproject.web.responseDto.post.PostListDtoAboutAllUser;
 import AMS.AMSsideproject.web.test.DatabaseCleanup;
@@ -177,7 +177,7 @@ class PostServiceTest {
     public void 모든유저게시물에대해서필터링조회좋아요순정렬무한스크롤중간페이지() throws Exception {
 
         //when
-        SearchFormAboutAllUserPost form = new SearchFormAboutAllUserPost("Java", "koo", "likeNum", 6L, null,6L);
+        SearchFormAboutAllUserPost form = new SearchFormAboutAllUserPost("Java", "koo", "likeNum", 6L, null,6);
         Slice<Post> findPosts = postService.findPostsAboutAllUser(form);
 
         //then
@@ -193,7 +193,7 @@ class PostServiceTest {
     public void 모든유저게시물에대해서필터링조회좋아요순정렬무한스크롤마지막페이지() throws Exception {
 
         //when
-        SearchFormAboutAllUserPost form = new SearchFormAboutAllUserPost("Java", "koo", "likeNum", 2L, null,3L);
+        SearchFormAboutAllUserPost form = new SearchFormAboutAllUserPost("Java", "koo", "likeNum", 2L, null,3);
         Slice<Post> findPosts = postService.findPostsAboutAllUser(form);
 
         //then
@@ -210,7 +210,7 @@ class PostServiceTest {
         //given
         List<String> list = new ArrayList<>();
         list.add("DFS"); list.add("FFS");
-        SearchFormOtherUser form = SearchFormOtherUser.builder()
+        SearchFormAboutOtherUserPost form = SearchFormAboutOtherUserPost.builder()
                 //.tags(list)
                 //.type("see")
                 .language("Java")
@@ -240,7 +240,7 @@ class PostServiceTest {
         //given
         List<String> list = new ArrayList<>();
         list.add("FFS"); //list.add("DFS");
-        SearchFormOtherUser form = SearchFormOtherUser.builder()
+        SearchFormAboutOtherUserPost form = SearchFormAboutOtherUserPost.builder()
                 //.tags(list)
                 //.type("see")
                 .language("Java")

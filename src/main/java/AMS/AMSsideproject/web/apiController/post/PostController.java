@@ -3,20 +3,13 @@ package AMS.AMSsideproject.web.apiController.post;
 import AMS.AMSsideproject.domain.like.service.LikeService;
 import AMS.AMSsideproject.domain.post.Post;
 import AMS.AMSsideproject.domain.post.repository.query.form.LikeDto;
-import AMS.AMSsideproject.web.apiController.post.requestForm.SearchFormAboutAllUserPost;
-import AMS.AMSsideproject.web.apiController.post.requestForm.SearchFormAboutSpecificUserByLogin;
-import AMS.AMSsideproject.web.apiController.post.requestForm.SearchFormAboutSpecificUserByNonLogin;
+import AMS.AMSsideproject.web.apiController.post.requestForm.*;
 import AMS.AMSsideproject.domain.post.repository.query.PostRepositoryQueryDto;
 import AMS.AMSsideproject.domain.post.service.PostService;
-import AMS.AMSsideproject.domain.post.service.form.SearchFormOneSelf;
-import AMS.AMSsideproject.domain.post.service.form.SearchFormOtherUser;
-import AMS.AMSsideproject.web.apiController.post.requestForm.PostEditForm;
-import AMS.AMSsideproject.web.apiController.post.requestForm.PostSaveForm;
 import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
 import AMS.AMSsideproject.web.custom.annotation.AddAuthRequired;
 import AMS.AMSsideproject.web.custom.annotation.LoginAuthRequired;
-import AMS.AMSsideproject.web.custom.annotation.VerityUserType;
 import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
 import AMS.AMSsideproject.web.response.BaseResponse;
 import AMS.AMSsideproject.web.response.DataResponse;
@@ -33,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -68,7 +60,7 @@ public class PostController {
         PostListResponse postListResponse = new PostListResponse(findPostDtos, result.getNumberOfElements(), result.hasNext());
         return new DataResponse<>("200", "모든 사용자들의 게시물 리스트 결과입니다.", postListResponse);
     }
-    @GetMapping(value = "/", headers = JwtProperties.HEADER_STRING)
+    @GetMapping(value = "/", headers = JwtProperties.ACCESS_HEADER_STRING)
     @LoginAuthRequired //로그인 전용 인증 체크
     //권한 체크도 해야되는거 아니야!?????????!!!!!!!!!!(USER.....)
     @ApiOperation(value = "서비스 메인페이지, 로그인 회원 - 게시물 리스트 조회 api", notes = "모든 회원 게시물들에 대해서 필터링 조건에 맞게 게시물을 조회합니다.")
@@ -79,7 +71,7 @@ public class PostController {
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     public DataResponse<PostListResponse> mainPage(@RequestBody SearchFormAboutAllUserPost form,
-                                                   @RequestHeader(JwtProperties.HEADER_STRING) String accessToken) {
+                                                   @RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken) {
         Slice<Post> result = postService.findPostsAboutAllUser(form);
 
         //Dto 변환
@@ -94,19 +86,16 @@ public class PostController {
 
     //비로그인 사용자 - 특정 사용자 페이지(내 페이지, 상대방 페이지 -> 같음)
     @GetMapping(value = "/{nickname}")
-    @ApiOperation(value = "회원별 페이지, 비로그인 회원-특정 회원에 대한 게시물 리스트 조회",
+    @ApiOperation(value = "비로그인 회원-  특정 회원에 대한 게시물 리스트 조회",
             notes = "특정 회원 게시물들에 대해서 필터링 조건에 맞게 리스트를 조회합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출", response = UserPage_200.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     public DataResponse<PostListResponse> userPage(@PathVariable("nickname")String nickname ,
-                                                   @RequestBody SearchFormAboutSpecificUserByNonLogin form) {
+                                                   @RequestBody SearchFormAboutOtherUserPost form) {
 
-        SearchFormOtherUser searchForm = new SearchFormOtherUser(form.getLanguage(), form.getSearchTitle(), form.getOrderKey(), form.getLastPostId(),
-                form.getLastReplyNum(), form.getLastLikeNum());
-
-        Slice<Post> findPosts = postService.findPostsAboutOtherUser(nickname, searchForm);
+        Slice<Post> findPosts = postService.findPostsAboutOtherUser(nickname, form);
 
         //Dto 변환
         List<PostListDtoAboutSpecificUser> findPostDtos = findPosts.getContent().stream()
@@ -117,11 +106,10 @@ public class PostController {
         PostListResponse postListResponse = new PostListResponse(findPostDtos, findPosts.getNumberOfElements(), findPosts.hasNext());
         return new DataResponse<>("200", "특정 사용자의 게시물 리스트 입니다.",postListResponse);
     }
-    //로그인 사용자 - 특정 사용자 페이지(내 페이지, 다른 사용자 페이지 -> 다름)
-    @GetMapping(value = "/{nickname}", headers = JwtProperties.HEADER_STRING)
-    @LoginAuthRequired
-    @VerityUserType //자신이 자신의 페이지에 접속했는지 다른 사용자 페이지에 접속했는지 구분
-    @ApiOperation(value = "회원별 페이지, 비로그인 회원-특정 회원(나,다른유저)에 대한 게시물 리스트 조회",
+    //로그인 사용자 - 다른 사용자 페이지 접속하는 경우
+    @GetMapping(value = "/{nickname}", headers = JwtProperties.ACCESS_HEADER_STRING)
+    @LoginAuthRequired //권한 체크도 해야되는거 아니야!?????????!!!!!!!!!!(USER.....)
+    @ApiOperation(value = "로그인 회원 - 다른사용자 페이지에 대한 게시물 리스트 조회",
             notes = "특정 회원 게시물들에 대해서 필터링 조건에 맞게 리스트를 조회합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출", response = UserPage_200.class),
@@ -130,25 +118,42 @@ public class PostController {
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     public DataResponse<PostListResponse> userPage(@PathVariable("nickname")String nickname,
-                                                   @RequestHeader(JwtProperties.HEADER_STRING) String accessToken,
-                                                   @RequestBody SearchFormAboutSpecificUserByLogin form,
-                                                   HttpServletRequest request) {
+                                                   @RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken,
+                                                   @RequestBody SearchFormAboutOtherUserPost form) {
 
-        Slice<Post> findPosts = null;
-        Boolean verity = (Boolean)request.getAttribute("verity");
-        if(verity == true) { //내 페이지에 접속한 경우
-            SearchFormOneSelf searchFormOneSelf = new SearchFormOneSelf(form.getTags(), form.getType(), form.getLanguage(), form.getSearchTitle()
-                    , form.getOrderKey(), form.getLastPostId(), form.getLastReplyNum(), form.getLastLikeNum());
+        Slice<Post> findPosts = findPosts = postService.findPostsAboutOtherUser(nickname, form);
 
-            findPosts = postService.findPostsAboutOneSelf(nickname, searchFormOneSelf);
+        //Dto 변환
+        List<PostListDtoAboutSpecificUser> findPostDtos = findPosts.getContent().stream()
+                .map(p -> new PostListDtoAboutSpecificUser(p))
+                .collect(Collectors.toList());
 
-        }else { //다른 사용자의 페이지에 접속한 경우
-            SearchFormOtherUser searchFormOtherUser = new SearchFormOtherUser(form.getLanguage(), form.getSearchTitle(), form.getOrderKey(),
-                    form.getLastPostId(), form.getLastReplyNum(), form.getLastLikeNum());
+        //response
+        PostListResponse postListResponse = new PostListResponse(findPostDtos, findPosts.getNumberOfElements(), findPosts.hasNext());
+        return new DataResponse<>("200", "특정 사용자의 게시물 리스트 입니다.",postListResponse);
+    }
+    //로그인 사용자 - 내 페이지 접속하는 경우
+    /**
+     * "my_session token"은 기본정보 검증안해도 되나???!!(유효기간 등)????
+     */
+    @GetMapping(value = "/{nickname}", headers = {JwtProperties.ACCESS_HEADER_STRING, JwtProperties.MYSESSION_HEADER_STRING})
+    @LoginAuthRequired //권한 체크도 해야되는거 아니야!?????????!!!!!!!!!!(USER.....)
+    @ApiOperation(value = "로그인 회원 - 자신의 페이지에 대한 게시물 리스트 조회",
+            notes = "특정 회원 게시물들에 대해서 필터링 조건에 맞게 리스트를 조회합니다.")
+    @ApiResponses({
+            @ApiResponse(code=200, message="정상 호출", response = UserPage_200.class),
+            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
+            @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
+    })
+    public DataResponse<PostListResponse> userPage(@PathVariable("nickname")String nickname,
+                                                   @RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken,
+                                                   @RequestHeader(JwtProperties.MYSESSION_HEADER_STRING) String my_session_token,
+                                                   @RequestBody SearchFormAboutSelfUserPost form) {
 
-            findPosts = postService.findPostsAboutOtherUser(nickname, searchFormOtherUser);
-        }
+        Slice<Post> findPosts = findPosts = postService.findPostsAboutOneSelf(nickname, form);
 
+        //Dto 변환
         List<PostListDtoAboutSpecificUser> findPostDtos = findPosts.getContent().stream()
                 .map(p -> new PostListDtoAboutSpecificUser(p))
                 .collect(Collectors.toList());
@@ -159,9 +164,13 @@ public class PostController {
     }
 
 
+
+
+
+
     // 게시물 상세조회(로그인, 비로그인)
     /**
-     * - 게시물 조회할때 uri 에 "postId" 로 해서 바로 사용하는 게 좋을까?! : 정보가 노출되면 좋지 않은데.....
+     * - "postID" : 내부적으로는 int pk, 외부적으로는 UUID 사용!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
      */
     @ApiOperation(value = "비로그인 사용자 - 게시물 상세조회 api", notes = "게시물의 상세 정보를 보여줍니다.")
     @GetMapping(value = "/{nickname}/{postId}")
@@ -176,7 +185,7 @@ public class PostController {
         return new DataResponse<>("200", "문제 상제 조회 결과입니다.", findPostDto);
     }
     @ApiOperation(value = "로그인 사용자 - 게시물 상세조회 api", notes = "게시물의 상세 정보를 보여줍니다.")
-    @GetMapping(value = "/{nickname}/{postId}", headers = JwtProperties.HEADER_STRING)
+    @GetMapping(value = "/{nickname}/{postId}", headers = JwtProperties.ACCESS_HEADER_STRING)
     @LoginAuthRequired//로그인 전용 인증 체크
     //권한 체크도 해야되는거 아니야!?????????!!!!!!!!!!(USER.....)
     @ApiResponses({
@@ -186,7 +195,7 @@ public class PostController {
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     public DataResponse<LoginPostDto> postPage(@PathVariable("postId") Long postId,
-                                          @RequestHeader(JwtProperties.HEADER_STRING)String accessToken) {
+                                          @RequestHeader(JwtProperties.ACCESS_HEADER_STRING)String accessToken) {
 
         Long findUserId = jwtProvider.getUserIdToToken(accessToken);
 
@@ -232,8 +241,8 @@ public class PostController {
             //스프링 시큐리티 (USER 권한에 대한 에러도 처리해야되는거 아니야?!!!!!!!!!!!!
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
-    public BaseResponse writePost(@RequestHeader(JwtProperties.HEADER_STRING)String accessToken, //swagger 에 표시를 위해
-                                      @RequestBody PostSaveForm form) {
+    public BaseResponse writePost(@RequestHeader(JwtProperties.ACCESS_HEADER_STRING)String accessToken, //swagger 에 표시를 위해
+                                  @RequestBody PostSaveForm form) {
 
         Long userId = jwtProvider.getUserIdToToken(accessToken);
         Post savaPost = postService.registration(userId, form);
@@ -256,7 +265,7 @@ public class PostController {
     })
     public DataResponse<PostEditDto> edit(@PathVariable("nickname")String nickname,
                                           @PathVariable("postId")Long postId,
-                                          @RequestHeader(JwtProperties.HEADER_STRING)String accessToken) { //swagger 에 표시를 위해
+                                          @RequestHeader(JwtProperties.ACCESS_HEADER_STRING)String accessToken) { //swagger 에 표시를 위해
 
         //1. post 조회 쿼리 1번
         //2. post tags 프록시 초기화 -> Post_tag 테이블 쿼리 한번 + tag 테이블 쿼리 한번씩 나간다.(원래는 각 2개씩 나가야되는데 betch 로 인해 각각 한번씩만일단 나감)
@@ -288,7 +297,7 @@ public class PostController {
     public BaseResponse edit(@PathVariable("nickname")String nickname,
                              @PathVariable("postId")Long postId,
                              @RequestBody PostEditForm postEditForm,
-                             @RequestHeader(JwtProperties.HEADER_STRING) String accessToken) { //swagger 에 표시를 위해
+                             @RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken) { //swagger 에 표시를 위해
 
         postService.updatePost(postId, postEditForm);
         return new BaseResponse("200", "게시물 수정이 완료되었습니다.");
@@ -309,7 +318,7 @@ public class PostController {
     })
     public BaseResponse delete(@PathVariable("nickname")String nickname,
                                @PathVariable("postId")Long postId,
-                               @RequestHeader(JwtProperties.HEADER_STRING) String accessToken) {
+                               @RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken) {
 
         postService.deletePost(postId);
         return new BaseResponse("200", "게시물 삭제가 완료되었습니다.");

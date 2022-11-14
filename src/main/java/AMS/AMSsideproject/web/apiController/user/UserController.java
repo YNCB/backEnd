@@ -5,6 +5,7 @@ import AMS.AMSsideproject.domain.user.service.UserService;
 import AMS.AMSsideproject.web.apiController.user.requestDto.*;
 import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
 import AMS.AMSsideproject.web.auth.jwt.JwtToken;
+import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtService;
 import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
 import AMS.AMSsideproject.web.response.BaseResponse;
@@ -32,6 +33,7 @@ public class UserController {
     private final UserService userService;
     private final EmailService emailService;
     private final JwtService jwtService;
+    private final JwtProvider jwtProvider;
 
     // 1차 회원가입
     @PostMapping("/join1")
@@ -100,7 +102,7 @@ public class UserController {
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
-    public DataResponse<UserEditDto> UserEditForm(@RequestHeader(JwtProperties.HEADER_STRING) String accessToken) {
+    public DataResponse<UserEditDto> UserEditForm(@RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken) {
 
         //Token 정보에서 User 찾기
         User findUser = jwtService.findUserToToken(accessToken);
@@ -116,14 +118,14 @@ public class UserController {
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
-    public DataResponse<UserEditSuccessDto> UserEdit(@RequestHeader(JwtProperties.HEADER_STRING) String accessToken, @RequestBody UserEditForm userEditForm) {
+    public DataResponse<UserEditSuccessDto> UserEdit(@RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken, @RequestBody UserEditForm userEditForm) {
 
         //해당 api를 호출 하기전에  클라이언트에서 "닉네임 중복검사 api 호출" 해야됌
 
         //Token 정보에서 User 찾기
-        User findUser = jwtService.findUserToToken(accessToken);
+        Long findUserId = jwtProvider.getUserIdToToken(accessToken);
 
-        User updateUser = userService.update(findUser.getUser_id(), userEditForm);
+        User updateUser = userService.update(findUserId, userEditForm);
 
         //토큰 새로 발급
         JwtToken jwtToken = jwtService.createAndSaveToken(updateUser.getUser_id(), updateUser.getNickname(), updateUser.getRole());
@@ -136,9 +138,14 @@ public class UserController {
          *
          * 바꿔야 된다 - 회원수정 보다는 게시물 등록, 수정을 더많이 호출하잖아 그러면 회원수정에서 토큰도 새로 생성하는게 쿼리문 더 줄어들지 않을까
          *             회원수정일때 엑세스,리프레시 생성하면 쿼리문하나 발생(리프레시 토큰 업데이트).
+         *             게시물 등록할때 JWT토큰의 닉네임을 가지고 "권한"이 있는지 체크하니깐 JWT토큰안에 닉네임을 사용하니.
+         *             만약 업데이트 하지않으면 JWT토큰안에 있는 닉네임이 "회원수정" 되었으면 구버전의 닉네임이 있으니 게시물 작성할때 쿼리문 하나더 발생하니.!!
+         *
          */
-        return new DataResponse<>("200", "회원 수정이 완료되었습니다. 토큰이 재발급하겠습니다.",
-                new UserEditSuccessDto(updateUser.getUser_id(), updateUser.getNickname(), jwtToken.getAccessToken(), jwtToken.getRefreshToken()));
+        return new DataResponse<>("200", "회원 수정이 완료되었습니다. 토큰이 재발급되었습니다.",
+                new UserEditSuccessDto(updateUser.getUser_id(), updateUser.getNickname(),
+                        jwtToken.getAccessToken(), jwtToken.getRefreshToken(), jwtToken.getMy_session()));
+
     }
 
 

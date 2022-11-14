@@ -14,7 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class RefreshTokenInterceptor implements HandlerInterceptor {
+public class RefreshTokenAuthInterceptor implements HandlerInterceptor {
 
     @Autowired private  JwtProvider jwtProvider;
     @Autowired private  RefreshTokenService refreshTokenService;
@@ -46,7 +46,6 @@ public class RefreshTokenInterceptor implements HandlerInterceptor {
             //요청한 사용자의 refreshToken 과 일치하는지 검증
             refreshTokenService.validRefreshTokenValue(findUserId, refreshToken);
 
-            //request.setAttribute("userId", findUserId); //컨트롤러에 userId 전달
             return true;
 
         }catch (JWTTokenExpireException e) { //토큰 유효기간이 만료된 경우

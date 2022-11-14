@@ -14,8 +14,12 @@ public class UserEditSuccessDto {
     private Long user_id;
     @ApiModelProperty(example = "codebox")
     private String nickname;
+
     @ApiModelProperty(example = "xxxx")
     private String accessToken;
     @ApiModelProperty(example = "xxxx")
     private String refreshToken;
+    @ApiModelProperty(example = "xxxx")
+    private String my_session;
+
 }

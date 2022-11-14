@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
  * 특정 user 페이지 api는 -> "/codebox/user1" 인데
  * 내 페이지인지 상대방 페이지 인지는 구분해야되나?!
@@ -15,8 +17,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SearchFormAboutSpecificUserByNonLogin {
+public class SearchFormAboutSelfUserPost {
 
+    @ApiModelProperty(example = "BFS,DFS")
+    private List<String> tags; //tags
+    @ApiModelProperty(example = "see", notes = "see(보고푼문제), alone(혼자푼문제), null")
+    private String type; //ALL, SEE, ALONE
     @ApiModelProperty(example = "Java")
     private String language;
     @ApiModelProperty(example = "test", notes = "게시물 제목 대상")

@@ -43,7 +43,7 @@ public class JwtService {
         return createToken;
     }
 
-    //refreshToken 의정보를 가지고 AccessToken을 생성하는 기능 -> refreshToken 재발급 받을때만 사용
+    //refreshToken의 정보를 가지고 accessToken, my_session 토큰을 생성하는 기능 -> refreshToken 재발급 받을때만 사용
     public JwtToken recreateTokenUsingTokenInfo(String token) {
 
         Long userId = jwtProvider.getUserIdToToken(token);
@@ -51,19 +51,18 @@ public class JwtService {
         String role = jwtProvider.getRoleToToken(token);
 
         String accessToken = jwtProvider.createAccessToken(userId, nickName, role);
+        String mySessionToken = jwtProvider.createMySessionToken(userId);
 
-        return new JwtToken(accessToken, token);
+        return new JwtToken(accessToken, token, mySessionToken);
     }
 
-    //Token 에서 user 찾는 메서드 -> refreshToken 재발급 받을때만 사용
+    //Token 에서 user 찾는 메서드 -> 회원 수정할때 사용
     @Transactional(readOnly = true)
     public User findUserToToken(String token) {
 
         Long findUserId = jwtProvider.getUserIdToToken(token);
         return userService.findUserByUserId(findUserId);
     }
-
-
 
 }
 
