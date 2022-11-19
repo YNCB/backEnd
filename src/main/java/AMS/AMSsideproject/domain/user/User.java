@@ -16,9 +16,8 @@ public class User {
     private Long user_id;
 
     private String email;
-    //private String id; //소설 플랫폼 고유 id
     private String password;
-    private String nickname;
+    private String nickname; //Unique!!
 
     private String social_type; //google, kakao, etc
     private LocalDateTime redate; //회원가입 일자

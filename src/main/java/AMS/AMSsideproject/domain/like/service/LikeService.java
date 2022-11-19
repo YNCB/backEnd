@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.management.Query;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,9 +31,9 @@ public class LikeService {
     @Transactional
     public LikeDto like(Long postId, Long userId) {
 
-        /**!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-         * 1. post 쿼리1, post.likes 프록시 쿼리 1~x, ((추가 쿼리1 + user 쿼리1) or 삭제 쿼리 1) -> "양방향"
-         * 2. post 쿼리1, user 쿼리1, like 판단 쿼리1, (추가 쿼리1 or 삭제 쿼리1) -> "단방향"
+        /** 양방향 vs 단방향
+         * 1. post 쿼리1, post.likes 프록시 쿼리 1, ((추가 쿼리1 + user 쿼리1) or 삭제 쿼리 1), post.likeNUm 업데이트 쿼리 -> "양방향"
+         * 2. like 쿼리1 , (추가 쿼리1 or 삭제 쿼리1), post 쿼리1, post.likeNum 업데이트 쿼리1 -> "단방향"
          */
 
         Post findPost = postRepository.findPostByPostId(postId);
@@ -43,7 +44,7 @@ public class LikeService {
         boolean check = false;
         Like deleteLike = null;
         for(Like like : likes) {
-            if(like.getUser().getUser_id() == userId) {
+            if(like.getUser().getUser_id() == userId) { //userId를 꺼낼때는 N+1문제없음 user의 다른 속성들을 가져올때 쿼리문 발생.
                 deleteLike = like;
                 check = true;
                 break;
@@ -53,31 +54,52 @@ public class LikeService {
         if(check == true) { //취소되야되는 경우
             findPost.getLikes().remove(deleteLike);
             check = false;
+
         }else { //추가되야 되는 경우
-            User findUser = userRepository.findByUserId(userId).get(); //움 여기가 조금 ......움....
+            User findUser = userRepository.findByUserId(userId).get();
 
             Like createLike = Like.create(findPost, findUser);
-
-            //findPost.getLikes().add(createLike);
-            findPost.addLike(createLike); //위에 create 에서 이미 양방향 연관관계가 된거 아닌가?!
+            findPost.addLike(createLike);
             check = true;
         }
 
-        findPost.setLikeNum(); //!!!!!!!!!!!!!!!!
-        return new LikeDto(check, findPost.getLikes().size());
+        findPost.setLikeNum();
+        return new LikeDto(check, findPost.getLikeNum());
+    }
+
+    //"2(단방향)" : Native query or JPQL 사용
+    @Transactional
+    public LikeDto like_v2(Long postId, Long userId) {
+
+        Post findPost = postRepository.findPostByPostId(postId);
+        Optional<Like> likeCheck = likeRepository.findLikeCheck(postId, userId);
+
+        Boolean check = false;
+        if(likeCheck.isEmpty()){ //추가되어야 되는 경우
+            likeRepository.save(postId,userId);
+            findPost.addLikeNum();
+            check = true;
+
+        }else { //삭제되어야 되는 경우
+            likeRepository.delete(postId, userId);
+            findPost.subLikeNum();
+        }
+
+        return new LikeDto(check, findPost.getLikeNum());
     }
 
 
 
 
 
-    //!!!!!!!!!!!!!!!이곤 모징!!!!!!!!!!!!!!
     //게시물 상세조회에서 게시물 좋아요 누른 사용자 인지 판별
     public Boolean checkExisting(Long postId, Long userId) {
 
         Optional<Like> existing = likeRepository.findLikeCheck(postId, userId);
+
         if(existing.isEmpty())
             return false;
+
         return true;
     }
 

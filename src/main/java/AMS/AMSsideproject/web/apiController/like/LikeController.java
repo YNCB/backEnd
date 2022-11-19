@@ -26,15 +26,9 @@ public class LikeController {
 
     private final JwtProvider jwtProvider;
     private final LikeService likeService;
-
     private final LikeDtoRepository likeDtoRepository;
 
-    /**
-     * 1. api 한개 두고 클릭하면 좋아요누른건지 , 취고한건지 판별
-     * 2. 특정 유저가 좋아요 누른 게시물들어가면 게시물에 좋아요 버튼 활성화되어있어야된다.
-     *    ->이거는 JWT토큰으로 user 정보 빼서 "like"테이블에서 "post_id", "user정보" 를 가지고 눌렸는지 판별해서 response에 여부 추가해주기
-     * 3. api를 "/nickname/postId"로 그냥 post가 낫지않나?!
-     */
+
     //게시물 좋아요 ,삭제
     //좋아요는 로그인 해야지 가능
     @PostMapping("/{nickname}/{postId}/like")
@@ -49,12 +43,10 @@ public class LikeController {
                                           @RequestHeader(JwtProperties.ACCESS_HEADER_STRING)String accessToken ) {
 
         Long findUserId = jwtProvider.getUserIdToToken(accessToken);
-        LikeDto likeDto = likeService.like(postId, findUserId);
 
-        /**
-         * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-         * 근데 여기서 게시물에 좋아요를 눌렸을때 게시물 좋아요 상태만 리턴하면 되나?!!! 해당 게시물 속성도 다시 리턴해줘야되는거 아니야?!!!!!
-         */
+        //LikeDto likeDto = likeService.like(postId, findUserId);
+        LikeDto likeDto = likeService.like_v2(postId, findUserId);
+
         return new DataResponse("200", "좋아요 추가 또는 삭제가 완료되었습니다.", likeDto);
     }
 

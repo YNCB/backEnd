@@ -13,14 +13,12 @@ import java.util.stream.Collectors;
 @Data
 public class PostDto {
 
+    @ApiModelProperty(example = "1")
+    private Long post_id; //제목
+
     @ApiModelProperty(example = "test")
     private String title; //제목
 
-    /**
-     * 사용자 pk 를 줄 이유가 있나?! 사용되지 않을건데..아마
-     */
-//    @ApiModelProperty(example = "3" , notes = "작성자 고유 아이디")
-//    private Long user_id; //작성자 고유 id
     @ApiModelProperty(example = "user")
     private String nickname; //작성자 닉네임
 
@@ -46,13 +44,15 @@ public class PostDto {
     @ApiModelProperty(example = "DFS", notes = "문제 태그들")
     private List<String> tags; //태그들
 
-    //!!!!!!!!!!!!!!!!!!!!
-    private List<LikeDto> likes; //좋아요들
+    //!!!!!!!!!!!!!!!!!!!! 따로 api가 존재!!!!!!!!!!!!!
+    //private List<LikeDto> likes; //좋아요들
 
 
-    public PostDto(String title, String nickname, LocalDateTime redate, Integer likeNum, String language, String type, Integer level, String context, Integer replyNum) {
+    public PostDto(Long postId, String title, String nickname, LocalDateTime redate, Integer likeNum, String language, String type,
+                   Integer level, String context, Integer replyNum) {
+
+        this.post_id = postId;
         this.title = title;
-        //this.user_id = user_id;
         this.nickname = nickname;
         this.redate = redate.format(DateTimeFormatter.ISO_LOCAL_DATE);
         this.likeNum = likeNum;

@@ -2,17 +2,19 @@ package AMS.AMSsideproject.domain.like.repository;
 
 import AMS.AMSsideproject.domain.like.Like;
 import AMS.AMSsideproject.domain.like.QLike;
-import AMS.AMSsideproject.domain.post.QPost;
-import AMS.AMSsideproject.domain.user.QUser;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import java.time.LocalDateTime;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
 
 @Repository
 public class LikeRepository {
@@ -27,6 +29,7 @@ public class LikeRepository {
 
     //게시물 아이디, 회원 아이디 요청했을때 좋아요 누른 유무 판별
     public Optional<Like> findLikeCheck(Long postId, Long userId) {
+
         Like like = query.select(QLike.like)
                 .from(QLike.like)
                 .where(
@@ -36,20 +39,6 @@ public class LikeRepository {
 
         return Optional.ofNullable(like);
     }
-
-    //게시물 아이디, 회원 아이디 요청했을때 좋아요 리스트 반환
-//    public List<Like> findLikes(Long postId, Long userId) {
-//        List<Like> likes = query.select(QLike.like)
-//                .from(QLike.like)
-//                .join(QLike.like.user, QUser.user)
-//                .join(QLike.like.post, QPost.post)
-//                .where(
-//                        postIdEq(postId),
-//                        userIdEq(userId))
-//                .fetch();
-//
-//        return likes;
-//    }
 
     private BooleanExpression postIdEq(Long postId) {
         if(Objects.isNull(postId))
@@ -64,9 +53,37 @@ public class LikeRepository {
     }
 
 
-//    //게시물 좋아요 리스트 검색
-//    public List<Like> findLikes(Long posId) {
-//        query.select()
-//    }
+
+    /**
+     * test
+     * !확인해볼것! : 왜 401에러 떴을때 내가 "시큐리티 인터셉터"에 등록한 "401"응답에러가 response로 뜨는거지!???????
+     */
+    public void save(Long postId, Long userId) {
+
+        //Native query
+        String sql = "INSERT INTO heart (redate, post_id, user_id) " +
+                "VALUE( ?,(select p.post_id from post p where p.post_id = ?), (select u.user_id from user u where u.user_id = ?) )";
+
+        em.createNativeQuery(sql, Like.class)
+                .setParameter(1, LocalDateTime.now()).setParameter(2, postId).setParameter(3, userId)
+                .executeUpdate();
+
+    }
+    public void delete(Long postId, Long userId) {
+
+        //Native query
+        String sql = "DELETE FROM heart WHERE post_id = ? AND user_id = ? ";
+
+        em.createNativeQuery(sql, Like.class)
+                .setParameter(1, postId).setParameter(2, userId)
+                .executeUpdate();
+
+//        String sql = "delete from heart h where h.post_id=:postId and h.user_id=:userId";
+//
+//        em.createQuery(sql).setParameter("postId", postId).setParameter("userId", userId)
+//                .executeUpdate();
+
+    }
+
 
 }

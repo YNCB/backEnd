@@ -32,8 +32,8 @@ public class PostRepositoryQueryDto {
     public PostDto findQueryPostDtoByPostId(Long postId) {
 
         PostDto findPostDto = query.select(Projections.constructor(PostDto.class,
-                        QPost.post.title, QUser.user.nickname, QPost.post.redate, QPost.post.likeNum, QPost.post.language,
-                        QPost.post.type, QPost.post.level, QPost.post.context, QPost.post.replyNum
+                        QPost.post.post_id,QPost.post.title, QUser.user.nickname, QPost.post.redate, QPost.post.likeNum,
+                        QPost.post.language,QPost.post.type, QPost.post.level, QPost.post.context, QPost.post.replyNum
                 ))
                 .from(QPost.post)
                 .where(postIdEqAboutPost(postId))
@@ -41,7 +41,8 @@ public class PostRepositoryQueryDto {
                 .fetchFirst(); //일치하는 게시물은 반드시 한개
 
         findPostDto.setTags(findPostTags(postId)); //tags 초기화!!!
-        findPostDto.setLikes(findLikes(postId)); //likes 초기화!!!
+        //findPostDto.setLikes(findLikes(postId)); //likes 초기화!!!
+
         return findPostDto;
     }
 
@@ -55,15 +56,15 @@ public class PostRepositoryQueryDto {
     }
 
     //단건 조회(게시물 한개) - 게시물 좋아요 검색
-    private List<LikeDto> findLikes(Long postId) {
-        return query.select(Projections.constructor(LikeDto.class,
-                        QUser.user.user_id, QUser.user.nickname))
-                .from(QLike.like)
-                .join(QLike.like.user, QUser.user)
-                .where(postIdEqAboutLike(postId))
-                .orderBy(QLike.like.redate.desc()) //내림차순 정렬
-                .fetch();
-    }
+//    private List<LikeDto> findLikes(Long postId) {
+//        return query.select(Projections.constructor(LikeDto.class,
+//                        QUser.user.user_id, QUser.user.nickname))
+//                .from(QLike.like)
+//                .join(QLike.like.user, QUser.user)
+//                .where(postIdEqAboutLike(postId))
+//                .orderBy(QLike.like.redate.desc()) //내림차순 정렬
+//                .fetch();
+//    }
 
     private BooleanExpression postIdEqAboutPostTag(Long postId) {
         if(postId==null)

@@ -45,7 +45,7 @@ public class Post {
     private List<Like> likes = new ArrayList<>(); //좋아요들
 
     @Column(name = "like_num")
-    private Integer likeNum; //좋아요 총 개수
+    private Integer likeNum; //좋아요 총 개수 -> 정렬에 컬럼 조건으로 사용되기 때문에
 
 
     @Column(name = "reply_num")
@@ -66,14 +66,23 @@ public class Post {
         postTagList.add(postTag);
     }
 
-    //양방향 연관관계 메서드
     public void addLike(Like like){
-        like.setPost(this);
         likes.add(like);
     }
 
     public void setLikeNum(){
         this.likeNum = this.likes.size();
+    }
+
+
+    /**
+     * test
+     */
+    public void addLikeNum() {
+        this.likeNum++;
+    }
+    public void subLikeNum() {
+        this.likeNum--;
     }
 
     //생성 메서드

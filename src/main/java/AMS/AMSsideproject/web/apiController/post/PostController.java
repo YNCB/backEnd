@@ -170,7 +170,9 @@ public class PostController {
 
     // 게시물 상세조회(로그인, 비로그인)
     /**
-     * - "postID" : 내부적으로는 int pk, 외부적으로는 UUID 사용!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     * <나중에 더 찾아볼 내용!></나중에>
+     * - "postID" : 내부적으로는 int pk, 외부적으로는 UUID 사용하는 방법은 움..
+     * => "postID" 를 알게되더라도 게시물작성, 수정등은 토큰을 통해 "권한" 체크를 하니깐 유출되어도 상관없움??!!
      */
     @ApiOperation(value = "비로그인 사용자 - 게시물 상세조회 api", notes = "게시물의 상세 정보를 보여줍니다.")
     @GetMapping(value = "/{nickname}/{postId}")
@@ -182,9 +184,11 @@ public class PostController {
 
         //최적화 Dto 버전 사용
         PostDto findPostDto = postRepositoryQueryDto.findQueryPostDtoByPostId(postId);
+
         return new DataResponse<>("200", "문제 상제 조회 결과입니다.", findPostDto);
     }
-    @ApiOperation(value = "로그인 사용자 - 게시물 상세조회 api", notes = "게시물의 상세 정보를 보여줍니다.")
+
+    @ApiOperation(value = "로그인 사용자 - 게시물 상세조회 api", notes = "게시물의 상세 정보를 보여줍니다(+게시물 좋아요 누른 유무)")
     @GetMapping(value = "/{nickname}/{postId}", headers = JwtProperties.ACCESS_HEADER_STRING)
     @LoginAuthRequired//로그인 전용 인증 체크
     //권한 체크도 해야되는거 아니야!?????????!!!!!!!!!!(USER.....)
@@ -199,26 +203,17 @@ public class PostController {
 
         Long findUserId = jwtProvider.getUserIdToToken(accessToken);
 
-        //굳이 쿼리문을 하나더 생성할 필요가 없지!!!!!!!!!!!!!
-        //Boolean existing = likeService.checkExisting(postId, findUserId);
+        //체크 유무 판단
+        Boolean existing = likeService.checkExisting(postId, findUserId);
 
         //최적화 Dto 버전 사용
         PostDto findPostDto = postRepositoryQueryDto.findQueryPostDtoByPostId(postId);
 
-        Boolean existing = checkLikeExisting(findPostDto, findUserId);
         LoginPostDto loginPostDto = LoginPostDto.create(findPostDto, existing);
         return new DataResponse<>("200", "문제 상제 조회 결과입니다.", loginPostDto);
     }
-    //굳이 postService 에 정의할필요없다고 생각해서!
-    private Boolean checkLikeExisting(PostDto postDto, Long userId) {
-        List<LikeDto> likes = postDto.getLikes();
-        for(LikeDto likeDto : likes) {
-            if(likeDto.user_id==userId){
-                return true;
-            }
-        }
-        return false;
-    }
+
+
 
 
 

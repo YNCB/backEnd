@@ -27,10 +27,6 @@ public class Like {
     private LocalDateTime redate; //좋아요 누른 시간
 
 
-    public void setPost(Post post) {
-        this.post = post;
-    }
-
     public static Like create(Post post, User user) {
         Like like = new Like();
         like.post = post;
