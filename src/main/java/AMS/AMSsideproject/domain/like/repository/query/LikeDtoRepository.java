@@ -35,17 +35,16 @@ public class LikeDtoRepository {
      * 이거 "객체 연결 테이블"표시 안하고 그냥 임의로 "컬럼명"으로 내가 조인해서 사용해도 좋나?!!!!!!!!!!!!!!!!!!
      */
     //게시물 좋아요 리스트 검색(Dto로 성능 향상)
-    public List<LikesDto> findLikes(Long postId) {
+    public List<String> findLikes(Long postId) {
 
-        List<LikesDto> nicknames = query.select(Projections.constructor(LikesDto.class,
-                        QUser.user.user_id, QUser.user.nickname))
+        List<String> nicknames = query.select(
+                //Projections.constructor(LikesDto.class, QUser.user.user_id, QUser.user.nickname)
+                QUser.user.nickname
+                )
                 .from(QLike.like)
                 .where(postIdEq(postId))
                 .join(QLike.like.post, QPost.post)
-
                 .join(QLike.like.user, QUser.user)
-                //.join(QUser.user).on(QLike.like.user.user_id.eq(QUser.user.user_id))
-                //이거 "객체 연결 테이블"표시 안하고 그냥 임의로 "컬럼명"으로 내가 조인해서 사용해도 좋나?!!!!!!!!!!!!!!!!!!
                 .fetch();
 
         return nicknames;

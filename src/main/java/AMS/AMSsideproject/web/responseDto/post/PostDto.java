@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 @Data
 public class PostDto {
 
-    @ApiModelProperty(example = "1")
-    private Long post_id; //제목
+//    @ApiModelProperty(example = "1")
+//    private Long post_id; //제목
 
     @ApiModelProperty(example = "test")
     private String title; //제목
@@ -48,10 +48,10 @@ public class PostDto {
     //private List<LikeDto> likes; //좋아요들
 
 
-    public PostDto(Long postId, String title, String nickname, LocalDateTime redate, Integer likeNum, String language, String type,
+    public PostDto(String title, String nickname, LocalDateTime redate, Integer likeNum, String language, String type,
                    Integer level, String context, Integer replyNum) {
 
-        this.post_id = postId;
+//        this.post_id = postId;
         this.title = title;
         this.nickname = nickname;
         this.redate = redate.format(DateTimeFormatter.ISO_LOCAL_DATE);

@@ -67,7 +67,7 @@ public class LikeService {
         return new LikeDto(check, findPost.getLikeNum());
     }
 
-    //"2(단방향)" : Native query or JPQL 사용
+    //"2(단방향)" : Native query
     @Transactional
     public LikeDto like_v2(Long postId, Long userId) {
 
@@ -87,10 +87,6 @@ public class LikeService {
 
         return new LikeDto(check, findPost.getLikeNum());
     }
-
-
-
-
 
     //게시물 상세조회에서 게시물 좋아요 누른 사용자 인지 판별
     public Boolean checkExisting(Long postId, Long userId) {

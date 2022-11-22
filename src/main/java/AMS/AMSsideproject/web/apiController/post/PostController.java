@@ -164,10 +164,6 @@ public class PostController {
     }
 
 
-
-
-
-
     // 게시물 상세조회(로그인, 비로그인)
     /**
      * <나중에 더 찾아볼 내용!></나중에>
@@ -188,7 +184,7 @@ public class PostController {
         return new DataResponse<>("200", "문제 상제 조회 결과입니다.", findPostDto);
     }
 
-    @ApiOperation(value = "로그인 사용자 - 게시물 상세조회 api", notes = "게시물의 상세 정보를 보여줍니다(+게시물 좋아요 누른 유무)")
+    @ApiOperation(value = "로그인 사용자 - 게시물 상세조회 api", notes = "게시물의 상세 정보를 보여줍니다. 추가로 게시물 좋아요 누른 유무도 알려줍니다.")
     @GetMapping(value = "/{nickname}/{postId}", headers = JwtProperties.ACCESS_HEADER_STRING)
     @LoginAuthRequired//로그인 전용 인증 체크
     //권한 체크도 해야되는거 아니야!?????????!!!!!!!!!!(USER.....)
@@ -214,35 +210,34 @@ public class PostController {
     }
 
 
-
-
-
-
+    //게시물 작성 -> JWT 토큰에 있는 user_id 로 게시물을 저장시킨다.
     /**
-     * "nickname" 패스는 빼면 -> 그럼 인터셉터도 사용안함 , 토큰으로만 판별(토큰에서 사용자 정보를 추출해서 누가쓰는지 알아냄!)
+     * "context" 부분이 "마크업"으로 되야된다.!!!
+     * "PostSaveForm" validated 적용하기
+     * "406" error 정의
      */
-    // uri 를 nickname 를 둘필요가 있나?!???????????????????????????????????????????????
-    //- 또한 "context" 부분이 "마크업"으로 되야된다.!!! -> DB는 TEXT 형인데 TEXT 자료형 크기만큼 어떻게 받게 하지??!
-    //- "PostSaveForm" validated 적용하기
-    //- "406" error 정의
     @ApiOperation(value = "게시물 작성 api", notes = "게시물을 작성하는 api 입니다.")
-    @PostMapping("/{nickname}/write")
-    @AddAuthRequired //추가 권한 검사 대상
+    @PostMapping("/write")
+    @LoginAuthRequired //(USER 권한에 대한 에러도 처리해야되는거 아니야?!!!!!!!!!!!!
+    //@AddAuthRequired //추가 권한 검사 대상
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
             @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
-            @ApiResponse(code=403, message = "잘못된 접근입니다. 권한이 없습니다.", response = BaseErrorResult.class),
-            //스프링 시큐리티 (USER 권한에 대한 에러도 처리해야되는거 아니야?!!!!!!!!!!!!
+            //@ApiResponse(code=403, message = "잘못된 접근입니다. 권한이 없습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     public BaseResponse writePost(@RequestHeader(JwtProperties.ACCESS_HEADER_STRING)String accessToken, //swagger 에 표시를 위해
                                   @RequestBody PostSaveForm form) {
 
         Long userId = jwtProvider.getUserIdToToken(accessToken);
+
         Post savaPost = postService.registration(userId, form);
+
         return new BaseResponse("200", "게시물이 저장되었습니다.");
     }
+
+
 
 
 

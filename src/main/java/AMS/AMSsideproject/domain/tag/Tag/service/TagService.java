@@ -21,7 +21,7 @@ public class TagService {
      * 저장, 조회 할때 태그 별로 쿼리가 각각 나가는데 너무 성능 이슈인데...움.....
      */
 
-    //tagList 에 있는 tag 를 존재여부 체그 및 추가하는 메서드
+    //tagList 에 있는 tag 를 존재여부 체크 및 추가하는 메서드
     @Transactional
     public List<Tag> addFromTagList(List<String> tagList) {
 

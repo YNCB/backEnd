@@ -24,6 +24,7 @@ public class WebConfig implements WebMvcConfigurer {
     /** 인터셉터 등록 **/
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+
         registry.addInterceptor(refreshTokenInterceptor())
                 .order(1)
                 .addPathPatterns("/codebox/refreshToken")
@@ -31,7 +32,7 @@ public class WebConfig implements WebMvcConfigurer {
 
         registry.addInterceptor(postAuthorizationInterceptor())
                 .order(1)
-                .addPathPatterns("/codebox/*/write")
+                //.addPathPatterns("/codebox/*/write")
                 .addPathPatterns("/codebox/*/*/edit")
                 .addPathPatterns("/codebox/*/*") //delete 에 대해서
                 .excludePathPatterns("/css/**", "/*.ico", "/error", "/error-page/**"); //오류 페이지 경로 제외!!

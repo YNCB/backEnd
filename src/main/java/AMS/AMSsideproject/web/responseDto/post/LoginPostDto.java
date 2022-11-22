@@ -15,8 +15,8 @@ import java.util.List;
 @NoArgsConstructor
 public class LoginPostDto {
 
-    @ApiModelProperty(example = "1")
-    private Long post_id; //제목
+//    @ApiModelProperty(example = "1")
+//    private Long post_id; //제목
 
     @ApiModelProperty(example = "test")
     private String title; //제목
@@ -28,6 +28,7 @@ public class LoginPostDto {
     private String redate; //게시물 등록 일자
     @ApiModelProperty(example = "5")
     private Integer likeNum; //좋아요수
+
     @ApiModelProperty(example = "true", notes = "좋아요 누른 유무")
     private boolean likeExisting; //좋아요 누른 유무
 
@@ -51,9 +52,10 @@ public class LoginPostDto {
 
 
     public static LoginPostDto create(PostDto postDto, boolean existing) {
+
         LoginPostDto loginPostDto = new LoginPostDto();
 
-        loginPostDto.post_id = postDto.getPost_id();
+//        loginPostDto.post_id = postDto.getPost_id();
         loginPostDto.title = postDto.getTitle();
         loginPostDto.nickname = postDto.getNickname();
         loginPostDto.redate = postDto.getRedate();

@@ -67,8 +67,8 @@ public class LikeRepository {
         em.createNativeQuery(sql, Like.class)
                 .setParameter(1, LocalDateTime.now()).setParameter(2, postId).setParameter(3, userId)
                 .executeUpdate();
-
     }
+
     public void delete(Long postId, Long userId) {
 
         //Native query
@@ -77,12 +77,6 @@ public class LikeRepository {
         em.createNativeQuery(sql, Like.class)
                 .setParameter(1, postId).setParameter(2, userId)
                 .executeUpdate();
-
-//        String sql = "delete from heart h where h.post_id=:postId and h.user_id=:userId";
-//
-//        em.createQuery(sql).setParameter("postId", postId).setParameter("userId", userId)
-//                .executeUpdate();
-
     }
 
 

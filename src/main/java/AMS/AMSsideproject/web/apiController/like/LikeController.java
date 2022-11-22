@@ -52,16 +52,15 @@ public class LikeController {
 
 
     //게시물 좋아요 리스트 보기
-    /**
-     * 일단은 좋아요 리스트 보는거는 로그인하지 않아도 가능하게 구현.
-     */
+    //로그인 해야되는 기능
     @GetMapping("/{nickname}/{postId}/like")
     public DataResponse likeList(@PathVariable("nickname") String nickname, @PathVariable("postId") Long postId) {
         /**
          * 1. 프록시 초기화 하는거는 쿼리문 2개?!
          * 2. 그냥 바로 sql문으로 쿼리문 1개?!
          */
-        List<LikesDto> likes = likeDtoRepository.findLikes(postId);
+        //List<LikesDto> likes = likeDtoRepository.findLikes(postId);
+        List<String> likes = likeDtoRepository.findLikes(postId);
         return new DataResponse("200", "게시물 좋아요 닉네임 리스트 입니다.", likes);
     }
 

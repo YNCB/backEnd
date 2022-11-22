@@ -35,6 +35,7 @@ public class TagRepository {
                 .fetch()
                 .stream().findFirst();
     }
+
     private BooleanExpression tagNameEq(String tagName) {
         if(!StringUtils.hasText(tagName))
             return null;
