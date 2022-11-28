@@ -60,10 +60,10 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/codebox/setting").hasAuthority("USER")
-                .antMatchers("/codebox/*/write").hasAuthority("USER")
+                .antMatchers("/codebox/write").hasAuthority("USER")
                 .antMatchers("/codebox/*/*/edit").hasAuthority("USER")
                 .antMatchers(HttpMethod.DELETE, "/codebox/*/*").hasAuthority("USER")
-                .antMatchers( "/codebox/*/*/like").hasAuthority("USER")
+                .antMatchers( "/codebox/*/*/like").hasAuthority("USER") //좋아요 누르기, 리스트 보기 모드 로그인 필요
 
                 //.antMatchers( "/codebox/*/{\\d+}").permitAll()
 
