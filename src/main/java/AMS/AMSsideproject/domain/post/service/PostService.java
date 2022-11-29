@@ -183,8 +183,10 @@ public class PostService {
             String oldTagName = postTag.getTag().getName();
             boolean contains = newTags.stream().anyMatch(t -> t.equals(oldTagName));
 
-            if(contains == false)
+            if(contains == false) {
+                postTag.getTag().downTagNum();
                 deleteTags.add(postTag);
+            }
         }
 
         return deleteTags;

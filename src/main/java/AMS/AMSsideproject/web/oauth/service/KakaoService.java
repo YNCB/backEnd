@@ -20,7 +20,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class KakaoService {
 
-    @Autowired
     private final WebClient wc;
     private final ObjectMapper ob;
 

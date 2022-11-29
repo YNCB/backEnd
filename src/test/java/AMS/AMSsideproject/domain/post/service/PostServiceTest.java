@@ -109,6 +109,32 @@ class PostServiceTest {
         }
     }
 
+//    @Test
+//    @Transactional
+//    public void 게시물삭제태그테스트() throws Exception {
+//        //given
+//        //게시물 등록1
+//        User findUser = userService.findUserByNickName("test2");
+//        List<String> tags1 = new ArrayList<>();
+//        tags1.add("test1"); tags1.add("test2");
+//        PostSaveForm postSaveForm1 = new PostSaveForm(tags1,"test1", "test1","test1", "SEE","Java",4);
+//        Post addPost1 = postService.registration(findUser.getUser_id(), postSaveForm1);
+//
+//        //게시물 등록2
+//        List<String> tags2 = new ArrayList<>();
+//        tags2.add("test1"); tags2.add("test3");
+//        PostSaveForm postSaveForm2 = new PostSaveForm(tags2,"test2", "test2","test2", "SEE","Java",4);
+//        Post addPost2 = postService.registration(findUser.getUser_id(), postSaveForm2);
+//
+//        //when
+//        //게시물 삭제
+//        postService.deletePost(addPost1.getPost_id());
+//
+//        //then
+//        Optional<Tag> findTag = tagRepository.findByTagName("test1");
+//        Assertions.assertThat(findTag.get().getNum()).isEqualTo(0);
+//    }
+
     @Test
     @Transactional
     public void 모든유저게시물에대해서필터링조회최신순정렬무한스크롤첫페이지() throws Exception {
