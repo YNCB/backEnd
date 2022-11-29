@@ -69,7 +69,7 @@ public class SecurityConfig {
 
 
                 //.antMatchers( "/codebox/*/{\\d+}").permitAll()
-                .antMatchers("/test").permitAll()
+                //.antMatchers("/test").permitAll()
 
                 .and()
                 .build();

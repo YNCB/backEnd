@@ -93,7 +93,7 @@ class PostServiceTest {
         User findUser = userService.findUserByNickName("test2");
 
         List<String> tags = new ArrayList<>();
-        tags.add("BFS"); tags.add("DFS");
+        tags.add("test1"); tags.add("test2");
         PostSaveForm postSaveForm = new PostSaveForm(tags,"test", "test","test", "SEE","Java",4);
 
         //when
@@ -101,9 +101,11 @@ class PostServiceTest {
 
         //then
         Assertions.assertThat(addPost.getPostTagList().size()).isEqualTo(2);
+
         for(String tagName: tags) {
             Optional<Tag> findTag = tagRepository.findByTagName(tagName);
             Assertions.assertThat(findTag.get()).isNotNull();
+            System.out.println(findTag.get());
         }
     }
 

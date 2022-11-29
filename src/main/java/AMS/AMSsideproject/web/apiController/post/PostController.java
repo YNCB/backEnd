@@ -297,6 +297,11 @@ public class PostController {
         //redirect 로 "게시물 상세 조회" 로 이동해야됌
     }
 
+
+
+
+
+
     //게시물 삭제
     //"postTag"는 배열에서 remove하면 옵션으로 없어지는데 만약에 tag 테이블에 사용하고 있지 않은 tag 도 삭제??!!
     @DeleteMapping("/{nickname}/{postId}")

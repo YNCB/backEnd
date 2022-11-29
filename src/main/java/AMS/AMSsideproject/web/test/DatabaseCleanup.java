@@ -32,6 +32,11 @@ public class DatabaseCleanup implements InitializingBean {
         entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
 
         for(String tableName : tableNames) {
+            //System.out.println("name = " + tableName);
+
+            if(tableName.equals("like"))
+                tableName = "heart";
+
             entityManager.createNativeQuery("TRUNCATE TABLE " + tableName).executeUpdate();
             //entityManager.createNativeQuery("ALTER TABLE " + tableName + " ALTER COLUMN ID RESTART WITH 1").executeUpdate();
         }

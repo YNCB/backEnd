@@ -1,6 +1,7 @@
 package AMS.AMSsideproject.domain.tag.Tag;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import javax.persistence.Id;
 @Entity
 @Getter
 @NoArgsConstructor
+@Data
 public class Tag {
 
     @Id

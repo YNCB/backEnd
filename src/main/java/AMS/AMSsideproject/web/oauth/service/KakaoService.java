@@ -6,6 +6,8 @@ import AMS.AMSsideproject.web.oauth.provider.token.KakaoToken;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -18,13 +20,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class KakaoService {
 
+    @Autowired
     private final WebClient wc;
     private final ObjectMapper ob;
 
     //카카오 oauth 서버로 부터 엑세스 토큰을 받는 메서드
     public KakaoToken getAccessToken(String code) throws JsonProcessingException {
 
-        //파라미터 세팅
+        //파라미터 세팅 -> MultiValueMap 사용시 "Webclient"에서 자동으로 "application/x-www-form-urlencoded" 설정!!
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", KakaoInfo.grantType);
         params.add("client_id", KakaoInfo.client_id);
@@ -32,7 +35,10 @@ public class KakaoService {
         params.add("code", code);
         params.add("client_secret", KakaoInfo.client_secret);
 
-        //http 요청 및 응답
+
+        System.out.println(params);
+
+        //http 요청 및 응답(non blocking)
         String response = wc.post()
                 .uri(KakaoInfo.accessTokenUri)
                 .bodyValue(params)

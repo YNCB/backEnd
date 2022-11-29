@@ -111,6 +111,13 @@ public class PostService {
         findPost.setPost(postEditForm);
     }
 
+
+
+
+
+
+
+
     //게시물 삭제
     @Transactional
     public void deletePost(Long postId) {
@@ -119,15 +126,6 @@ public class PostService {
     }
 
 
-
-
-//    //게시물 좋아요 수 증가
-//    @Transactional
-//    public Post addPostLikeNum(Long postId , Long num) {
-//        Post findPost = postRepository.findPostByPostId(postId);
-//        findPost.addLikeNum(num);
-//        return findPost;
-//    }
 
     //무한 스크롤 함수
     private NoOffsetPage NoOffsetPageNation(String orderKey, Long lastPostId, Integer lastLikeNum, Integer lastReplyNum) {
