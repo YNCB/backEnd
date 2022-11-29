@@ -46,6 +46,21 @@ public class PostRepositoryQueryDto {
         return findPostDto;
     }
 
+    //게시물 수정 조회에 대해서 Dto로 성능 튜닝
+    public PostEditDto findQueryPostEditDtoByPostId(Long postId){
+
+        PostEditDto postEditDto = query.select(Projections.constructor(PostEditDto.class,
+                        QPost.post.title, QPost.post.problem_uri, QPost.post.context, QPost.post.type, QPost.post.language, QPost.post.level))
+                .from(QPost.post)
+                .where(postIdEqAboutPost(postId))
+                .fetchFirst();
+
+        postEditDto.setTags(findPostTags(postId));
+
+        return postEditDto;
+    }
+
+
     //단건 조회에서 사용하는 법(게시물 한개) - 게시물 태그 검색
     private List<String> findPostTags(Long postId) {
         return query.select(QTag.tag.name)
@@ -84,15 +99,5 @@ public class PostRepositoryQueryDto {
         return QLike.like.post.post_id.eq(postId);
     }
 
-    //게시물 수정 조회에 대해서 Dto로 성능 튜닝
-    public PostEditDto findQueryPostEditDtoByPostId(Long postId){
-        PostEditDto postEditDto = query.select(Projections.constructor(PostEditDto.class,
-                        QPost.post.title, QPost.post.problem_uri, QPost.post.context, QPost.post.type, QPost.post.language, QPost.post.level))
-                .from(QPost.post)
-                .where(postIdEqAboutPost(postId))
-                .fetchFirst();
 
-        postEditDto.setTags(findPostTags(postId));
-        return postEditDto;
-    }
 }

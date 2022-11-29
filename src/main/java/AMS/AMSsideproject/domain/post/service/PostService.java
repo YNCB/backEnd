@@ -44,10 +44,10 @@ public class PostService {
         //기존에 없던 tag 는 저장시키기
         List<Tag> addTags = tagService.addFromTagList(postSaveForm.getTags());
 
-        //없던 tag는 다 저장시켰기 때문에 전달받은 tagList에 있는 tag들은 전부 tag table에 존재
+        //없던 tag는 다 저장시켰기 때문에 전달받은 tagList에 있는 tag들은 전부 tag table에 존재함
         for(Tag tag : addTags) {
             PostTag postTag = PostTag.createPostTag(tag);
-            post.addPostTag(postTag); //양방향 연관관계
+            post.addPostTag(postTag); //양방향 연관관계 -> "cascade" 로 인해 post 가 저장되면서 postTag 테이블에도 자동 저장
         }
 
         postRepository.save(post);
@@ -85,9 +85,6 @@ public class PostService {
     }
 
 
-
-
-
     //게시물 수정(업데이트) - "지연감지 사용!" -> 근데 쿼리문이 너무 많이 나가는데.. 이건 어쩔수 없지 않나?!
     @Transactional
     public void updatePost(Long postId, PostEditForm postEditForm) {
@@ -100,6 +97,7 @@ public class PostService {
 
         //기존 게시물에 추가될 태그들
         List<Tag> newAddTags = checkAddPostTags(findPost.getPostTagList(), postEditForm.getTags());
+
         //추가될 태그들 추가
         for(Tag tag : newAddTags) {
             PostTag newPostTag = PostTag.createPostTag(tag);
@@ -182,6 +180,7 @@ public class PostService {
 
         List<PostTag> deleteTags = new ArrayList<>();
         for(PostTag postTag : oldTags) {
+
             //프록시 초기화 되면서 sql문 나감. "batch" 옵션으로 나감
             String oldTagName = postTag.getTag().getName();
             boolean contains = newTags.stream().anyMatch(t -> t.equals(oldTagName));
@@ -189,6 +188,7 @@ public class PostService {
             if(contains == false)
                 deleteTags.add(postTag);
         }
+
         return deleteTags;
     }
 
@@ -211,6 +211,7 @@ public class PostService {
 
         //게시물에 새롭게 추가할 태그들이 "태그테이블"에 있는지 체크. 없으면 생성 및 추가
         List<Tag> tags = tagService.addFromTagList(newAddTags);
+
         return tags;
     }
 

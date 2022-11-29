@@ -21,7 +21,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final CorConfig config;
+    private final CorsConfig config;
     private final JwtProvider jwtProvider;
 
     private final UserService userService;
@@ -63,9 +63,13 @@ public class SecurityConfig {
                 .antMatchers("/codebox/write").hasAuthority("USER")
                 .antMatchers("/codebox/*/*/edit").hasAuthority("USER")
                 .antMatchers(HttpMethod.DELETE, "/codebox/*/*").hasAuthority("USER")
-                .antMatchers( "/codebox/*/*/like").hasAuthority("USER") //좋아요 누르기, 리스트 보기 모드 로그인 필요
+                .antMatchers( "/codebox/*/*/like").hasAuthority("USER") //좋아요 누르기, 리스트 보기 모두 로그인 필요
+
+
+
 
                 //.antMatchers( "/codebox/*/{\\d+}").permitAll()
+                .antMatchers("/test").permitAll()
 
                 .and()
                 .build();
@@ -78,7 +82,7 @@ public class SecurityConfig {
         public void configure(HttpSecurity http)  {
             AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
 
-            http.addFilter(config.corsFilter());
+            http.addFilter(config.corsFilter() );
             http.addFilter(new UsernamePasswordAuthenticationCustomFilter(authenticationManager, objectMapper , successHandler, failureHandler));
             http.addFilter(new JwtAuthenticationFilter(authenticationManager, jwtProvider, objectMapper, userService));
 

@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PostEditDto {
+
     @ApiModelProperty(example = "test")
     private String title;
     @ApiModelProperty(example = "test")
@@ -29,7 +30,13 @@ public class PostEditDto {
     @ApiModelProperty(example = "DFS", notes = "문제 태그들 여러개 가능")
     private List<String> tags;
 
+
+
+
+
+
     public PostEditDto(String title, String problem_uri, String content, String type, String language, Integer level) {
+
         this.title = title;
         this.problem_uri = problem_uri;
         this.content = content;
@@ -39,6 +46,7 @@ public class PostEditDto {
     }
 
     static public PostEditDto create(Post post) {
+
         PostEditDto postEditDto = new PostEditDto();
         postEditDto.setTitle(post.getTitle());
         postEditDto.setProblem_uri(post.getProblem_uri());

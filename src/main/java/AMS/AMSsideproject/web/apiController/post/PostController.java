@@ -219,7 +219,7 @@ public class PostController {
     @ApiOperation(value = "게시물 작성 api", notes = "게시물을 작성하는 api 입니다.")
     @PostMapping("/write")
     @LoginAuthRequired //(USER 권한에 대한 에러도 처리해야되는거 아니야?!!!!!!!!!!!!
-    //@AddAuthRequired //추가 권한 검사 대상
+    //@AddAuthRequired //추가 권한 검사 대상 => JWT 토큰으로만 판별하니깐 URI 에도 변경!!
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
             @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
@@ -232,13 +232,13 @@ public class PostController {
 
         Long userId = jwtProvider.getUserIdToToken(accessToken);
 
+        /**
+         * 나중에 다시 보기 -> 태그가 하나씩 모두 쿼리문을 통해서 존재 유무를 확인함.
+         */
         Post savaPost = postService.registration(userId, form);
 
         return new BaseResponse("200", "게시물이 저장되었습니다.");
     }
-
-
-
 
 
     //게시물 수정 form
@@ -255,7 +255,7 @@ public class PostController {
     })
     public DataResponse<PostEditDto> edit(@PathVariable("nickname")String nickname,
                                           @PathVariable("postId")Long postId,
-                                          @RequestHeader(JwtProperties.ACCESS_HEADER_STRING)String accessToken) { //swagger 에 표시를 위해
+                                          @RequestHeader(JwtProperties.ACCESS_HEADER_STRING)String accessToken) { 
 
         //1. post 조회 쿼리 1번
         //2. post tags 프록시 초기화 -> Post_tag 테이블 쿼리 한번 + tag 테이블 쿼리 한번씩 나간다.(원래는 각 2개씩 나가야되는데 betch 로 인해 각각 한번씩만일단 나감)
@@ -267,12 +267,14 @@ public class PostController {
         //1. post 조회 쿼리 1번 -> Dto 바로 변환
         //2. Dto 의 tags 를 찾는데 쿼리 1번 만 발생
         PostEditDto findPostEdit = postRepositoryQueryDto.findQueryPostEditDtoByPostId(postId);
-        return new DataResponse<>("200", "게시물 수정 항목입니다.", findPostEdit);
+        
+        return new DataResponse<>("200", "게시물 수정 폼입니다.", findPostEdit);
     }
+
     /**
      * Hard!!!!!
      */
-    //게시물 수정
+    // 실제 게시물 수정
     // 만약 "Tag" 테이블에서 더이상 사용하지않은 "Tag"는 삭제해야되지않나!???!!!!!!! 자동으로 하게 해야되는거 아니가?!!!!!
     @PutMapping("/{nickname}/{postId}/edit")
     @AddAuthRequired //추가 권한 검사 대상
@@ -287,9 +289,10 @@ public class PostController {
     public BaseResponse edit(@PathVariable("nickname")String nickname,
                              @PathVariable("postId")Long postId,
                              @RequestBody PostEditForm postEditForm,
-                             @RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken) { //swagger 에 표시를 위해
+                             @RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken) {
 
         postService.updatePost(postId, postEditForm);
+
         return new BaseResponse("200", "게시물 수정이 완료되었습니다.");
         //redirect 로 "게시물 상세 조회" 로 이동해야됌
     }

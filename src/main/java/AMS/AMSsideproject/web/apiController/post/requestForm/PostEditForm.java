@@ -25,8 +25,10 @@ public class PostEditForm {
 
     @ApiModelProperty(example = "see", notes = "see, alone")
     private String type;
+
     @ApiModelProperty(example = "Java")
     private String language;
+
     @ApiModelProperty(example = "3")
     private Integer level;
 }
