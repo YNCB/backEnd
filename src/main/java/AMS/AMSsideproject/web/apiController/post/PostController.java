@@ -271,11 +271,11 @@ public class PostController {
         return new DataResponse<>("200", "게시물 수정 폼입니다.", findPostEdit);
     }
 
-    /**
-     * Hard!!!!!
-     */
     // 실제 게시물 수정
-    // 만약 "Tag" 테이블에서 더이상 사용하지않은 "Tag"는 삭제해야되지않나!???!!!!!!! 자동으로 하게 해야되는거 아니가?!!!!!
+    /**
+     * - 전체적으로 쿼리문이 너무 낭비....움... 좋은 방법이 없나
+     * - 그리고 태그가 삭제되면서 0인거는 삭제되어야되는거 아니야?! 그냥 남겨놔도 되나?!
+     */
     @PutMapping("/{nickname}/{postId}/edit")
     @AddAuthRequired //추가 권한 검사 대상
     @ApiOperation(value = "게시물 수정 api", notes = "실제 게시물을 수정하는 api 입니다.")

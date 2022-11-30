@@ -114,16 +114,16 @@ public class PostService {
 
 
 
-
-
-
-
     //게시물 삭제
     @Transactional
     public void deletePost(Long postId) {
         Post findPost = postRepository.findPostByPostId(postId);
         postRepository.delete(findPost);
     }
+
+
+
+
 
 
 
@@ -184,7 +184,15 @@ public class PostService {
             boolean contains = newTags.stream().anyMatch(t -> t.equals(oldTagName));
 
             if(contains == false) {
-                postTag.getTag().downTagNum();
+
+                /**
+                 * - 여기서 하는게 맞는 로직인가
+                 * - "postTag"의 함수를 통해서 "tag"의 줄이는 함수를 호출하는 식이 더 맞지않나?!
+                 * - 그리고 "cascade"로 "postTag"가 자동으로 삭제되고, "postTag"의 "Tag" 객체의 개수를 줄였으니 지연감지로 작동하는거인가?!
+                 */
+                postTag.getTag().downTagNum(); //언급수 줄이기
+
+
                 deleteTags.add(postTag);
             }
         }
