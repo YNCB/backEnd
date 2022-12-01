@@ -33,19 +33,13 @@ public class TagService {
 
             if(findTag.isEmpty()) { //태그 테이블에 없는경우
                 Tag tag = Tag.createTag(tagName);
-                
                 Tag saveTag = tagRepository.save(tag);
-                saveTag.upTagNum(); //언급 개수 늘리기
-                
                 result.add(saveTag);
 
             }else { //태그 테이블에 있는경우
-                findTag.get().upTagNum(); //언급 개수 늘리기
-                
                 result.add(findTag.get());
             }
         }
-
         return result;
     }
 

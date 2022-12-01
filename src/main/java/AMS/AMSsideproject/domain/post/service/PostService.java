@@ -47,6 +47,7 @@ public class PostService {
         //없던 tag는 다 저장시켰기 때문에 전달받은 tagList에 있는 tag들은 전부 tag table에 존재함
         for(Tag tag : addTags) {
             PostTag postTag = PostTag.createPostTag(tag);
+            postTag.plusTagNum(); //태그 언급 개수 늘리기
             post.addPostTag(postTag); //양방향 연관관계 -> "cascade" 로 인해 post 가 저장되면서 postTag 테이블에도 자동 저장
         }
 
@@ -101,33 +102,31 @@ public class PostService {
         //추가될 태그들 추가
         for(Tag tag : newAddTags) {
             PostTag newPostTag = PostTag.createPostTag(tag);
+            newPostTag.plusTagNum(); //태그 언급수 늘리기
             findPost.addPostTag(newPostTag);
         }
 
         //삭제될 태그들 삭제
-        needDeleteTags.stream().forEach(p -> findPost.getPostTagList().remove(p));
+        needDeleteTags.stream().forEach(p -> {
+            p.reduceTagNum(); //태그 언급수 줄이기
+            findPost.getPostTagList().remove(p);
+        });
 
         //태그를 제외한 나머지 게시물 정보들 업데이트
         findPost.setPost(postEditForm);
     }
 
-
-
-
     //게시물 삭제
     @Transactional
     public void deletePost(Long postId) {
+
         Post findPost = postRepository.findPostByPostId(postId);
+        findPost.getPostTagList().stream().forEach(p -> p.reduceTagNum());
         postRepository.delete(findPost);
     }
 
 
-
-
-
-
-
-    //무한 스크롤 함수
+    //무한 스크롤를 위한 파라미터 세팅 함수
     private NoOffsetPage NoOffsetPageNation(String orderKey, Long lastPostId, Integer lastLikeNum, Integer lastReplyNum) {
 
         BooleanBuilder builder = new BooleanBuilder();
@@ -184,15 +183,6 @@ public class PostService {
             boolean contains = newTags.stream().anyMatch(t -> t.equals(oldTagName));
 
             if(contains == false) {
-
-                /**
-                 * - 여기서 하는게 맞는 로직인가
-                 * - "postTag"의 함수를 통해서 "tag"의 줄이는 함수를 호출하는 식이 더 맞지않나?!
-                 * - 그리고 "cascade"로 "postTag"가 자동으로 삭제되고, "postTag"의 "Tag" 객체의 개수를 줄였으니 지연감지로 작동하는거인가?!
-                 */
-                postTag.getTag().downTagNum(); //언급수 줄이기
-
-
                 deleteTags.add(postTag);
             }
         }
@@ -222,6 +212,5 @@ public class PostService {
 
         return tags;
     }
-
 
 }

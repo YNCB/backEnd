@@ -36,6 +36,9 @@ public class PostTag {
         return postTag;
     }
 
+    public void plusTagNum() {this.tag.upTagNum();}
+    public void reduceTagNum() {this.tag.downTagNum();}
+
 
 
 }

@@ -81,7 +81,7 @@ class PostServiceTest {
     }
 
     @Autowired private DatabaseCleanup databaseCleanup;
-    @AfterEach
+    //@AfterEach
     public void clear() {
         databaseCleanup.execute();
     }
@@ -138,6 +138,26 @@ class PostServiceTest {
         //then
         Optional<Tag> findTag = tagRepository.findByTagName("test1");
         Assertions.assertThat(findTag.get().getNum()).isEqualTo(1);
+    }
+
+    @Test
+    public void 게시물삭제태그테스트() throws Exception {
+        //given
+        //게시물 등록1
+        User findUser = userService.findUserByNickName("test2");
+        List<String> tags1 = new ArrayList<>();
+        tags1.add("test1"); tags1.add("test2");
+        PostSaveForm postSaveForm1 = new PostSaveForm(tags1,"test1", "test1","test1", "SEE","Java",4);
+        Post addPost1 = postService.registration(findUser.getUser_id(), postSaveForm1);
+
+        //when
+        postService.deletePost(addPost1.getPost_id());
+
+        //then
+        Optional<Tag> test1 = tagRepository.findByTagName("test1");
+        Optional<Tag> test2 = tagRepository.findByTagName("test2");
+        Assertions.assertThat(test1.get().getNum()).isEqualTo(0);
+        Assertions.assertThat(test2.get().getNum()).isEqualTo(0);
     }
 
     @Test
@@ -293,28 +313,6 @@ class PostServiceTest {
                 .collect(Collectors.toList());
 
         Assertions.assertThat(result.size()).isEqualTo(0);
-    }
-
-    @Test
-    @Transactional
-    //@Rollback(value = false)
-    public void 게시물수정테스트() throws Exception {
-        //given
-        List<String> newTags = new ArrayList<>();
-        newTags.add("GRAPH"); newTags.add("SIMULATION");
-        PostEditForm postEditForm = new PostEditForm(newTags, "edit", "edit", "edit", "alone", "Java", 4);
-
-        //when
-        postService.updatePost(1L, postEditForm);
-
-        //then
-
-        Post findPost = postRepository.findPostByPostId(1L);
-        Assertions.assertThat(findPost.getPostTagList().size()).isEqualTo(2);
-
-//        System.out.println("========================");
-//        findPost.getPostTagList().stream()
-//                .forEach(p -> System.out.println("newTags : " + p.getTag().getName()));
     }
 
 }

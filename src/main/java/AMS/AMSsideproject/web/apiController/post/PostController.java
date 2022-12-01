@@ -274,7 +274,7 @@ public class PostController {
     // 실제 게시물 수정
     /**
      * - 전체적으로 쿼리문이 너무 낭비....움... 좋은 방법이 없나
-     * - 그리고 태그가 삭제되면서 0인거는 삭제되어야되는거 아니야?! 그냥 남겨놔도 되나?!
+     * - 그리고 수정되면서 태그중에 언급 개수가 0인거는 삭제되어야되는거 아니야?! 그냥 남겨놔도 되나?!
      */
     @PutMapping("/{nickname}/{postId}/edit")
     @AddAuthRequired //추가 권한 검사 대상
@@ -298,12 +298,10 @@ public class PostController {
     }
 
 
-
-
-
-
     //게시물 삭제
-    //"postTag"는 배열에서 remove하면 옵션으로 없어지는데 만약에 tag 테이블에 사용하고 있지 않은 tag 도 삭제??!!
+    /**
+     * 게시물 삭제시 태그 언급수가 0인 태그는 삭제해야되나?!!
+     */
     @DeleteMapping("/{nickname}/{postId}")
     @AddAuthRequired //추가 권한 검사 대상
     @ApiOperation(value = "게시물 삭제 api", notes = "게시물을 삭제하는 api입니다.")

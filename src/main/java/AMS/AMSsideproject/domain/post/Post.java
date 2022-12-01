@@ -56,7 +56,7 @@ public class Post {
             fetch = FetchType.LAZY,
             mappedBy = "post",
             cascade = CascadeType.ALL,
-            orphanRemoval = true)
+            orphanRemoval = true )
     private List<PostTag> postTagList = new ArrayList<>();
 
 
