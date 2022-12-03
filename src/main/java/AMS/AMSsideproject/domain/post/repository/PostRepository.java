@@ -27,5 +27,6 @@ public interface PostRepository {
     //자신의 전체 게시물 검색(필터링 조건)
     public Slice<Post> findPostsByOneSelf(String nickname, List<String> tags, String type, String language, String title , Pageable pageable, BooleanBuilder builder);
 
-
+    //지연감지 사용하지 않고 직접 "게시물 조회수" 업데이트
+    public void updateViewCount(Long postId);
 }

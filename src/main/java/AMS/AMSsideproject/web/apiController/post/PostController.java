@@ -26,6 +26,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,6 +52,7 @@ public class PostController {
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     public DataResponse<PostListResponse> mainPage(@RequestBody SearchFormAboutAllUserPost form) {
+
         Slice<Post> result = postService.findPostsAboutAllUser(form);
 
         //Dto 변환
@@ -189,13 +193,15 @@ public class PostController {
     @LoginAuthRequired//로그인 전용 인증 체크
     //권한 체크도 해야되는거 아니야!?????????!!!!!!!!!!(USER.....)
     @ApiResponses({
-            @ApiResponse(code=200, message="정상 호출"),
+            @ApiResponse(code=200, message="정상 호출 - 추가로 Header 에 해당 게시물 id를 포함시킨 쿠리를 포함함"),
             @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     public DataResponse<LoginPostDto> postPage(@PathVariable("postId") Long postId,
-                                          @RequestHeader(JwtProperties.ACCESS_HEADER_STRING)String accessToken) {
+                                               @RequestHeader(JwtProperties.ACCESS_HEADER_STRING)String accessToken,
+                                               @CookieValue(value = "postView" ,required = false) Cookie postViewCookie, //쿠키가 없을수 있음
+                                               HttpServletResponse response) {
 
         Long findUserId = jwtProvider.getUserIdToToken(accessToken);
 
@@ -204,6 +210,9 @@ public class PostController {
 
         //최적화 Dto 버전 사용
         PostDto findPostDto = postRepositoryQueryDto.findQueryPostDtoByPostId(postId);
+
+        //조회순 증가!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        postService.readPost(postId, postViewCookie, response);
 
         LoginPostDto loginPostDto = LoginPostDto.create(findPostDto, existing);
         return new DataResponse<>("200", "문제 상제 조회 결과입니다.", loginPostDto);
@@ -296,7 +305,6 @@ public class PostController {
         return new BaseResponse("200", "게시물 수정이 완료되었습니다.");
         //redirect 로 "게시물 상세 조회" 로 이동해야됌
     }
-
 
     //게시물 삭제
     /**

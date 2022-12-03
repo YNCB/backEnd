@@ -27,6 +27,8 @@ public class PostDto {
     @ApiModelProperty(example = "5")
     private Integer likeNum; //좋아요수
 
+    @ApiModelProperty(example = "6")
+    private Long countView; //조회수
 
     @ApiModelProperty(example = "Java")
     private String language; //푼 언어

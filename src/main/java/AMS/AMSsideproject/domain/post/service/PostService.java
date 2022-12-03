@@ -21,6 +21,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +62,7 @@ public class PostService {
     public Slice<Post> findPostsAboutAllUser(SearchFormAboutAllUserPost searchForm) {
 
         NoOffsetPage noOffsetPage = NoOffsetPageNation(searchForm.getOrderKey(), searchForm.getLastPostId(),
-                searchForm.getLastLikeNum(), searchForm.getLastReplyNum());
+                searchForm.getLastLikeNum(), searchForm.getLastReplyNum(), searchForm.getCountView());
 
         return postRepository.findPostsByAllUser(searchForm.getLanguage(), searchForm.getSearchTitle(),
                 noOffsetPage.getPageable(), noOffsetPage.getBooleanBuilder());
@@ -69,7 +72,7 @@ public class PostService {
     public Slice<Post> findPostsAboutOtherUser(String nickname, SearchFormAboutOtherUserPost searchForm) {
 
         NoOffsetPage noOffsetPage = NoOffsetPageNation(searchForm.getOrderKey(), searchForm.getLastPostId(), searchForm.getLastLikeNum(),
-                searchForm.getLastReplyNum());
+                searchForm.getLastReplyNum(), searchForm.getCountView());
 
         return postRepository.findPostsByOtherUser(nickname, searchForm.getLanguage(), searchForm.getSearchTitle(),
                 noOffsetPage.getPageable(), noOffsetPage.getBooleanBuilder());
@@ -79,7 +82,7 @@ public class PostService {
     public Slice<Post> findPostsAboutOneSelf(String nickname, SearchFormAboutSelfUserPost searchForm) {
 
         NoOffsetPage noOffsetPage = NoOffsetPageNation(searchForm.getOrderKey(), searchForm.getLastPostId(), searchForm.getLastLikeNum(),
-                searchForm.getLastReplyNum());
+                searchForm.getLastReplyNum(), searchForm.getCountView());
 
         return postRepository.findPostsByOneSelf(nickname, searchForm.getTags(), searchForm.getType(), searchForm.getLanguage(),
                 searchForm.getSearchTitle(), noOffsetPage.getPageable(), noOffsetPage.getBooleanBuilder());
@@ -125,9 +128,47 @@ public class PostService {
         postRepository.delete(findPost);
     }
 
+    //조회순 늘리기 -> "쿠기를 이용한 중복 방지 기능 추가"
+    @Transactional
+    public void readPost(Long postId ,Cookie postViewCookie, HttpServletResponse response){
+        /**
+         * - [1]지연 감지 사용
+         * 1. 게시물 조회수 업데이트 되는 상황에서 -> 게시물 찾기, update => 쿼리 2번
+         * 2. 게시물 조회수 업데이트 되지 않는 상황 -> 게시물 찾기 => 쿼리 1번
+         *
+         * - [2] 직접 게시물 조회수 update
+         * 1. 게시물 조회수 업데이트 되는 상황에서 -> update => 쿼리 1번
+         * 2. 게시물 조회수 업데이트 되지 않는 상황 -> 쿼리 0번
+         */
+        //Post findPost = postRepository.findPostByPostId(postId); //[1]
+
+        if(postViewCookie != null) { //기존에 해당 기능의 쿠키가 존재하는 경우 -> 쿠기내에 해당 "게시물 Id" 가 존재하는지 판별
+
+            if(!postViewCookie.getValue().contains("[" + postId + "]")) { //쿠기내에 해당 게시물 Id가 존재 x -> 추가해줘야함
+
+                //findPost.addCountView(); //[1]
+                postRepository.updateViewCount(postId); //[2]
+
+                postViewCookie.setValue(postViewCookie.getValue() + "_[" + postId + "]" ); //기존 쿠기내에 해당 게시물 Id 추가
+                postViewCookie.setPath("/");
+                postViewCookie.setMaxAge(60 * 60 * 24);  //쿠키의 수명을 24시간 설정하니 기존에 있던 게시물Id 에 대해서도 모두 적용!
+                response.addCookie(postViewCookie);
+            }
+
+        }else { //해당 기능의 필요한 쿠키가 존재x -> 쿠기에 "게시물 Id"를 추가
+
+            //findPost.addCountView(); //게시물 조회순 늘리기 [1]
+            postRepository.updateViewCount(postId); //[2]
+
+            Cookie newCookie = new Cookie("postView", "[" + postId + "]");
+            newCookie.setPath("/");
+            newCookie.setMaxAge(60 * 60 * 24); //24시간 수명 설정
+            response.addCookie(newCookie);
+        }
+    }
 
     //무한 스크롤를 위한 파라미터 세팅 함수
-    private NoOffsetPage NoOffsetPageNation(String orderKey, Long lastPostId, Integer lastLikeNum, Integer lastReplyNum) {
+    private NoOffsetPage NoOffsetPageNation(String orderKey, Long lastPostId, Integer lastLikeNum, Integer lastReplyNum, Long lastCountView) {
 
         BooleanBuilder builder = new BooleanBuilder();
         Pageable pageable = null;
@@ -164,6 +205,15 @@ public class PostService {
                     builder.or(QPost.post.replyNum.lt(lastReplyNum));
                 }
             }
+            else if(orderKey.equals("countView")) {
+                orders.add(Sort.Order.desc(orderKey)); //내림차순 정렬
+                orders.add(Sort.Order.asc("post_id")); //같은 likeNum에 대해서는 post_id로 오름차순 정렬 기준으로 정의
+                if(lastCountView != null && lastPostId!=null) {
+                    builder.and(QPost.post.countView.eq(lastCountView).and(QPost.post.post_id.gt(lastPostId)));
+                    builder.or(QPost.post.countView.lt(lastCountView));
+                }
+            }
+
             pageable = PageRequest.of(0, 3, Sort.by(orders)); //10개 씩
 
         }else //구조상 이경우는 없음.

@@ -20,8 +20,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Slice;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +39,8 @@ class PostServiceTest {
     @Autowired PostService postService;
     @Autowired TagRepository tagRepository;
     @Autowired PostRepository postRepository;
+    @Autowired HttpServletRequest request;
+    @Autowired HttpServletResponse response;
 
     @BeforeEach
     public void init() {
@@ -159,6 +166,51 @@ class PostServiceTest {
         Assertions.assertThat(test1.get().getNum()).isEqualTo(0);
         Assertions.assertThat(test2.get().getNum()).isEqualTo(0);
     }
+
+    @Test
+    public void 게시물조회수테스트_해당게시물ID가토큰에존재하는경우() throws Exception {
+        //given
+        //게시물 등록1
+        User findUser = userService.findUserByNickName("test2");
+        List<String> tags1 = new ArrayList<>();
+        tags1.add("test1"); tags1.add("test2");
+        PostSaveForm postSaveForm1 = new PostSaveForm(tags1,"test1", "test1","test1", "SEE","Java",4);
+        Post addPost1 = postService.registration(findUser.getUser_id(), postSaveForm1);
+
+        Cookie cookie = new Cookie("postView", "["+ addPost1.getPost_id() + "]");
+        response = new MockHttpServletResponse();
+
+        //when
+        postService.readPost(addPost1.getPost_id(), cookie, response); //게시물 읽기
+
+        //then
+        //조회수가 증가되면 안됌!!!!!!
+        Post findPost = postRepository.findPostByPostId(addPost1.getPost_id());
+        Assertions.assertThat(findPost.getCountView()).isEqualTo(0L);
+    }
+
+    @Test
+    public void 게시물조회수테스트_해당게시물ID가토큰에존재하지않는경우() throws Exception {
+        //given
+        //게시물 등록1
+        User findUser = userService.findUserByNickName("test2");
+        List<String> tags1 = new ArrayList<>();
+        tags1.add("test1"); tags1.add("test2");
+        PostSaveForm postSaveForm1 = new PostSaveForm(tags1,"test1", "test1","test1", "SEE","Java",4);
+        Post addPost1 = postService.registration(findUser.getUser_id(), postSaveForm1);
+
+        Cookie cookie = null;
+        response = new MockHttpServletResponse();
+
+        //when
+        postService.readPost(addPost1.getPost_id(), cookie, response); //게시물 읽기
+
+        //then
+        //조회수가 증가되어야 함!!!!!!
+        Post findPost = postRepository.findPostByPostId(addPost1.getPost_id());
+        Assertions.assertThat(findPost.getCountView()).isEqualTo(1L);
+    }
+
 
     @Test
     @Transactional

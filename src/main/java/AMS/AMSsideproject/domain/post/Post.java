@@ -59,6 +59,10 @@ public class Post {
             orphanRemoval = true )
     private List<PostTag> postTagList = new ArrayList<>();
 
+    //게시물 조회
+    @Column(name = "count_view")
+    private Long countView;
+
 
     //양방향 연관관계 메서드
     public void addPostTag(PostTag postTag) {
@@ -85,6 +89,11 @@ public class Post {
         this.likeNum--;
     }
 
+    //게시물 조회시 조회 수 늘림 -> "지연 감지" 사용시
+    public void addCountView() {
+        this.countView++;
+    }
+
     //생성 메서드
     public static Post createPost(User user, PostSaveForm postSaveForm) {
         Post post = new Post();
@@ -100,6 +109,9 @@ public class Post {
 
         post.likeNum =0;
         post.replyNum =0;
+
+        post.countView = 0L; //좋아요 조회수 초기화!!!!!!!!
+
         post.redate = LocalDateTime.now();
         return post;
     }
@@ -115,6 +127,10 @@ public class Post {
 
         this.chdate = LocalDateTime.now();
     }
+
+
+
+
 
 
 

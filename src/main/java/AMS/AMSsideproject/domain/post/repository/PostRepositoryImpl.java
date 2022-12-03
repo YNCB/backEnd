@@ -159,6 +159,20 @@ public class PostRepositoryImpl implements PostRepository {
 
     }
 
+    //게시물 조회수를 "지연감지" 없이 직접 업데이트 쿼리문 사용시
+    public void updateViewCount(Long postId) {
+        this.query.update(QPost.post)
+                .set(QPost.post.countView, QPost.post.countView.add(1))
+                .where(postIdEqAboutPost(postId))
+                .execute();
+    }
+
+
+    private BooleanExpression postIdEqAboutPost(Long postId) {
+        if(postId == null)
+            return null;
+        return QPost.post.post_id.eq(postId);
+    }
 
     private BooleanExpression TagsIn(List<String> tags) {
         if(tags.isEmpty())
