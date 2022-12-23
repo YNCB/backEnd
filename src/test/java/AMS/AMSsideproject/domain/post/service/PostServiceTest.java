@@ -217,7 +217,7 @@ class PostServiceTest {
     public void 모든유저게시물에대해서필터링조회최신순정렬무한스크롤첫페이지() throws Exception {
 
         //when
-        SearchFormAboutAllUserPost form = new SearchFormAboutAllUserPost("Java", "koo", "latest", null, null,null);
+        SearchFormAboutAllUserPost form = new SearchFormAboutAllUserPost("Java", "koo", "latest", null, null,null,null);
         Slice<Post> findPosts = postService.findPostsAboutAllUser(form);
 
         //then
@@ -233,7 +233,7 @@ class PostServiceTest {
     public void 모든유저게시물에대해서필터링조회최신순정렬무한스크롤중간페이지() throws Exception {
 
         //when
-        SearchFormAboutAllUserPost form = new SearchFormAboutAllUserPost("Java", "koo", "latest", 6L, null,null);
+        SearchFormAboutAllUserPost form = new SearchFormAboutAllUserPost("Java", "koo", "latest", 6L, null,null,null);
         Slice<Post> findPosts = postService.findPostsAboutAllUser(form);
 
         //then
@@ -250,7 +250,7 @@ class PostServiceTest {
     public void 모든유저게시물에대해서필터링조회최신순정렬무한스크롤마지막페이지() throws Exception {
 
         //when
-        SearchFormAboutAllUserPost form = new SearchFormAboutAllUserPost("Java", "koo", "latest", 3L, null,null);
+        SearchFormAboutAllUserPost form = new SearchFormAboutAllUserPost("Java", "koo", "latest", 3L, null,null,null);
         Slice<Post> findPosts = postService.findPostsAboutAllUser(form);
 
         //then
@@ -266,7 +266,7 @@ class PostServiceTest {
     public void 모든유저게시물에대해서필터링조회좋아요순정렬무한스크롤첫페이지() throws Exception {
 
         //when
-        SearchFormAboutAllUserPost form = new SearchFormAboutAllUserPost("Java", "koo", "likeNum", null, null,null);
+        SearchFormAboutAllUserPost form = new SearchFormAboutAllUserPost("Java", "koo", "likeNum", null, null,null,null);
         Slice<Post> findPosts = postService.findPostsAboutAllUser(form);
 
         //then
@@ -282,7 +282,7 @@ class PostServiceTest {
     public void 모든유저게시물에대해서필터링조회좋아요순정렬무한스크롤중간페이지() throws Exception {
 
         //when
-        SearchFormAboutAllUserPost form = new SearchFormAboutAllUserPost("Java", "koo", "likeNum", 6L, null,6);
+        SearchFormAboutAllUserPost form = new SearchFormAboutAllUserPost("Java", "koo", "likeNum", 6L, null,6,null);
         Slice<Post> findPosts = postService.findPostsAboutAllUser(form);
 
         //then
@@ -298,7 +298,7 @@ class PostServiceTest {
     public void 모든유저게시물에대해서필터링조회좋아요순정렬무한스크롤마지막페이지() throws Exception {
 
         //when
-        SearchFormAboutAllUserPost form = new SearchFormAboutAllUserPost("Java", "koo", "likeNum", 2L, null,3);
+        SearchFormAboutAllUserPost form = new SearchFormAboutAllUserPost("Java", "koo", "likeNum", 2L, null,3,null);
         Slice<Post> findPosts = postService.findPostsAboutAllUser(form);
 
         //then

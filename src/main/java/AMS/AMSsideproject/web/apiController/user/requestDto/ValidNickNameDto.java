@@ -18,5 +18,5 @@ public class ValidNickNameDto {
     @ApiModelProperty(example = "test")
     @NotBlank(message = "필수 입력값 입니다.")
     @Length(min=3 , max=10 , message = "3자 ~ 10자 이어야 합니다.")
-    public String nickName;
+    public String nickname;
 }

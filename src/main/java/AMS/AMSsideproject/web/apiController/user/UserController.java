@@ -74,7 +74,7 @@ public class UserController {
     public DataResponse<ValidNickNameDto> ValidDuplicateNickName(@Validated @RequestBody ValidNickNameDto validNickName) {
 
         //이거도 굳이 리턴할필요가 있나?! 닉네임을?!
-        String nickName= userService.validDuplicateUserNickName(validNickName.nickName);
+        String nickName= userService.validDuplicateUserNickName(validNickName.nickname);
         return new DataResponse<>("200", "사용 가능한 닉네임 입니다.", new ValidNickNameDto(nickName));
     }
 
