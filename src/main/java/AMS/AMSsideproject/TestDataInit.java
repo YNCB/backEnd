@@ -85,6 +85,5 @@ public class TestDataInit {
         likeService.like_v2(registration7.getPost_id(), join4.getUser_id());
         likeService.like_v2(registration7.getPost_id(), join5.getUser_id());
 
-
     }
 }
