@@ -308,7 +308,7 @@ public class PostController {
 
     //게시물 삭제
     /**
-     * 게시물 삭제시 태그 언급수가 0인 태그는 삭제해야되나?!!
+     * 게시물 삭제시 태그 언급수가 0인 태그는 삭제해야되나?!!!!!!
      */
     @DeleteMapping("/{nickname}/{postId}")
     @AddAuthRequired //추가 권한 검사 대상

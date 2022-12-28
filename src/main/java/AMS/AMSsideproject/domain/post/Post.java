@@ -47,7 +47,6 @@ public class Post {
     @Column(name = "like_num")
     private Integer likeNum; //좋아요 총 개수 -> 정렬에 컬럼 조건으로 사용되기 때문에
 
-
     @Column(name = "reply_num")
     private Integer replyNum; //댓글 개수
 
@@ -63,7 +62,6 @@ public class Post {
     @Column(name = "count_view")
     private Long countView;
 
-
     //양방향 연관관계 메서드
     public void addPostTag(PostTag postTag) {
         postTag.setPost(this);
@@ -78,7 +76,6 @@ public class Post {
         this.likeNum = this.likes.size();
     }
 
-
     /**
      * test
      */
@@ -88,11 +85,11 @@ public class Post {
     public void subLikeNum() {
         this.likeNum--;
     }
-
     //게시물 조회시 조회 수 늘림 -> "지연 감지" 사용시
     public void addCountView() {
         this.countView++;
     }
+
 
     //생성 메서드
     public static Post createPost(User user, PostSaveForm postSaveForm) {
@@ -127,9 +124,6 @@ public class Post {
 
         this.chdate = LocalDateTime.now();
     }
-
-
-
 
 
 

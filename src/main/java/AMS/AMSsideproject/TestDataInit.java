@@ -30,13 +30,13 @@ public class TestDataInit {
         //사용자 데이터
         UserJoinForm2 userJoinForm1 = new UserJoinForm2("test1@naver.com","test1", "test1", "basic", "학생", "Java");
         User join1 = userService.join(userJoinForm1);
-        UserJoinForm2 userJoinForm2 = new UserJoinForm2("test2@google.com", "test2", "test2", "kakao", "학생","Java");
+        UserJoinForm2 userJoinForm2 = new UserJoinForm2("test2@google.com", "test2", "test2", "basic", "학생","Java");
         User join2 = userService.join(userJoinForm2);
-        UserJoinForm2 userJoinForm3 = new UserJoinForm2("test3@google.com", "test3", "test3", "kakao", "학생","Java");
+        UserJoinForm2 userJoinForm3 = new UserJoinForm2("test3@google.com", "test3", "test3", "basic", "학생","Java");
         User join3 = userService.join(userJoinForm3);
-        UserJoinForm2 userJoinForm4 = new UserJoinForm2("test4@naver.com", "test4", "test4", "google", "학생","Java");
+        UserJoinForm2 userJoinForm4 = new UserJoinForm2("test4@naver.com", "test4", "test4", "basic", "학생","Java");
         User join4 = userService.join(userJoinForm4);
-        UserJoinForm2 userJoinForm5 = new UserJoinForm2("test5@google.com", "test5", "test5", "kakao", "학생","Java");
+        UserJoinForm2 userJoinForm5 = new UserJoinForm2("test5@google.com", "test5", "test5", "basic", "학생","Java");
         User join5 = userService.join(userJoinForm5);
 
         //게시물 데이터
