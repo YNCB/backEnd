@@ -32,7 +32,6 @@ public class ReplyExControllerAdvice {
     }
 
 
-
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public BaseErrorResult EtcException(Exception e) {
