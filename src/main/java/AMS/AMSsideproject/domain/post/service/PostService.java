@@ -3,6 +3,8 @@ package AMS.AMSsideproject.domain.post.service;
 import AMS.AMSsideproject.domain.post.Post;
 import AMS.AMSsideproject.domain.post.QPost;
 import AMS.AMSsideproject.domain.post.repository.PostRepository;
+import AMS.AMSsideproject.domain.post.repository.query.PostRepositoryQueryDto;
+import AMS.AMSsideproject.domain.reply.service.ReplyService;
 import AMS.AMSsideproject.web.apiController.post.requestForm.*;
 import AMS.AMSsideproject.domain.post.service.form.NoOffsetPage;
 import AMS.AMSsideproject.domain.tag.Tag.Tag;
@@ -10,6 +12,8 @@ import AMS.AMSsideproject.domain.tag.Tag.service.TagService;
 import AMS.AMSsideproject.domain.tag.postTag.PostTag;
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
+import AMS.AMSsideproject.web.responseDto.post.PostDto;
+import AMS.AMSsideproject.web.responseDto.reply.RepliesDto;
 import com.querydsl.core.BooleanBuilder;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,8 +38,10 @@ import java.util.List;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final PostRepositoryQueryDto postRepositoryQueryDto;
     private final UserService userService;
     private final TagService tagService;
+    private final ReplyService replyService;
 
     //게시물 등록
     @Transactional
@@ -86,6 +92,19 @@ public class PostService {
 
         return postRepository.findPostsByOneSelf(nickname, searchForm.getTags(), searchForm.getType(), searchForm.getLanguage(),
                 searchForm.getSearchTitle(), noOffsetPage.getPageable(), noOffsetPage.getBooleanBuilder());
+    }
+
+    //게시물 상세 조회(게시물 정보,댓글 정보)
+    public PostDto findPostByPostId(Long postId) {
+
+        //게시물 정보 조회
+        PostDto findPostDto = postRepositoryQueryDto.findQueryPostDtoByPostId(postId);
+        //게시물의 댓글 정보 조회
+        List<RepliesDto> findRepliesDto = replyService.findRepliesByPostId(postId);
+
+        findPostDto.setReplies(findRepliesDto);
+
+        return findPostDto;
     }
 
 
@@ -167,8 +186,9 @@ public class PostService {
         }
     }
 
+
     //무한 스크롤를 위한 파라미터 세팅 함수
-    private NoOffsetPage NoOffsetPageNation(String orderKey, Long lastPostId, Integer lastLikeNum, Integer lastReplyNum, Long lastCountView) {
+    private NoOffsetPage NoOffsetPageNation(String orderKey, Long lastPostId, Integer lastLikeNum, Integer lastReplyNum, Integer lastCountView) {
 
         BooleanBuilder builder = new BooleanBuilder();
         Pageable pageable = null;

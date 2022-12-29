@@ -152,7 +152,7 @@ public class PostController {
     })
     public DataResponse<PostListResponse> userPage(@PathVariable("nickname")String nickname,
                                                    @RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken,
-                                                   @RequestHeader(JwtProperties.MYSESSION_HEADER_STRING) String my_session_token,
+                                                   @RequestHeader(JwtProperties.MYSESSION_HEADER_STRING) String my_sessionToken,
                                                    @RequestBody SearchFormAboutSelfUserPost form) {
 
         Slice<Post> findPosts = findPosts = postService.findPostsAboutOneSelf(nickname, form);
@@ -182,8 +182,13 @@ public class PostController {
     })
     public DataResponse<PostDto> postPage(@PathVariable("postId") Long postId) {
 
-        //최적화 Dto 버전 사용
-        PostDto findPostDto = postRepositoryQueryDto.findQueryPostDtoByPostId(postId);
+        //최적화 Dto 버전 사용 - post 정보만
+        //PostDto findPostDto = postRepositoryQueryDto.findQueryPostDtoByPostId(postId);
+        /**
+         * - post 정보 포함 : 최적의 Dto 버전사용
+         * - reply 정보 포함
+         */
+        PostDto findPostDto = postService.findPostByPostId(postId);
 
         return new DataResponse<>("200", "문제 상제 조회 결과입니다.", findPostDto);
     }
@@ -209,7 +214,12 @@ public class PostController {
         Boolean existing = likeService.checkExisting(postId, findUserId);
 
         //최적화 Dto 버전 사용
-        PostDto findPostDto = postRepositoryQueryDto.findQueryPostDtoByPostId(postId);
+        //PostDto findPostDto = postRepositoryQueryDto.findQueryPostDtoByPostId(postId);
+        /**
+         * - post 정보 포함 : 최적의 Dto 버전사용
+         * - reply 정보 포함
+         */
+        PostDto findPostDto = postService.findPostByPostId(postId);
 
         //조회순 증가!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         postService.readPost(postId, postViewCookie, response);

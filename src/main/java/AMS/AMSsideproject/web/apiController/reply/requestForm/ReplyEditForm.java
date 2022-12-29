@@ -7,10 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReplySaveForm {
+public class ReplyEditForm {
 
     private String title;
     private String content;
-    private Long parent_id; //루트일경우에는 null
-
 }

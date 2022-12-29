@@ -2,8 +2,11 @@ package AMS.AMSsideproject.web.responseDto.post;
 
 import AMS.AMSsideproject.domain.post.Post;
 import AMS.AMSsideproject.domain.post.repository.query.form.LikeDto;
+import AMS.AMSsideproject.web.responseDto.reply.RepliesDto;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -13,8 +16,8 @@ import java.util.stream.Collectors;
 @Data
 public class PostDto {
 
-//    @ApiModelProperty(example = "1")
-//    private Long post_id; //제목
+    @ApiModelProperty(example = "1")
+    private Long post_id;
 
     @ApiModelProperty(example = "test")
     private String title; //제목
@@ -24,11 +27,6 @@ public class PostDto {
 
     @ApiModelProperty(example = "2020-2-2")
     private String redate; //게시물 등록 일자
-    @ApiModelProperty(example = "5")
-    private Integer likeNum; //좋아요수
-
-    @ApiModelProperty(example = "6")
-    private Long countView; //조회수
 
     @ApiModelProperty(example = "Java")
     private String language; //푼 언어
@@ -39,21 +37,22 @@ public class PostDto {
     @ApiModelProperty(example = "test")
     private String context;
 
-
     @ApiModelProperty(example = "10")
     private Integer replyNum; //댓글수
+    @ApiModelProperty(example = "5")
+    private Integer likeNum; //좋아요수
+    @ApiModelProperty(example = "6")
+    private Integer countView; //조회수
 
-    @ApiModelProperty(example = "DFS", notes = "문제 태그들")
+    @ApiModelProperty(example = "['DFS','BFS']", notes = "문제 태그 리스트")
     private List<String> tags; //태그들
 
-    //!!!!!!!!!!!!!!!!!!!! 따로 api가 존재!!!!!!!!!!!!!
-    //private List<LikeDto> likes; //좋아요들
+    private List<RepliesDto> replies;
 
-
-    public PostDto(String title, String nickname, LocalDateTime redate, Integer likeNum, String language, String type,
+    public PostDto(Long postId, String title, String nickname, LocalDateTime redate, Integer likeNum, Integer countView, String language, String type,
                    Integer level, String context, Integer replyNum) {
 
-//        this.post_id = postId;
+        this.post_id = postId;
         this.title = title;
         this.nickname = nickname;
         this.redate = redate.format(DateTimeFormatter.ISO_LOCAL_DATE);
@@ -63,5 +62,6 @@ public class PostDto {
         this.level = level;
         this.context = context;
         this.replyNum = replyNum;
+        this.countView = countView;
     }
 }

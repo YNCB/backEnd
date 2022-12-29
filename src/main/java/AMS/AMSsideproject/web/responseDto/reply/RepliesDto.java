@@ -1,11 +1,10 @@
 package AMS.AMSsideproject.web.responseDto.reply;
 
 import AMS.AMSsideproject.domain.reply.Reply;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,8 +15,7 @@ public class RepliesDto {
     private String nickname;
     private String title;
     private String content;
-    private LocalDateTime redate;
-
+    private String redate;
     private List<RepliesDto> children = new ArrayList<>();
 
     static public RepliesDto createRepliesDto(Reply reply) {
@@ -26,7 +24,7 @@ public class RepliesDto {
         repliesDto.setNickname(reply.getUser().getNickname());
         repliesDto.setTitle(reply.getTitle());
         repliesDto.setContent(reply.getContent());
-        repliesDto.setRedate(reply.getRedate());
+        repliesDto.setRedate(reply.getRedate().format(DateTimeFormatter.ISO_LOCAL_DATE));
 
         return repliesDto;
     }

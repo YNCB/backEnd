@@ -4,10 +4,13 @@ import AMS.AMSsideproject.domain.like.service.LikeService;
 import AMS.AMSsideproject.domain.post.Post;
 import AMS.AMSsideproject.domain.post.repository.PostRepository;
 import AMS.AMSsideproject.domain.post.service.PostService;
+import AMS.AMSsideproject.domain.reply.Reply;
+import AMS.AMSsideproject.domain.reply.service.ReplyService;
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.repository.UserRepository;
 import AMS.AMSsideproject.domain.user.service.UserService;
 import AMS.AMSsideproject.web.apiController.post.requestForm.PostSaveForm;
+import AMS.AMSsideproject.web.apiController.reply.requestForm.ReplySaveForm;
 import AMS.AMSsideproject.web.apiController.user.requestDto.UserJoinForm2;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -23,6 +26,7 @@ public class TestDataInit {
     private final UserService userService;
     private final PostService postService;
     private final LikeService likeService;
+    private final ReplyService replyService;
 
     @PostConstruct
     public void init() {
@@ -85,6 +89,15 @@ public class TestDataInit {
         likeService.like_v2(registration7.getPost_id(), join4.getUser_id());
         likeService.like_v2(registration7.getPost_id(), join5.getUser_id());
 
+        //댓글 데이터
+        ReplySaveForm replySaveForm1 = new ReplySaveForm("test1", "test1", null);
+        Reply saveReply1 = replyService.addReply(registration1.getPost_id(), join3.getUser_id(), replySaveForm1);
+        ReplySaveForm replySaveForm2 = new ReplySaveForm("test2", "test2", saveReply1.getReply_id());
+        Reply saveReply2 = replyService.addReply(registration1.getPost_id(), join4.getUser_id(), replySaveForm2);
+        ReplySaveForm replySaveForm3 = new ReplySaveForm("test3", "test3", saveReply2.getReply_id());
+        Reply saveReply3 = replyService.addReply(registration1.getPost_id(), join5.getUser_id(), replySaveForm3);
 
+        ReplySaveForm replySaveForm4 = new ReplySaveForm("test4", "test4", null);
+        Reply saveReply4 = replyService.addReply(registration1.getPost_id(), join2.getUser_id(), replySaveForm1);
     }
 }

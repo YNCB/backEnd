@@ -5,6 +5,7 @@ import AMS.AMSsideproject.domain.tag.postTag.PostTag;
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.web.apiController.post.requestForm.PostEditForm;
 import AMS.AMSsideproject.web.apiController.post.requestForm.PostSaveForm;
+import io.swagger.models.auth.In;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -37,6 +38,14 @@ public class Post {
     private LocalDateTime chdate;
     private Integer level; //난이도
 
+    //양방향 연관관계
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            mappedBy = "post",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true )
+    private List<PostTag> postTagList = new ArrayList<>();
+
     @OneToMany(
             fetch = FetchType.LAZY,
             mappedBy = "post",
@@ -50,17 +59,9 @@ public class Post {
     @Column(name = "reply_num")
     private Integer replyNum; //댓글 개수
 
-    //양방향 연관관계
-    @OneToMany(
-            fetch = FetchType.LAZY,
-            mappedBy = "post",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true )
-    private List<PostTag> postTagList = new ArrayList<>();
-
-    //게시물 조회
     @Column(name = "count_view")
-    private Long countView;
+    private Integer countView; //조회수
+
 
     //양방향 연관관계 메서드
     public void addPostTag(PostTag postTag) {
@@ -71,7 +72,6 @@ public class Post {
     public void addLike(Like like){
         likes.add(like);
     }
-
     public void setLikeNum(){
         this.likeNum = this.likes.size();
     }
@@ -79,6 +79,7 @@ public class Post {
     /**
      * test
      */
+    //조회수
     public void addLikeNum() {
         this.likeNum++;
     }
@@ -89,6 +90,9 @@ public class Post {
     public void addCountView() {
         this.countView++;
     }
+    //댓글수
+    public void addReplyNum() { this.replyNum++; }
+    public void subReplyNum() { this.replyNum--; };
 
 
     //생성 메서드
@@ -106,8 +110,7 @@ public class Post {
 
         post.likeNum =0;
         post.replyNum =0;
-
-        post.countView = 0L; //좋아요 조회수 초기화!!!!!!!!
+        post.countView = 0; //좋아요 조회수 초기화!!!!!!!!
 
         post.redate = LocalDateTime.now();
         return post;
@@ -131,9 +134,6 @@ public class Post {
 
 
 
-    public void addReplyNum() {
-        this.replyNum++;
-    }
 
 //    public void addLikeNum(Long num) {
 //        this.likeNum += num;
