@@ -18,11 +18,11 @@ public class Reply {
     private Long reply_id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", nullable = false)
+    @JoinColumn(name = "post_id")
     private Post post;
     
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user; //작성자
     
     private String title;
@@ -45,7 +45,30 @@ public class Reply {
     private List<Reply> children = new ArrayList<>(); //자식 댓글
 
 
-//    private Integer reDepth; //댓글:0 , 대댓글:1 , 대대댓글:2 등
-//    private Integer reLevel; //한 집합의 댓글, 대댓글 총 개수(댓글:0 부터 시작)
-    
+    //생성자
+    static public Reply createReply(String title, String content, User user, Post post) {
+        Reply reply = new Reply();
+        reply.post = post;
+        reply.user = user;
+        reply.title = title;
+        reply.content = content;
+        reply.parent = null; //초기값
+        reply.redate = LocalDateTime.now();
+        reply.chdate = null;
+        return reply;
+    }
+
+    //양방향 연관관계
+    public void setParent(Reply parent){
+        this.parent = parent;
+        parent.getChildren().add(this);
+    }
+
+    //수정자
+    public void edit(String title, String content) {
+        this.title = title;
+        this.content = content;
+        this.chdate = LocalDateTime.now(); //수정일 설정
+    }
+
 }

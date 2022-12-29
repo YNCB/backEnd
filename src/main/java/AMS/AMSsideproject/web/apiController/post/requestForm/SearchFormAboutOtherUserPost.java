@@ -36,5 +36,5 @@ public class SearchFormAboutOtherUserPost {
     private Integer lastLikeNum; //좋아요순 사용
     @ApiModelProperty(example = "4", notes = "무한스크롤 방식을 위한것, 마지막 게시물의 게시물 조회수개수 입니다. " +
             "countView(조회순)이 해당합니다.")
-    private Long countView; //조회수순 사용
+    private Integer countView; //조회수순 사용
 }

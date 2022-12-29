@@ -37,7 +37,6 @@ public class SecurityConfig {
                 .antMatchers("/codebox/join*", "/codebox/join/mailConfirm", "/codebox/join/validNickName") //회원가입 관련
                 .antMatchers("/codebox/refreshToken") //리프레쉬 토큰 관련
                 .antMatchers(HttpMethod.GET,"/codebox/", "/codebox/*", "/codebox/*/{postId:[\\d+]}") //게시물 관련!!!!!!!!!!!!!!!!!!!!정규식 표현
-
 //                .antMatchers(HttpMethod.GET, "/codebox/*/*/like")
 
                 .antMatchers("/swagger-ui.html/**", "/swagger/**", "/v2/api-docs", "/swagger-resources/**", "/webjars/**")
@@ -56,16 +55,14 @@ public class SecurityConfig {
                 .httpBasic().disable() //헤더에 토큰으로 "basic "으로 된 토큰을 사용하는 경우 -> httpBasic() / 사용하지 않으면 "BasicAu~"가 작동안하는데 우리는 JWT 토큰을 사용하니 커스텀해서 등록해주기
 
                 .apply(new MyCustomDsl())
-
                 .and()
                 .authorizeRequests()
                 .antMatchers("/codebox/setting").hasAuthority("USER")
                 .antMatchers("/codebox/write").hasAuthority("USER")
                 .antMatchers("/codebox/*/*/edit").hasAuthority("USER")
                 .antMatchers(HttpMethod.DELETE, "/codebox/*/*").hasAuthority("USER")
+                .antMatchers("/codebox/*/*/saveReply", "/codebox/*/*/*").hasAuthority("USER") //댓글 관련
                 .antMatchers( "/codebox/*/*/like").hasAuthority("USER") //좋아요 누르기, 리스트 보기 모두 로그인 필요
-
-
 
 
                 //.antMatchers( "/codebox/*/{\\d+}").permitAll()

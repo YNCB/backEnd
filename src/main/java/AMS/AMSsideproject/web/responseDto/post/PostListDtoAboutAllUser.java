@@ -32,7 +32,7 @@ public class PostListDtoAboutAllUser {
     @ApiModelProperty(example = "10")
     private Integer replyNum; //좋아요수
     @ApiModelProperty(example = "6")
-    private Long countView; //조회수
+    private Integer countView; //조회수
 
     @ApiModelProperty(example = "DFS", notes = "문제 태그들")
     private List<String> tags; //태그들

@@ -15,8 +15,8 @@ import java.util.List;
 @NoArgsConstructor
 public class LoginPostDto {
 
-//    @ApiModelProperty(example = "1")
-//    private Long post_id; //제목
+    @ApiModelProperty(example = "1")
+    private Long post_id;
 
     @ApiModelProperty(example = "test")
     private String title; //제목
@@ -26,8 +26,6 @@ public class LoginPostDto {
 
     @ApiModelProperty(example = "2020-2-2")
     private String redate; //게시물 등록 일자
-    @ApiModelProperty(example = "5")
-    private Integer likeNum; //좋아요수
 
     @ApiModelProperty(example = "true", notes = "좋아요 누른 유무")
     private boolean likeExisting; //좋아요 누른 유무
@@ -43,19 +41,20 @@ public class LoginPostDto {
 
     @ApiModelProperty(example = "10")
     private Integer replyNum; //댓글수
+    @ApiModelProperty(example = "5")
+    private Integer likeNum; //좋아요수
+    @ApiModelProperty(example = "50")
+    private Integer countView; //조회수
 
     @ApiModelProperty(example = "DFS", notes = "문제 태그들")
     private List<String> tags; //태그들
-
-    //!!!!!!!!!!!!!!!!!!!
-    //private List<LikeDto> likes; //좋아요들
 
 
     public static LoginPostDto create(PostDto postDto, boolean existing) {
 
         LoginPostDto loginPostDto = new LoginPostDto();
 
-//        loginPostDto.post_id = postDto.getPost_id();
+        loginPostDto.post_id = postDto.getPost_id();
         loginPostDto.title = postDto.getTitle();
         loginPostDto.nickname = postDto.getNickname();
         loginPostDto.redate = postDto.getRedate();
@@ -69,6 +68,7 @@ public class LoginPostDto {
         loginPostDto.context = postDto.getContext();
 
         loginPostDto.replyNum = postDto.getReplyNum();
+        loginPostDto.countView = postDto.getCountView();
         loginPostDto.tags = postDto.getTags();
 
         return loginPostDto;
