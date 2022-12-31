@@ -17,10 +17,7 @@ import AMS.AMSsideproject.web.response.post.PostListResponse;
 import AMS.AMSsideproject.web.responseDto.post.*;
 import AMS.AMSsideproject.web.swagger.postController.MainPage_200;
 import AMS.AMSsideproject.web.swagger.postController.UserPage_200;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Slice;
@@ -90,11 +87,14 @@ public class PostController {
 
     //비로그인 사용자 - 특정 사용자 페이지(내 페이지, 상대방 페이지 -> 같음)
     @GetMapping(value = "/{nickname}")
-    @ApiOperation(value = "비로그인 회원-  특정 회원에 대한 게시물 리스트 조회",
+    @ApiOperation(value = "비로그인 회원-특정 회원에 대한 게시물 리스트 조회",
             notes = "특정 회원 게시물들에 대해서 필터링 조건에 맞게 리스트를 조회합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출", response = UserPage_200.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
+    })
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "nickname", value = "회원 닉네임", required = true)
     })
     public DataResponse<PostListResponse> userPage(@PathVariable("nickname")String nickname ,
                                                    @RequestBody SearchFormAboutOtherUserPost form) {
@@ -110,6 +110,7 @@ public class PostController {
         PostListResponse postListResponse = new PostListResponse(findPostDtos, findPosts.getNumberOfElements(), findPosts.hasNext());
         return new DataResponse<>("200", "특정 사용자의 게시물 리스트 입니다.",postListResponse);
     }
+
     //로그인 사용자 - 다른 사용자 페이지 접속하는 경우
     @GetMapping(value = "/{nickname}", headers = JwtProperties.ACCESS_HEADER_STRING)
     @LoginAuthRequired //권한 체크도 해야되는거 아니야!?????????!!!!!!!!!!(USER.....)
@@ -120,6 +121,10 @@ public class PostController {
             @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
+    })
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "nickname", value = "회원 닉네임", required = true),
+            @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰", required = true)
     })
     public DataResponse<PostListResponse> userPage(@PathVariable("nickname")String nickname,
                                                    @RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken,
@@ -136,10 +141,9 @@ public class PostController {
         PostListResponse postListResponse = new PostListResponse(findPostDtos, findPosts.getNumberOfElements(), findPosts.hasNext());
         return new DataResponse<>("200", "특정 사용자의 게시물 리스트 입니다.",postListResponse);
     }
+
     //로그인 사용자 - 내 페이지 접속하는 경우
-    /**
-     * "my_session token"은 기본정보 검증안해도 되나???!!(유효기간 등)????
-     */
+    //"my_session token"은 기본정보 검증안해도 되나???!!(유효기간 등)????
     @GetMapping(value = "/{nickname}", headers = {JwtProperties.ACCESS_HEADER_STRING, JwtProperties.MYSESSION_HEADER_STRING})
     @LoginAuthRequired //권한 체크도 해야되는거 아니야!?????????!!!!!!!!!!(USER.....)
     @ApiOperation(value = "로그인 회원 - 자신의 페이지에 대한 게시물 리스트 조회",
@@ -149,6 +153,11 @@ public class PostController {
             @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
+    })
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "nickname", value = "회원 닉네임", required = true),
+            @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰", required = true),
+            @ApiImplicitParam(name = JwtProperties.MYSESSION_HEADER_STRING, value = "마이페이지 엑세스 토큰", required = true)
     })
     public DataResponse<PostListResponse> userPage(@PathVariable("nickname")String nickname,
                                                    @RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken,
@@ -221,7 +230,7 @@ public class PostController {
          */
         PostDto findPostDto = postService.findPostByPostId(postId);
 
-        //조회순 증가!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //조회순 증가 검증
         postService.readPost(postId, postViewCookie, response);
 
         LoginPostDto loginPostDto = LoginPostDto.create(findPostDto, existing);
