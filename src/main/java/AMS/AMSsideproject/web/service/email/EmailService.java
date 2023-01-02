@@ -2,12 +2,11 @@ package AMS.AMSsideproject.web.service.email;
 
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
-import AMS.AMSsideproject.web.exception.user.AlreadyJoinedUser;
-import AMS.AMSsideproject.web.exception.user.UserNullException;
+import AMS.AMSsideproject.web.exception.AlreadyJoinedUser;
+import AMS.AMSsideproject.web.exception.UserNullException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 

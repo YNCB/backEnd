@@ -2,7 +2,7 @@ package AMS.AMSsideproject.web.interceptor;
 
 import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
 import AMS.AMSsideproject.web.custom.annotation.LoginAuthRequired;
-import AMS.AMSsideproject.web.exception.user.JWTTokenExpireException;
+import AMS.AMSsideproject.web.exception.JWTTokenExpireException;
 import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
 import AMS.AMSsideproject.web.response.BaseResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;

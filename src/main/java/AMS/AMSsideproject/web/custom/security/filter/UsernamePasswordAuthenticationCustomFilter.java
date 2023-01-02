@@ -1,7 +1,7 @@
 package AMS.AMSsideproject.web.custom.security.filter;
 
 import AMS.AMSsideproject.web.custom.security.filter.form.UserLoginForm;
-import AMS.AMSsideproject.web.exception.security.LoginUserInternalException;
+import AMS.AMSsideproject.web.exception.LoginUserInternalException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

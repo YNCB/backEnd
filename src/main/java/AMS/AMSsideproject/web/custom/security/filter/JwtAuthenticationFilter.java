@@ -4,7 +4,7 @@ import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
 import AMS.AMSsideproject.web.custom.security.PrincipalDetails;
-import AMS.AMSsideproject.web.exception.user.JWTTokenExpireException;
+import AMS.AMSsideproject.web.exception.JWTTokenExpireException;
 import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
 import AMS.AMSsideproject.web.response.BaseResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;

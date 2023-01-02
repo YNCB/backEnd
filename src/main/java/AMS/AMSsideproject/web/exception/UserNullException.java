@@ -1,4 +1,4 @@
-package AMS.AMSsideproject.web.exception.user;
+package AMS.AMSsideproject.web.exception;
 
 public class UserNullException extends RuntimeException{
 

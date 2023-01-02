@@ -2,8 +2,8 @@ package AMS.AMSsideproject.web.exhandler.advice.user;
 
 
 import AMS.AMSsideproject.web.apiController.user.requestDto.ValidNickNameDto;
-import AMS.AMSsideproject.web.exception.user.AlreadyJoinedUser;
-import AMS.AMSsideproject.web.exception.user.DuplicationUserNickname;
+import AMS.AMSsideproject.web.exception.AlreadyJoinedUser;
+import AMS.AMSsideproject.web.exception.DuplicationUserNickname;
 import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
 import AMS.AMSsideproject.web.exhandler.DataErrorResult;
 import org.springframework.http.HttpStatus;

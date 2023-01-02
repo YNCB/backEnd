@@ -1,4 +1,4 @@
-package AMS.AMSsideproject.web.exception.security;
+package AMS.AMSsideproject.web.exception;
 
 import org.springframework.security.core.AuthenticationException;
 

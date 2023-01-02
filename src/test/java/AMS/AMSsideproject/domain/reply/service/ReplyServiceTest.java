@@ -10,7 +10,7 @@ import AMS.AMSsideproject.web.apiController.post.requestForm.PostSaveForm;
 import AMS.AMSsideproject.web.apiController.reply.requestForm.ReplyEditForm;
 import AMS.AMSsideproject.web.apiController.reply.requestForm.ReplySaveForm;
 import AMS.AMSsideproject.web.apiController.user.requestDto.UserJoinForm2;
-import AMS.AMSsideproject.web.exception.reply.NotUserEq;
+import AMS.AMSsideproject.web.exception.NotUserEq;
 import AMS.AMSsideproject.web.responseDto.reply.RepliesDto;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;

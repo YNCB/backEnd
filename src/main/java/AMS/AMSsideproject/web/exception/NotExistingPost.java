@@ -1,4 +1,4 @@
-package AMS.AMSsideproject.web.exception.post;
+package AMS.AMSsideproject.web.exception;
 
 public class NotExistingPost extends RuntimeException{
 

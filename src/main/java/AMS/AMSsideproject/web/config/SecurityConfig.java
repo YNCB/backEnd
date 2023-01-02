@@ -36,7 +36,7 @@ public class SecurityConfig {
                 .antMatchers("/codebox/login/token/kakao", "/codebox/login/token/google") //로그인 관련
                 .antMatchers("/codebox/join*", "/codebox/join/mailConfirm", "/codebox/join/validNickName") //회원가입 관련
                 .antMatchers("/codebox/refreshToken") //리프레쉬 토큰 관련
-                .antMatchers(HttpMethod.GET,"/codebox/", "/codebox/*", "/codebox/*/{postId:[\\d+]}") //게시물 관련!!!!!!!!!!!!!!!!!!!!정규식 표현
+                .antMatchers(HttpMethod.GET,"/codebox/", "/codebox/*", "/codebox/*/{postId:[\\d+]}") //게시물 관련!!!!!!!!!!!!!!정규식 표현
 //                .antMatchers(HttpMethod.GET, "/codebox/*/*/like")
 
                 .antMatchers("/swagger-ui.html/**", "/swagger/**", "/v2/api-docs", "/swagger-resources/**", "/webjars/**")
@@ -61,7 +61,7 @@ public class SecurityConfig {
                 .antMatchers("/codebox/write").hasAuthority("USER")
                 .antMatchers("/codebox/*/*/edit").hasAuthority("USER")
                 .antMatchers(HttpMethod.DELETE, "/codebox/*/*").hasAuthority("USER")
-                .antMatchers("/codebox/*/*/saveReply", "/codebox/*/*/*").hasAuthority("USER") //댓글 관련
+                .antMatchers("/codebox/*/*/reply", "/codebox/*/*/*").hasAuthority("USER") //댓글 관련
                 .antMatchers( "/codebox/*/*/like").hasAuthority("USER") //좋아요 누르기, 리스트 보기 모두 로그인 필요
 
 
