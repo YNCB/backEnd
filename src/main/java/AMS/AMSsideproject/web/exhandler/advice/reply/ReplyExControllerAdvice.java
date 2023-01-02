@@ -1,9 +1,9 @@
 package AMS.AMSsideproject.web.exhandler.advice.reply;
 
 import AMS.AMSsideproject.web.apiController.reply.ReplyController;
-import AMS.AMSsideproject.web.exception.post.NotExistingPost;
-import AMS.AMSsideproject.web.exception.reply.NotExistingReply;
-import AMS.AMSsideproject.web.exception.reply.NotUserEq;
+import AMS.AMSsideproject.web.exception.NotExistingPost;
+import AMS.AMSsideproject.web.exception.NotExistingReply;
+import AMS.AMSsideproject.web.exception.NotUserEq;
 import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;

@@ -20,8 +20,10 @@ import AMS.AMSsideproject.web.swagger.postController.UserPage_200;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.Parameter;
 import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +42,11 @@ public class PostController {
     private final PostRepositoryQueryDto postRepositoryQueryDto; //성능 튜닝한 repository
     private final JwtProvider jwtProvider;
     private final LikeService likeService;
+
+    /**
+     * - Bean validation 적용해야됌!
+     * - 같은 api에 대해서 swagger가 인식을 못해 api를 임시로 아래와 같이 임시로 설정
+     */
 
     //모든 사용자들의 게시물 리스트 조회 (로그인, 비로그인)
     @GetMapping(value = "/")
@@ -71,8 +78,11 @@ public class PostController {
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰", required = true)
+    })
     public DataResponse<PostListResponse> mainPage(@RequestBody SearchFormAboutAllUserPost form,
-                                                   @RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken) {
+                                                   @RequestHeader(value = JwtProperties.ACCESS_HEADER_STRING ,required = true) String accessToken) {
         Slice<Post> result = postService.findPostsAboutAllUser(form);
 
         //Dto 변환
@@ -87,7 +97,7 @@ public class PostController {
 
     //비로그인 사용자 - 특정 사용자 페이지(내 페이지, 상대방 페이지 -> 같음)
     @GetMapping(value = "/{nickname}")
-    @ApiOperation(value = "비로그인 회원-특정 회원에 대한 게시물 리스트 조회",
+    @ApiOperation(value = "비로그인 회원 - 특정 회원에 대한 게시물 리스트 조회",
             notes = "특정 회원 게시물들에 대해서 필터링 조건에 맞게 리스트를 조회합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출", response = UserPage_200.class),
@@ -183,13 +193,19 @@ public class PostController {
      * - "postID" : 내부적으로는 int pk, 외부적으로는 UUID 사용하는 방법은 움..
      * => "postID" 를 알게되더라도 게시물작성, 수정등은 토큰을 통해 "권한" 체크를 하니깐 유출되어도 상관없움??!!
      */
-    @ApiOperation(value = "비로그인 사용자 - 게시물 상세조회 api", notes = "게시물의 상세 정보를 보여줍니다.")
     @GetMapping(value = "/{nickname}/{postId}")
+    @ApiOperation(value = "비로그인 사용자 - 게시물 상세조회 api",
+            notes = "게시물의 상세 정보를 보여줍니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
-    public DataResponse<PostDto> postPage(@PathVariable("postId") Long postId) {
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "nickname", value = "회원 닉네임", required = true),
+            @ApiImplicitParam(name = "postId", value = "게시물 아이디", required = true)
+    })
+    public DataResponse<PostDto> postPage(@PathVariable("postId") Long postId,
+                                          @PathVariable("nickname") String nickname) {
 
         //최적화 Dto 버전 사용 - post 정보만
         //PostDto findPostDto = postRepositoryQueryDto.findQueryPostDtoByPostId(postId);
@@ -202,19 +218,27 @@ public class PostController {
         return new DataResponse<>("200", "문제 상제 조회 결과입니다.", findPostDto);
     }
 
-    @ApiOperation(value = "로그인 사용자 - 게시물 상세조회 api", notes = "게시물의 상세 정보를 보여줍니다. 추가로 게시물 좋아요 누른 유무도 알려줍니다.")
     @GetMapping(value = "/{nickname}/{postId}", headers = JwtProperties.ACCESS_HEADER_STRING)
+    @ApiOperation(value = "로그인 사용자 - 게시물 상세조회 api",
+            notes = "게시물의 상세 정보를 보여줍니다. 추가로 게시물 좋아요 누른 유무도 알려줍니다.")
     @LoginAuthRequired//로그인 전용 인증 체크
     //권한 체크도 해야되는거 아니야!?????????!!!!!!!!!!(USER.....)
     @ApiResponses({
-            @ApiResponse(code=200, message="정상 호출 - 추가로 Header 에 해당 게시물 id를 포함시킨 쿠리를 포함함"),
+            @ApiResponse(code=200, message="정상 호출 - 추가로 Header 에 해당 게시물 id를 포함시킨 쿠키를 포함함"),
             @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "nickname", value = "회원 닉네임", required = true),
+            @ApiImplicitParam(name = "postId", value = "게시물 아이디", required = true),
+            @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰", required = true),
+            @ApiImplicitParam(name = "postView", value = "게시물 중복 조회 증가 방지 쿠키", required = false, paramType = "cookie")
+    })
     public DataResponse<LoginPostDto> postPage(@PathVariable("postId") Long postId,
-                                               @RequestHeader(JwtProperties.ACCESS_HEADER_STRING)String accessToken,
-                                               @CookieValue(value = "postView" ,required = false) Cookie postViewCookie, //쿠키가 없을수 있음
+                                               @PathVariable("nickname") String nickname,
+                                               @RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken,
+                                               @ApiIgnore @CookieValue(value = "postView" ,required = false) Cookie postViewCookie, //쿠키가 없을수 있음
                                                HttpServletResponse response) {
 
         Long findUserId = jwtProvider.getUserIdToToken(accessToken);

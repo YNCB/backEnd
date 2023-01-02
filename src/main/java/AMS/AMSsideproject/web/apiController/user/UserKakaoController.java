@@ -9,7 +9,7 @@ import AMS.AMSsideproject.web.oauth.provider.info.KakaoInfo;
 import AMS.AMSsideproject.web.response.DataResponse;
 import AMS.AMSsideproject.web.responseDto.user.KakaoUserJoinDto;
 import AMS.AMSsideproject.web.responseDto.user.UserLoginDto;
-import AMS.AMSsideproject.web.exception.user.UserNullException;
+import AMS.AMSsideproject.web.exception.UserNullException;
 import AMS.AMSsideproject.web.oauth.provider.profile.KakaoProfile;
 import AMS.AMSsideproject.web.oauth.provider.token.KakaoToken;
 import AMS.AMSsideproject.web.oauth.service.KakaoService;

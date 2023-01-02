@@ -6,10 +6,11 @@ import AMS.AMSsideproject.web.apiController.reply.requestForm.ReplyEditForm;
 import AMS.AMSsideproject.web.apiController.reply.requestForm.ReplySaveForm;
 import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
+import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
 import AMS.AMSsideproject.web.response.BaseResponse;
 import AMS.AMSsideproject.web.response.DataResponse;
 import AMS.AMSsideproject.web.responseDto.reply.ReplyDto;
-import io.swagger.annotations.Api;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,8 +23,25 @@ public class ReplyController {
     private final ReplyService replyService;
     private final JwtProvider jwtProvider;
 
+    /**
+     * Bean validation 적용해야됌!
+     */
+
     //댓글 저장 - 로그인 사용자만 가능
-    @PostMapping("/{nickname}/{postId}/saveReply")
+    @PostMapping("/{nickname}/{postId}/reply")
+    @ApiOperation(value = "댓글 저장 api", notes = "댓글을 저장합니다.")
+    @ApiResponses({
+            @ApiResponse(code=200, message="정상 호출"),
+            @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
+            @ApiResponse(code = 400, message = "잘못된 요청", response = BaseResponse.class),
+            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
+    })
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "nickname", value = "회원 닉네임", required = true),
+            @ApiImplicitParam(name = "postId", value = "게시물 아이디", required = true),
+            @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰", required = true)
+    })
     public BaseResponse storeReply(@PathVariable("nickname") String nickname,
                                    @PathVariable("postId") Long postId ,
                                    @RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken,
@@ -37,6 +55,21 @@ public class ReplyController {
 
     //댓글 삭제
     @DeleteMapping("/{nickname}/{postId}/{replyId}")
+    @ApiOperation(value = "댓글 삭제 api", notes = "댓글을 삭제합니다.")
+    @ApiResponses({
+            @ApiResponse(code=200, message="정상 호출"),
+            @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
+            @ApiResponse(code=400, message = "잘못된 요청", response = BaseResponse.class),
+            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=403, message = "권한이 없음", response = BaseResponse.class),
+            @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
+    })
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "nickname", value = "회원 닉네임", required = true),
+            @ApiImplicitParam(name = "postId", value = "게시물 아이디", required = true),
+            @ApiImplicitParam(name = "replyId", value = "댓글 아이디", required = true),
+            @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰", required = true)
+    })
     public BaseResponse removeReply(@PathVariable("nickname") String nickname,
                                     @PathVariable("postId") Long postId,
                                     @PathVariable("replyId") Long replyId,
@@ -50,6 +83,19 @@ public class ReplyController {
 
     //댓글 수정폼
     @GetMapping("/{nickname}/{postId}/{replyId}")
+    @ApiOperation(value = "댓글 수정 폼 api", notes = "댓글 수정 항목을 보여줍니다.")
+    @ApiResponses({
+            @ApiResponse(code=200, message="정상 호출"),
+            @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
+            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
+    })
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "nickname", value = "회원 닉네임", required = true),
+            @ApiImplicitParam(name = "postId", value = "게시물 아이디", required = true),
+            @ApiImplicitParam(name = "replyId", value = "댓글 아이디", required = true),
+            @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰", required = true)
+    })
     public DataResponse editReplyForm(@PathVariable("nickname") String nickname,
                                       @PathVariable("postId") Long postId,
                                       @PathVariable("replyId") Long replyId,
@@ -63,6 +109,20 @@ public class ReplyController {
 
     //댓글 수정
     @PostMapping("/{nickname}/{postId}/{replyId}")
+    @ApiOperation(value = "댓글 수정 api", notes = "댓글을 수정합니다.")
+    @ApiResponses({
+            @ApiResponse(code=200, message="정상 호출"),
+            @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
+            @ApiResponse(code=403, message = "권한이 없음", response = BaseResponse.class),
+            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
+    })
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "nickname", value = "회원 닉네임", required = true),
+            @ApiImplicitParam(name = "postId", value = "게시물 아이디", required = true),
+            @ApiImplicitParam(name = "replyId", value = "댓글 아이디", required = true),
+            @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰", required = true)
+    })
     public BaseResponse editReply(@PathVariable("nickname") String nickname,
                                   @PathVariable("postId") Long postId,
                                   @PathVariable("replyId") Long replyId,

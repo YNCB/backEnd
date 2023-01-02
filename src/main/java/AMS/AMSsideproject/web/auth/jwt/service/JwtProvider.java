@@ -2,7 +2,7 @@ package AMS.AMSsideproject.web.auth.jwt.service;
 
 import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
 import AMS.AMSsideproject.web.auth.jwt.JwtToken;
-import AMS.AMSsideproject.web.exception.user.JWTTokenExpireException;
+import AMS.AMSsideproject.web.exception.JWTTokenExpireException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.TokenExpiredException;

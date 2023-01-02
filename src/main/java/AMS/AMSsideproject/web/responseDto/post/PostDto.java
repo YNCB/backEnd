@@ -47,7 +47,7 @@ public class PostDto {
     @ApiModelProperty(example = "['DFS','BFS']", notes = "문제 태그 리스트")
     private List<String> tags; //태그들
 
-    private List<RepliesDto> replies;
+    private List<RepliesDto> replies; //댓글 리스트
 
     public PostDto(Long postId, String title, String nickname, LocalDateTime redate, Integer likeNum, Integer countView, String language, String type,
                    Integer level, String context, Integer replyNum) {

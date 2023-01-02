@@ -9,7 +9,7 @@ import AMS.AMSsideproject.web.oauth.provider.info.GoogleInfo;
 import AMS.AMSsideproject.web.response.DataResponse;
 import AMS.AMSsideproject.web.responseDto.user.GoogleUserJoinDto;
 import AMS.AMSsideproject.web.responseDto.user.UserLoginDto;
-import AMS.AMSsideproject.web.exception.user.UserNullException;
+import AMS.AMSsideproject.web.exception.UserNullException;
 import AMS.AMSsideproject.web.oauth.provider.profile.GoogleProfile;
 import AMS.AMSsideproject.web.oauth.provider.token.GoogleToken;
 import AMS.AMSsideproject.web.oauth.service.GoogleService;

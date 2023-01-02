@@ -8,9 +8,9 @@ import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.repository.UserRepository;
 import AMS.AMSsideproject.web.apiController.reply.requestForm.ReplyEditForm;
 import AMS.AMSsideproject.web.apiController.reply.requestForm.ReplySaveForm;
-import AMS.AMSsideproject.web.exception.post.NotExistingPost;
-import AMS.AMSsideproject.web.exception.reply.NotExistingReply;
-import AMS.AMSsideproject.web.exception.reply.NotUserEq;
+import AMS.AMSsideproject.web.exception.NotExistingPost;
+import AMS.AMSsideproject.web.exception.NotExistingReply;
+import AMS.AMSsideproject.web.exception.NotUserEq;
 import AMS.AMSsideproject.web.responseDto.reply.RepliesDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -94,6 +94,9 @@ public class ReplyService {
     public void deleteReply(Long replyId, Long userId) {
 
         Reply findReply = replyRepository.findReply(replyId);
+        if(findReply == null)
+            throw  new NotExistingReply("존재하지 않는 댓글입니다.");
+
         if(findReply.getUser().getUser_id() != userId)  //프록시 초기화
             throw new NotUserEq("권한이 없습니다.");
 

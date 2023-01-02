@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
-@Api(tags = "test용 컨트롤러 안보셔도 됩니다!")
+@Api(tags = "test용 컨트롤러 안보셔도 됩니다!", hidden = true)
 public class TestController {
 
     @GetMapping("/test")
