@@ -33,9 +33,16 @@ public class TestController {
 
     @GetMapping("/!!!!!!!!!!!!!!!!!jenkinkTest!!!!!!!!!!!!!!!")
     @ResponseBody
-    public String jenkinkTest() {
+    public String jenkinkTest1() {
 
-        return "!!!!!!!!!!!!!!!!jenkinkTest!!!!!!!!!!!!!!!!!!!!!!";
+        return "!!!!!!!!!!!!!!!!jenkinkTest22!!!!!!!!!!!!!!!!!!!!!!";
     }
+    @GetMapping("/!!!!!!!!!!!!!!!!!jenkinkTest22!!!!!!!!!!!!!!!")
+    @ResponseBody
+    public String jenkinkTest2() {
+
+        return "!!!!!!!!!!!!!!!!jenkinkTest222!!!!!!!!!!!!!!!!!!!!!!";
+    }
+
 
 }
