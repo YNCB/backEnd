@@ -31,18 +31,13 @@ public class TestController {
         return "구글 로그인 인증완료, code " + code;
     }
 
-    @GetMapping("/!!!!!!!!!!!!!!!!!jenkinkTest!!!!!!!!!!!!!!!")
+    @GetMapping("/!jenkinkTest!")
     @ResponseBody
     public String jenkinkTest1() {
 
         return "!!!!!!!!!!!!!!!!jenkinkTest22!!!!!!!!!!!!!!!!!!!!!!";
     }
-    @GetMapping("/!!!!!!!!!!!!!!!!!jenkinkTest22!!!!!!!!!!!!!!!")
-    @ResponseBody
-    public String jenkinkTest2() {
 
-        return "!!!!!!!!!!!!!!!!jenkinkTest222!!!!!!!!!!!!!!!!!!!!!!";
-    }
 
 
 }
