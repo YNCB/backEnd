@@ -31,6 +31,11 @@ public class TestController {
         return "구글 로그인 인증완료, code " + code;
     }
 
+    @GetMapping("/jenkinkTest")
+    @ResponseBody
+    public String jenkinkTest() {
 
+        return "jenkinkTest";
+    }
 
 }
