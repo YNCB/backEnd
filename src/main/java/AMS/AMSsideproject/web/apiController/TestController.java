@@ -35,7 +35,7 @@ public class TestController {
     @ResponseBody
     public String jenkinkTest() {
 
-        return "jenkinkTest!!!!!!!!!!!!!!!!!!!!!!!!";
+        return "!!!!!!!!!!!!!!!!jenkinkTest!!!!!!!!!!!!!!!!!!!!!!";
     }
 
 }
