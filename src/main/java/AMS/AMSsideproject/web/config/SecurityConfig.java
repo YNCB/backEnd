@@ -63,7 +63,10 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.DELETE, "/codebox/*/*").hasAuthority("USER")
                 .antMatchers("/codebox/*/*/reply", "/codebox/*/*/*").hasAuthority("USER") //댓글 관련
                 .antMatchers( "/codebox/*/*/like").hasAuthority("USER") //좋아요 누르기, 리스트 보기 모두 로그인 필요
-
+                //팔로우 관련
+                .antMatchers("/codebox/follow/add", "/codebox/follow/*").hasAuthority("USER")
+                .antMatchers("/codebox/follower/*").hasAuthority("USER")
+                .antMatchers("/codebox/following/*").hasAuthority("USER")
 
                 //.antMatchers( "/codebox/*/{\\d+}").permitAll()
                 //.antMatchers("/test").permitAll()

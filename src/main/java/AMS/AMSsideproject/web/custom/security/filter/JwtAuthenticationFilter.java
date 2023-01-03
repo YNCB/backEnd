@@ -46,6 +46,8 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 
         try {
 
+            System.out.println("===================================");
+
             //header 에서 JWT 토큰이 있는지 검사
             if(!StringUtils.hasText(token))  //토큰이 없는 경우
                 throw new Exception();
