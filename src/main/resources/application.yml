@@ -24,7 +24,7 @@ spring:
         show_sql: true
         format_sql: true
         #use_sql_comments: true
-        default_batch_fetch_size: 100
+        default_batch_fetch_sizee: 100
 
   # swagger 오류
   # : Spring boot 2.6버전 이후에 spring.mvc.pathmatch.matching-strategy 값이
