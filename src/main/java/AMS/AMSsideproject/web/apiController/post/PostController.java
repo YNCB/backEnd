@@ -82,7 +82,7 @@ public class PostController {
             @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰", required = true)
     })
     public DataResponse<PostListResponse> mainPage(@RequestBody SearchFormAboutAllUserPost form,
-                                                   @RequestHeader(value = JwtProperties.ACCESS_HEADER_STRING ,required = true) String accessToken) {
+                                                   @RequestHeader(value = JwtProperties.ACCESS_HEADER_STRING ,required = true)String accessToken) {
         Slice<Post> result = postService.findPostsAboutAllUser(form);
 
         //Dto 변환

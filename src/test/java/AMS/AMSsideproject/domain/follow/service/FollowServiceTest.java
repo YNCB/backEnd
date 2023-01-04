@@ -6,6 +6,7 @@ import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.repository.UserRepository;
 import AMS.AMSsideproject.domain.user.service.UserService;
 import AMS.AMSsideproject.web.apiController.user.requestDto.UserJoinForm2;
+import AMS.AMSsideproject.web.exception.AlreadyExistingFollow;
 import AMS.AMSsideproject.web.exception.NotExistingUser;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -42,6 +43,23 @@ class FollowServiceTest {
         Follow findFollow = followRepository.findFollow(follow.getId());
         Assertions.assertThat(findFollow.getUser().getUser_id()).isEqualTo(findUser1.getUser_id());
         Assertions.assertThat(findFollow.getFollow().getUser_id()).isEqualTo(findUser2.getUser_id());
+    }
+
+    @Test
+    public void 팔로우중복저장테스트() throws Exception {
+        //given
+        UserJoinForm2 userJoinForm1 = new UserJoinForm2("test1@naver.com", "test1","test1","basic","학생","Java");
+        UserJoinForm2 userJoinForm2 = new UserJoinForm2("test2@naver.com", "test2","test2","basic","학생","Java");
+
+        User findUser1 = userService.join(userJoinForm1);
+        User findUser2 = userService.join(userJoinForm2);
+
+        //when
+        Follow follow = followService.addFollow(findUser1.getUser_id(), findUser2.getUser_id());
+
+        //then
+        Assertions.assertThatThrownBy(() -> followService.addFollow(findUser1.getUser_id(), findUser2.getUser_id()))
+                .isInstanceOf(AlreadyExistingFollow.class);
     }
 
     @Test

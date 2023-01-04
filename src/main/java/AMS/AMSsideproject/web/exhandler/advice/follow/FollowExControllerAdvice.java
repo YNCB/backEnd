@@ -1,6 +1,8 @@
 package AMS.AMSsideproject.web.exhandler.advice.follow;
 
 import AMS.AMSsideproject.web.apiController.follow.FollowController;
+import AMS.AMSsideproject.web.exception.AlreadyExistingFollow;
+import AMS.AMSsideproject.web.exception.NotExistingFollow;
 import AMS.AMSsideproject.web.exception.NotExistingUser;
 import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
 import org.springframework.http.HttpStatus;
@@ -15,6 +17,17 @@ public class FollowExControllerAdvice {
     @ExceptionHandler(NotExistingUser.class)
     public BaseErrorResult NotExistingUser(NotExistingUser e) {
         return new BaseErrorResult(e.getMessage(),"400", "BAD_REQUEST");
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(AlreadyExistingFollow.class)
+    public BaseErrorResult AlreadyExistingFollow(AlreadyExistingFollow e) {
+        return new BaseErrorResult(e.getMessage(), "400", "BAD_REQUEST");
+    }
+
+    @ExceptionHandler(NotExistingFollow.class)
+    public BaseErrorResult NotExistingFollow(NotExistingFollow e) {
+        return new BaseErrorResult(e.getMessage(), "400", "BAD_REQUEST");
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

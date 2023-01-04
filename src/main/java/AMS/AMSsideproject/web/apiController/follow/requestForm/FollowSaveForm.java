@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FollowSaveForm {
-    private Long userId;
+    private Long userId; //팔로잉할 유저 아이디
 }

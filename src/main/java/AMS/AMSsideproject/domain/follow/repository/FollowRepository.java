@@ -6,12 +6,12 @@ import AMS.AMSsideproject.domain.user.QUser;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @NoArgsConstructor
@@ -39,6 +39,15 @@ public class FollowRepository {
     //팔로우 검색
     public Follow findFollow(Long followId) {
         return em.find(Follow.class, followId);
+    }
+
+    //팔로우 검색(userId, followId 를 통해)
+    public Optional<Follow> findFollowById(Long userId, Long followId) {
+        return Optional.ofNullable(query.selectFrom(f1)
+                .join(f1.user, u1)
+                .join(f1.follow, u2)
+                .where(userIdEq(userId), followIdEq(followId))
+                .fetchFirst());
     }
 
     //팔로워 리스트 조회(내가 팔로우한)

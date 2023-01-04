@@ -30,6 +30,11 @@ public class SecurityConfig {
     private final UserLoginSuccessCustomHandler successHandler;
     private final UserLoginFailureCustomHandler failureHandler;
 
+    /**
+     * requestMatchers 순서: url 정의한 순서대로 걸러지니 세분화된 url 를 작성하고 광범위한 url를 작성하기!
+     * uri 다시 정리하기 ! 위의 순서에 따라서 http method 정확히 정의 및 통합할수 있는건 통합
+    **/
+
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring()
@@ -37,7 +42,6 @@ public class SecurityConfig {
                 .antMatchers("/codebox/join*", "/codebox/join/mailConfirm", "/codebox/join/validNickName") //회원가입 관련
                 .antMatchers("/codebox/refreshToken") //리프레쉬 토큰 관련
                 .antMatchers(HttpMethod.GET,"/codebox/", "/codebox/*", "/codebox/*/{postId:[\\d+]}") //게시물 관련!!!!!!!!!!!!!!정규식 표현
-//                .antMatchers(HttpMethod.GET, "/codebox/*/*/like")
 
                 .antMatchers("/swagger-ui.html/**", "/swagger/**", "/v2/api-docs", "/swagger-resources/**", "/webjars/**")
                 .antMatchers("/v3/api-docs/**", "/swagger-ui/**")
@@ -63,13 +67,12 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.DELETE, "/codebox/*/*").hasAuthority("USER")
                 .antMatchers("/codebox/*/*/reply", "/codebox/*/*/*").hasAuthority("USER") //댓글 관련
                 .antMatchers( "/codebox/*/*/like").hasAuthority("USER") //좋아요 누르기, 리스트 보기 모두 로그인 필요
-                //팔로우 관련
-                .antMatchers("/codebox/follow/add", "/codebox/follow/*").hasAuthority("USER")
-                .antMatchers("/codebox/follower/*").hasAuthority("USER")
-                .antMatchers("/codebox/following/*").hasAuthority("USER")
 
-                //.antMatchers( "/codebox/*/{\\d+}").permitAll()
-                //.antMatchers("/test").permitAll()
+                //팔로우 관련
+                .antMatchers(HttpMethod.POST,"/codebox/follow/add").hasAuthority("USER")
+                .antMatchers(HttpMethod.DELETE, "/codebox/follow/*").hasAuthority("USER")
+                .antMatchers(HttpMethod.GET,"/codebox/follow/follower","/codebox/follow/following").hasAuthority("USER")
+
 
                 .and()
                 .build();
