@@ -31,10 +31,6 @@ public class PostEditDto {
     private List<String> tags;
 
 
-
-
-
-
     public PostEditDto(String title, String problem_uri, String content, String type, String language, Integer level) {
 
         this.title = title;

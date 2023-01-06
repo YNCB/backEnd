@@ -4,10 +4,11 @@ import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 @Controller
 @RequiredArgsConstructor
-@Api(tags = "test용 컨트롤러 안보셔도 됩니다!", hidden = true)
+@ApiIgnore
 public class TestController {
 
     @GetMapping("/test")
@@ -37,7 +38,5 @@ public class TestController {
 
         return "!!!!!!!!!!!!!!!!jenkinkTest22!!!!!!!!!!!!!!!!!!!!!!";
     }
-
-
 
 }

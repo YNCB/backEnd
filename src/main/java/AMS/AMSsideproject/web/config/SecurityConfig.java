@@ -7,14 +7,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.RequestCacheConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.stereotype.Component;
+
+import javax.servlet.Filter;
 
 @Configuration
 @EnableWebSecurity
@@ -30,23 +36,27 @@ public class SecurityConfig {
     private final UserLoginSuccessCustomHandler successHandler;
     private final UserLoginFailureCustomHandler failureHandler;
 
-    /**
-     * requestMatchers 순서: url 정의한 순서대로 걸러지니 세분화된 url 를 작성하고 광범위한 url를 작성하기!
-     * uri 다시 정리하기 ! 위의 순서에 따라서 http method 정확히 정의 및 통합할수 있는건 통합
-    **/
-
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring()
-                .antMatchers("/codebox/login/token/kakao", "/codebox/login/token/google") //로그인 관련
-                .antMatchers("/codebox/join*", "/codebox/join/mailConfirm", "/codebox/join/validNickName") //회원가입 관련
-                .antMatchers("/codebox/refreshToken") //리프레쉬 토큰 관련
-                .antMatchers(HttpMethod.GET,"/codebox/", "/codebox/*", "/codebox/*/{postId:[\\d+]}") //게시물 관련!!!!!!!!!!!!!!정규식 표현
+                //유저관련(소셜로그인)
+                .antMatchers("/codebox/login/token/kakao", "/codebox/login/token/google")
 
+                //유저관련(회원가입)
+                .antMatchers("/codebox/join*", "/codebox/join/mailConfirm", "/codebox/join/validNickName")
+
+                //리프레쉬 토큰 관련
+                .antMatchers("/codebox/refreshToken")
+
+                //게시물 관련(정규식 표현)
+                .antMatchers(HttpMethod.GET,"/codebox/","/codebox/{nickname:^((?!setting).)*$}","/codebox/*/{*[0-9]*$+}")
+
+                //swagger
                 .antMatchers("/swagger-ui.html/**", "/swagger/**", "/v2/api-docs", "/swagger-resources/**", "/webjars/**")
                 .antMatchers("/v3/api-docs/**", "/swagger-ui/**")
 
-                .antMatchers( "/test", "/login/oauth2/code/kakao", "/login/oauth2/code/google"); //test용
+                //test
+                .antMatchers( "/test", "/login/oauth2/code/kakao", "/login/oauth2/code/google");
     }
 
     @Bean
@@ -60,23 +70,30 @@ public class SecurityConfig {
 
                 .apply(new MyCustomDsl())
                 .and()
+
                 .authorizeRequests()
-                .antMatchers("/codebox/setting").hasAuthority("USER")
-                .antMatchers("/codebox/write").hasAuthority("USER")
-                .antMatchers("/codebox/*/*/edit").hasAuthority("USER")
+                 //유저 관련
+                .antMatchers("/codebox/setting").hasAuthority("USER") //get, put
+
+                //게시물 관련
+                .antMatchers(HttpMethod.POST, "/codebox/write").hasAuthority("USER")
+                .antMatchers("/codebox/*/*/edit").hasAuthority("USER") //get, post
                 .antMatchers(HttpMethod.DELETE, "/codebox/*/*").hasAuthority("USER")
-                .antMatchers("/codebox/*/*/reply", "/codebox/*/*/*").hasAuthority("USER") //댓글 관련
-                .antMatchers( "/codebox/*/*/like").hasAuthority("USER") //좋아요 누르기, 리스트 보기 모두 로그인 필요
+
+                //댓글 관련
+                .antMatchers(HttpMethod.POST, "/codebox/*/*/reply/add").hasAuthority("USER")
+                .antMatchers("/codebox/*/*/reply/*").hasAuthority("USER") //get,put,delete
+
+                //좋아요 관련
+                .antMatchers( "/codebox/*/*/like").hasAuthority("USER") //post,get
 
                 //팔로우 관련
                 .antMatchers(HttpMethod.POST,"/codebox/follow/add").hasAuthority("USER")
                 .antMatchers(HttpMethod.DELETE, "/codebox/follow/*").hasAuthority("USER")
                 .antMatchers(HttpMethod.GET,"/codebox/follow/follower","/codebox/follow/following").hasAuthority("USER")
 
-
                 .and()
                 .build();
-
     }
 
     public class MyCustomDsl extends AbstractHttpConfigurer<MyCustomDsl, HttpSecurity> {
@@ -85,7 +102,7 @@ public class SecurityConfig {
         public void configure(HttpSecurity http)  {
             AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
 
-            http.addFilter(config.corsFilter() );
+            http.addFilter(config.corsFilter() ); //스프링 시큐리티 필터내에 cors 관련 필터가 있음!! 그래서 제공해주는 필터 객체를 생성후 HttpSecurity에 등록!
             http.addFilter(new UsernamePasswordAuthenticationCustomFilter(authenticationManager, objectMapper , successHandler, failureHandler));
             http.addFilter(new JwtAuthenticationFilter(authenticationManager, jwtProvider, objectMapper, userService));
 

@@ -24,6 +24,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
+                .groupName("CODEBOX")
                 .apiInfo(apiInfo())
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("AMS.AMSsideproject.web.apiController")) //해당 패키지 아래 controller 대상으로 api 문서 생성

@@ -34,19 +34,13 @@ public class UserLoginSuccessCustomHandler implements AuthenticationSuccessHandl
 
         //로그인 인증을 마친 사용자 가져오기
         PrincipalDetails principal = (PrincipalDetails) authentication.getPrincipal();
-        User LoginUser = principal.getUser();
+        User loginUser = principal.getUser();
 
         //토큰 생성
-        JwtToken jwtToken = jwtService.createAndSaveToken(LoginUser.getUser_id(), LoginUser.getNickname(), LoginUser.getRole());
+        JwtToken jwtToken = jwtService.createAndSaveToken(loginUser.getUser_id(), loginUser.getNickname(), loginUser.getRole());
 
         //반환 json 객체 생성
-        UserLoginDto userLoginDto = UserLoginDto.builder()
-                .user_Id(LoginUser.getUser_id())
-                .nickname(LoginUser.getNickname())
-                .accessToken(jwtToken.getAccessToken())
-                .refreshToken(jwtToken.getRefreshToken())
-                .my_session(jwtToken.getMy_session())
-                .build();
+        UserLoginDto userLoginDto = new UserLoginDto(loginUser.getUser_id(), loginUser.getNickname(), jwtToken);
 
         DataResponse dataResponse = new DataResponse("200", "로그인을 성공하였습니다. 토큰이 발급되었습니다.", userLoginDto);
         String res = objectMapper.writeValueAsString(dataResponse);

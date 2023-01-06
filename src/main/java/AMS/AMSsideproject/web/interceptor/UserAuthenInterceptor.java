@@ -1,7 +1,7 @@
 package AMS.AMSsideproject.web.interceptor;
 
 import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
-import AMS.AMSsideproject.web.custom.annotation.LoginAuthRequired;
+import AMS.AMSsideproject.web.custom.annotation.UserAuthen;
 import AMS.AMSsideproject.web.exception.JWTTokenExpireException;
 import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
 import AMS.AMSsideproject.web.response.BaseResponse;
@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 @Slf4j
-public class LoginAuthInterceptor implements HandlerInterceptor {
+public class UserAuthenInterceptor implements HandlerInterceptor {
 
     @Autowired private JwtProvider jwtProvider;
     @Autowired private ObjectMapper objectMapper;
@@ -32,7 +32,7 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
             return true;
         }
         HandlerMethod handlerMethod = (HandlerMethod) handler;
-        LoginAuthRequired addAuthRequired = handlerMethod.getMethodAnnotation(LoginAuthRequired.class);
+        UserAuthen addAuthRequired = handlerMethod.getMethodAnnotation(UserAuthen.class);
         if(Objects.isNull(addAuthRequired)) {
             return true;
         }
@@ -68,7 +68,7 @@ public class LoginAuthInterceptor implements HandlerInterceptor {
     }
 
     private void sendErrorResponse(String message, HttpServletResponse response) throws IOException {
-        BaseErrorResult errorResult = new BaseErrorResult(message,"BAD", "403");
+        BaseErrorResult errorResult = new BaseErrorResult(message,"401", "Unauthorized");
         String res = objectMapper.writeValueAsString(errorResult);
 
         response.setStatus(HttpStatus.FORBIDDEN.value());

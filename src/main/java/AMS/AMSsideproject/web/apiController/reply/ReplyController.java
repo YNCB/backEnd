@@ -28,7 +28,7 @@ public class ReplyController {
      */
 
     //댓글 저장 - 로그인 사용자만 가능
-    @PostMapping("/{nickname}/{postId}/reply")
+    @PostMapping("/{nickname}/{postId}/reply/add")
     @ApiOperation(value = "댓글 저장 api", notes = "댓글을 저장합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
@@ -54,7 +54,7 @@ public class ReplyController {
     }
 
     //댓글 삭제
-    @DeleteMapping("/{nickname}/{postId}/{replyId}")
+    @DeleteMapping("/{nickname}/{postId}/reply/{replyId}")
     @ApiOperation(value = "댓글 삭제 api", notes = "댓글을 삭제합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
@@ -82,7 +82,7 @@ public class ReplyController {
     }
 
     //댓글 수정폼
-    @GetMapping("/{nickname}/{postId}/{replyId}")
+    @GetMapping("/{nickname}/{postId}/reply/{replyId}")
     @ApiOperation(value = "댓글 수정 폼 api", notes = "댓글 수정 항목을 보여줍니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
@@ -108,7 +108,7 @@ public class ReplyController {
     }
 
     //댓글 수정
-    @PostMapping("/{nickname}/{postId}/{replyId}")
+    @PutMapping("/{nickname}/{postId}/reply/{replyId}")
     @ApiOperation(value = "댓글 수정 api", notes = "댓글을 수정합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),

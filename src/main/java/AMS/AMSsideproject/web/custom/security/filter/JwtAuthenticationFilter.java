@@ -45,7 +45,6 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
         String message = null;
 
         try {
-
             //header 에서 JWT 토큰이 있는지 검사
             if(!StringUtils.hasText(token))  //토큰이 없는 경우
                 throw new Exception();
@@ -89,7 +88,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
     }
 
     private void sendErrorResponse(String message, HttpServletResponse response) throws IOException {
-        BaseErrorResult errorResult = new BaseErrorResult(message,"BAD", "401");
+        BaseErrorResult errorResult = new BaseErrorResult(message,"401", "Unauthorized");
         String res = objectMapper.writeValueAsString(errorResult);
 
         response.setStatus(HttpStatus.UNAUTHORIZED.value());

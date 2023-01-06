@@ -2,14 +2,14 @@ package AMS.AMSsideproject.web.apiController.post;
 
 import AMS.AMSsideproject.domain.like.service.LikeService;
 import AMS.AMSsideproject.domain.post.Post;
-import AMS.AMSsideproject.domain.post.repository.query.form.LikeDto;
 import AMS.AMSsideproject.web.apiController.post.requestForm.*;
 import AMS.AMSsideproject.domain.post.repository.query.PostRepositoryQueryDto;
 import AMS.AMSsideproject.domain.post.service.PostService;
 import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
-import AMS.AMSsideproject.web.custom.annotation.AddAuthRequired;
-import AMS.AMSsideproject.web.custom.annotation.LoginAuthRequired;
+import AMS.AMSsideproject.web.custom.annotation.PostAuthor;
+import AMS.AMSsideproject.web.custom.annotation.UserAuthen;
+import AMS.AMSsideproject.web.custom.annotation.UserAuthor;
 import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
 import AMS.AMSsideproject.web.response.BaseResponse;
 import AMS.AMSsideproject.web.response.DataResponse;
@@ -20,13 +20,11 @@ import AMS.AMSsideproject.web.swagger.postController.UserPage_200;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.annotations.Parameter;
 import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -69,8 +67,8 @@ public class PostController {
         return new DataResponse<>("200", "모든 사용자들의 게시물 리스트 결과입니다.", postListResponse);
     }
     @GetMapping(value = "/", headers = JwtProperties.ACCESS_HEADER_STRING)
-    @LoginAuthRequired //로그인 전용 인증 체크
-    //권한 체크도 해야되는거 아니야!?????????!!!!!!!!!!(USER.....)
+    @UserAuthen //로그인 전용 인증 체크
+    @UserAuthor
     @ApiOperation(value = "서비스 메인페이지, 로그인 회원 - 게시물 리스트 조회 api", notes = "모든 회원 게시물들에 대해서 필터링 조건에 맞게 게시물을 조회합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출", response = MainPage_200.class),
@@ -106,7 +104,7 @@ public class PostController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "nickname", value = "회원 닉네임", required = true)
     })
-    public DataResponse<PostListResponse> userPage(@PathVariable("nickname")String nickname ,
+    public DataResponse<PostListResponse> userPage1(@PathVariable("nickname")String nickname ,
                                                    @RequestBody SearchFormAboutOtherUserPost form) {
 
         Slice<Post> findPosts = postService.findPostsAboutOtherUser(nickname, form);
@@ -123,7 +121,8 @@ public class PostController {
 
     //로그인 사용자 - 다른 사용자 페이지 접속하는 경우
     @GetMapping(value = "/{nickname}", headers = JwtProperties.ACCESS_HEADER_STRING)
-    @LoginAuthRequired //권한 체크도 해야되는거 아니야!?????????!!!!!!!!!!(USER.....)
+    @UserAuthen
+    @UserAuthor
     @ApiOperation(value = "로그인 회원 - 다른사용자 페이지에 대한 게시물 리스트 조회",
             notes = "특정 회원 게시물들에 대해서 필터링 조건에 맞게 리스트를 조회합니다.")
     @ApiResponses({
@@ -136,7 +135,7 @@ public class PostController {
             @ApiImplicitParam(name = "nickname", value = "회원 닉네임", required = true),
             @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰", required = true)
     })
-    public DataResponse<PostListResponse> userPage(@PathVariable("nickname")String nickname,
+    public DataResponse<PostListResponse> userPage2(@PathVariable("nickname")String nickname,
                                                    @RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken,
                                                    @RequestBody SearchFormAboutOtherUserPost form) {
 
@@ -155,7 +154,8 @@ public class PostController {
     //로그인 사용자 - 내 페이지 접속하는 경우
     //"my_session token"은 기본정보 검증안해도 되나???!!(유효기간 등)????
     @GetMapping(value = "/{nickname}", headers = {JwtProperties.ACCESS_HEADER_STRING, JwtProperties.MYSESSION_HEADER_STRING})
-    @LoginAuthRequired //권한 체크도 해야되는거 아니야!?????????!!!!!!!!!!(USER.....)
+    @UserAuthen
+    @UserAuthor
     @ApiOperation(value = "로그인 회원 - 자신의 페이지에 대한 게시물 리스트 조회",
             notes = "특정 회원 게시물들에 대해서 필터링 조건에 맞게 리스트를 조회합니다.")
     @ApiResponses({
@@ -169,7 +169,7 @@ public class PostController {
             @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰", required = true),
             @ApiImplicitParam(name = JwtProperties.MYSESSION_HEADER_STRING, value = "마이페이지 엑세스 토큰", required = true)
     })
-    public DataResponse<PostListResponse> userPage(@PathVariable("nickname")String nickname,
+    public DataResponse<PostListResponse> userPage3(@PathVariable("nickname")String nickname,
                                                    @RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken,
                                                    @RequestHeader(JwtProperties.MYSESSION_HEADER_STRING) String my_sessionToken,
                                                    @RequestBody SearchFormAboutSelfUserPost form) {
@@ -221,8 +221,8 @@ public class PostController {
     @GetMapping(value = "/{nickname}/{postId}", headers = JwtProperties.ACCESS_HEADER_STRING)
     @ApiOperation(value = "로그인 사용자 - 게시물 상세조회 api",
             notes = "게시물의 상세 정보를 보여줍니다. 추가로 게시물 좋아요 누른 유무도 알려줍니다.")
-    @LoginAuthRequired//로그인 전용 인증 체크
-    //권한 체크도 해야되는거 아니야!?????????!!!!!!!!!!(USER.....)
+    @UserAuthen
+    @UserAuthor
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출 - 추가로 Header 에 해당 게시물 id를 포함시킨 쿠키를 포함함"),
             @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
@@ -270,8 +270,8 @@ public class PostController {
      */
     @ApiOperation(value = "게시물 작성 api", notes = "게시물을 작성하는 api 입니다.")
     @PostMapping("/write")
-    @LoginAuthRequired //(USER 권한에 대한 에러도 처리해야되는거 아니야?!!!!!!!!!!!!
-    //@AddAuthRequired //추가 권한 검사 대상 => JWT 토큰으로만 판별하니깐 URI 에도 변경!!
+    @UserAuthen
+    @UserAuthor
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
             @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
@@ -296,7 +296,7 @@ public class PostController {
     //게시물 수정 form
     //이어지는 고민인 "게시물 PK"를 path 에 두는게 좋은건가!??
     @GetMapping("/{nickname}/{postId}/edit")
-    @AddAuthRequired //추가 권한 검사 대상
+    @PostAuthor //추가 권한 검사 대상
     @ApiOperation(value = "게시물 수정 api", notes = "게시물에서 수정가능한 항목들을 보여줍니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
@@ -329,7 +329,7 @@ public class PostController {
      * - 그리고 수정되면서 태그중에 언급 개수가 0인거는 삭제되어야되는거 아니야?! 그냥 남겨놔도 되나?!
      */
     @PutMapping("/{nickname}/{postId}/edit")
-    @AddAuthRequired //추가 권한 검사 대상
+    @PostAuthor //추가 권한 검사 대상
     @ApiOperation(value = "게시물 수정 api", notes = "실제 게시물을 수정하는 api 입니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
@@ -354,7 +354,7 @@ public class PostController {
      * 게시물 삭제시 태그 언급수가 0인 태그는 삭제해야되나?!!!!!!
      */
     @DeleteMapping("/{nickname}/{postId}")
-    @AddAuthRequired //추가 권한 검사 대상
+    @PostAuthor //추가 권한 검사 대상
     @ApiOperation(value = "게시물 삭제 api", notes = "게시물을 삭제하는 api입니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),

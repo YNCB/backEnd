@@ -105,12 +105,8 @@ public class UserKakaoController {
 
             //토큰(access, refresh) 생성
             JwtToken jwtToken = jwtService.createAndSaveToken(findUser.getUser_id(), findUser.getNickname(), findUser.getRole());
-            UserLoginDto userLoginDto = UserLoginDto.builder()
-                    .user_Id(findUser.getUser_id())
-                    .nickname(findUser.getNickname())
-                    .accessToken(jwtToken.getAccessToken())
-                    .refreshToken(jwtToken.getRefreshToken())
-                    .build();
+
+            UserLoginDto userLoginDto = new UserLoginDto(findUser.getUser_id(), findUser.getNickname(), jwtToken);
 
             return new DataResponse<>("200", "로그인을 성공하였습니다. 토큰이 발급되었습니다.", userLoginDto); // -> redirect:/api/{nickname}
 

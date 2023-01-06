@@ -102,7 +102,7 @@ public class UserController {
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
-    public DataResponse<UserEditDto> UserEditForm(@RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken) {
+    public DataResponse<UserEditDto> UserEditForm(@RequestHeader(JwtProperties.ACCESS_HEADER_STRING)String accessToken) {
 
         //Token 정보에서 User 찾기
         User findUser = jwtService.findUserToToken(accessToken);

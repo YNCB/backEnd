@@ -9,10 +9,7 @@ import AMS.AMSsideproject.web.response.BaseResponse;
 import AMS.AMSsideproject.web.response.DataResponse;
 import AMS.AMSsideproject.web.responseDto.like.LikeDto;
 import AMS.AMSsideproject.web.responseDto.like.LikesDto;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,7 +27,6 @@ public class LikeController {
 
 
     //게시물 좋아요 ,삭제
-    //좋아요는 로그인 해야지 가능
     @PostMapping("/{nickname}/{postId}/like")
     @ApiOperation(value = "게시물 좋아요 api", notes = "게시물 좋아요 추가, 삭제를 합니다.")
     @ApiResponses({
@@ -39,8 +35,14 @@ public class LikeController {
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
-    public DataResponse<LikeDto> like(@PathVariable("nickname")String nickname, @PathVariable("postId")Long postId,
-                                          @RequestHeader(JwtProperties.ACCESS_HEADER_STRING)String accessToken ) {
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰", required = true),
+            @ApiImplicitParam(name = "nickname", value = "유저 닉네임", required = true),
+            @ApiImplicitParam(name = "postId", value = "게시물 Id", required = true)
+    })
+    public DataResponse<LikeDto> like(@PathVariable("nickname")String nickname,
+                                      @PathVariable("postId")Long postId,
+                                      @RequestHeader(JwtProperties.ACCESS_HEADER_STRING)String accessToken ) {
 
         Long findUserId = jwtProvider.getUserIdToToken(accessToken);
 
@@ -52,9 +54,21 @@ public class LikeController {
 
 
     //게시물 좋아요 리스트 보기
-    //로그인 해야되는 기능
     @GetMapping("/{nickname}/{postId}/like")
-    public DataResponse likeList(@PathVariable("nickname") String nickname, @PathVariable("postId") Long postId) {
+    @ApiResponses({
+            @ApiResponse(code=200, message="정상 호출"),
+            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
+            @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
+    })
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰", required = true),
+            @ApiImplicitParam(name = "nickname", value = "유저 닉네임", required = true),
+            @ApiImplicitParam(name = "postId", value = "게시물 Id", required = true)
+    })
+    public DataResponse likeList(@PathVariable("nickname") String nickname,
+                                 @PathVariable("postId") Long postId,
+                                 @RequestHeader(JwtProperties.ACCESS_HEADER_STRING)String accessToken) {
         /**
          * 1. 프록시 초기화 하는거는 쿼리문 2개?!
          * 2. 그냥 바로 sql문으로 쿼리문 1개?!

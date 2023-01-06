@@ -1,6 +1,7 @@
 package AMS.AMSsideproject.web.exhandler.advice.user;
 
 
+import AMS.AMSsideproject.web.apiController.user.UserController;
 import AMS.AMSsideproject.web.apiController.user.requestDto.ValidNickNameDto;
 import AMS.AMSsideproject.web.exception.AlreadyJoinedUser;
 import AMS.AMSsideproject.web.exception.DuplicationUserNickname;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.ArrayList;
 import java.util.List;
 
-@RestControllerAdvice
+@RestControllerAdvice(basePackageClasses = UserController.class)
 public class UserExControllerAdvice {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -53,7 +54,7 @@ public class UserExControllerAdvice {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public BaseErrorResult Exception(Exception e) {
-        return new BaseErrorResult("Internal server error", "500", "BAD");
+        return new BaseErrorResult(e.getMessage(), "500", "BAD");
     }
 
 

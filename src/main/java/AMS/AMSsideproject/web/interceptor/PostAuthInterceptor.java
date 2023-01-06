@@ -2,7 +2,7 @@ package AMS.AMSsideproject.web.interceptor;
 
 import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
-import AMS.AMSsideproject.web.custom.annotation.AddAuthRequired;
+import AMS.AMSsideproject.web.custom.annotation.PostAuthor;
 import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 @Slf4j
-public class PostAddAuthInterceptor implements HandlerInterceptor {
+public class PostAuthInterceptor implements HandlerInterceptor {
 
     @Autowired private JwtProvider jwtProvider;
     @Autowired private ObjectMapper objectMapper;
@@ -36,7 +36,7 @@ public class PostAddAuthInterceptor implements HandlerInterceptor {
             return true;
         }
         HandlerMethod handlerMethod = (HandlerMethod) handler;
-        AddAuthRequired addAuthRequired = handlerMethod.getMethodAnnotation(AddAuthRequired.class);
+        PostAuthor addAuthRequired = handlerMethod.getMethodAnnotation(PostAuthor.class);
         if(Objects.isNull(addAuthRequired)) {
             return true;
         }
