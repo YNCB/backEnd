@@ -75,6 +75,7 @@ public class PostController {
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
             @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
             @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
+            @ApiResponse(code=412, message = "로그아웃 처리된 엑세스 토큰입니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     @ApiImplicitParams({
@@ -133,6 +134,7 @@ public class PostController {
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
             @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
             @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
+            @ApiResponse(code=412, message = "로그아웃 처리된 엑세스 토큰입니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     @ApiImplicitParams({
@@ -167,6 +169,7 @@ public class PostController {
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
             @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
             @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
+            @ApiResponse(code=412, message = "로그아웃 처리된 엑세스 토큰입니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     @ApiImplicitParams({
@@ -192,7 +195,7 @@ public class PostController {
     }
 
 
-    // 게시물 상세조회 - 로그인 사용자
+    // 게시물 상세조회 - 비로그인 사용자
     /**
      * <나중에 더 찾아볼 내용!></나중에>
      * - "postID" : 내부적으로는 int pk, 외부적으로는 UUID 사용하는 방법은 움..
@@ -222,7 +225,7 @@ public class PostController {
         return new DataResponse<>("200", "문제 상제 조회 결과입니다.", findPostDto);
     }
 
-    // 게시물 상세조회 - 비로그인 사용자
+    // 게시물 상세조회 - 로그인 사용자
     @GetMapping(value = "/{nickname}/{postId}", headers = JwtProperties.ACCESS_HEADER_STRING)
     @ApiOperation(value = "로그인 사용자 - 게시물 상세조회 api", notes = "게시물의 상세 정보를 보여줍니다. 추가로 게시물 좋아요 누른 유무도 알려줍니다.")
     @UserAuthen
@@ -231,6 +234,7 @@ public class PostController {
             @ApiResponse(code=200, message="정상 호출 - 추가로 Header 에 해당 게시물 id를 포함시킨 쿠키를 포함함"),
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
             @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=412, message = "로그아웃 처리된 엑세스 토큰입니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     @ApiImplicitParams({
@@ -277,6 +281,7 @@ public class PostController {
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
             @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
             @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
+            @ApiResponse(code=412, message = "로그아웃 처리된 엑세스 토큰입니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING,value = "엑세스 토큰", required = true)
@@ -301,6 +306,7 @@ public class PostController {
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
             @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
             @ApiResponse(code=403, message = "잘못된 접근입니다. 권한이 없습니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=412, message = "로그아웃 처리된 엑세스 토큰입니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     @ApiImplicitParams({
@@ -340,6 +346,7 @@ public class PostController {
             @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
             @ApiResponse(code=403, message = "잘못된 접근입니다. 권한이 없습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
+            @ApiResponse(code=412, message = "로그아웃 처리된 엑세스 토큰입니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     @ApiImplicitParams({
@@ -369,6 +376,7 @@ public class PostController {
             @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
             @ApiResponse(code=403, message = "잘못된 접근입니다. 권한이 없습니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=412, message = "로그아웃 처리된 엑세스 토큰입니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     @ApiImplicitParams({

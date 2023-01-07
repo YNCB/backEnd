@@ -32,6 +32,7 @@ public class LikeController {
             @ApiResponse(code=200, message="정상 호출"),
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
             @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=412, message = "로그아웃 처리된 엑세스 토큰입니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     @ApiImplicitParams({
@@ -58,6 +59,7 @@ public class LikeController {
             @ApiResponse(code=200, message="정상 호출"),
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
             @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=412, message = "로그아웃 처리된 엑세스 토큰입니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     @ApiImplicitParams({

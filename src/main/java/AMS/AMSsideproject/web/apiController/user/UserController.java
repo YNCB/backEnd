@@ -17,6 +17,7 @@ import AMS.AMSsideproject.web.service.email.EmailService;
 import AMS.AMSsideproject.web.swagger.userController.Join_406;
 import AMS.AMSsideproject.web.swagger.userController.ValidDuplicateNickName_400;
 import io.swagger.annotations.*;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -99,8 +100,9 @@ public class UserController {
     @ApiOperation(value = "회원 정보 수정 api", notes = "회원 수정을 위해 사용자 정보를 제공해주는 api 입니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
-            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
+            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=412, message = "로그아웃 처리된 엑세스 토큰입니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰",required = true)
@@ -121,6 +123,7 @@ public class UserController {
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
             @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
             @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
+            @ApiResponse(code=412, message = "로그아웃 처리된 엑세스 토큰입니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰",required = true)
@@ -137,6 +140,21 @@ public class UserController {
 
         UserEditSuccessDto dto = new UserEditSuccessDto(updateUser.getUser_id(), updateUser.getNickname(), jwtToken);
         return new DataResponse<>("200", "회원 수정이 완료되었습니다. 토큰이 재발급되었습니다.", dto);
+    }
+
+    @GetMapping("/logout")
+    @ApiOperation(value = "로그아웃 api", notes = "엑세스 토큰을 블랙리스트 처리니다.")
+    @ApiResponses({
+            @ApiResponse(code=200, message="정상 호출"),
+            @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
+            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
+    })
+    @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰", required = true)
+    public BaseResponse userLogout(@RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken){
+
+        userService.logout(accessToken);
+        return new BaseResponse("200", "로그아웃이 되었습니다");
     }
 
 }

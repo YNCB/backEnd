@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -36,6 +37,8 @@ public class SecurityConfig {
     private final UserLoginSuccessCustomHandler successHandler;
     private final UserLoginFailureCustomHandler failureHandler;
 
+    private final RedisTemplate<String,String>redisTemplate;
+
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring()
@@ -49,7 +52,7 @@ public class SecurityConfig {
                 .antMatchers("/codebox/refreshToken")
 
                 //게시물 관련(정규식 표현)
-                .antMatchers(HttpMethod.GET,"/codebox/","/codebox/{nickname:^((?!setting).)*$}","/codebox/*/{*[0-9]*$+}")
+                .antMatchers(HttpMethod.GET,"/codebox/","/codebox/{nickname:^((?!setting|logout).)*$}","/codebox/*/{*[0-9]*$+}")
 
                 //swagger
                 .antMatchers("/swagger-ui.html/**", "/swagger/**", "/v2/api-docs", "/swagger-resources/**", "/webjars/**")
@@ -74,6 +77,7 @@ public class SecurityConfig {
                 .authorizeRequests()
                  //유저 관련
                 .antMatchers("/codebox/setting").hasAuthority("USER") //get, put
+                .antMatchers(HttpMethod.GET, "/codebox/logout").hasAuthority("USER")
 
                 //게시물 관련
                 .antMatchers(HttpMethod.POST, "/codebox/write").hasAuthority("USER")
@@ -104,7 +108,7 @@ public class SecurityConfig {
 
             http.addFilter(config.corsFilter() ); //스프링 시큐리티 필터내에 cors 관련 필터가 있음!! 그래서 제공해주는 필터 객체를 생성후 HttpSecurity에 등록!
             http.addFilter(new UsernamePasswordAuthenticationCustomFilter(authenticationManager, objectMapper , successHandler, failureHandler));
-            http.addFilter(new JwtAuthenticationFilter(authenticationManager, jwtProvider, objectMapper, userService));
+            http.addFilter(new JwtAuthenticationFilter(authenticationManager, jwtProvider, objectMapper, userService, redisTemplate));
 
         }
     }

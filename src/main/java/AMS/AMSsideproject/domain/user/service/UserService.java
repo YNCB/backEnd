@@ -4,14 +4,17 @@ import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.repository.UserRepository;
 import AMS.AMSsideproject.web.apiController.user.requestDto.UserEditForm;
 import AMS.AMSsideproject.web.apiController.user.requestDto.UserJoinForm2;
+import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
 import AMS.AMSsideproject.web.exception.DuplicationUserNickname;
 import AMS.AMSsideproject.web.exception.UserNullException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +23,8 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encodePwd;
+    private final RedisTemplate<String,String> redisTemplate;
+    private final JwtProvider jwtProvider;
 
     //회원 가입 메서드
     @Transactional
@@ -78,6 +83,14 @@ public class UserService {
         return findUser;
     }
 
+    //로그아웃
+    public void logout(String accessToken){
 
+        //엑세스 토큰 남은 유효시간
+        Long expiration = jwtProvider.getExpiration(accessToken);
+
+        //Redis Cache에 저장
+        redisTemplate.opsForValue().set(accessToken, "logout", expiration, TimeUnit.MILLISECONDS);
+    }
 
 }

@@ -2,7 +2,7 @@ package AMS.AMSsideproject.web.interceptor;
 
 import AMS.AMSsideproject.domain.token.service.RefreshTokenService;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
-import AMS.AMSsideproject.web.exception.JWTTokenExpireException;
+import AMS.AMSsideproject.web.exception.ExpireJWTTokenException;
 import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +48,7 @@ public class RefreshTokenAuthInterceptor implements HandlerInterceptor {
 
             return true;
 
-        }catch (JWTTokenExpireException e) { //토큰 유효기간이 만료된 경우
+        }catch (ExpireJWTTokenException e) { //토큰 유효기간이 만료된 경우
             errorResult = new BaseErrorResult("리프레시토큰이 만료되었습니다. 다시 로그인 해주시기 바랍니다.", "BAD", "400");
         }catch (Exception e) { //토큰 정보가 정상적이지 않은 경우
             errorResult = new BaseErrorResult("리프레시 토큰이 없거나 잘못된 값입니다. 다시 로그인을 해주시기 바랍니다.","BAD","400");

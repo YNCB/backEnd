@@ -2,7 +2,7 @@ package AMS.AMSsideproject.web.auth.jwt.service;
 
 import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
 import AMS.AMSsideproject.web.auth.jwt.JwtToken;
-import AMS.AMSsideproject.web.exception.JWTTokenExpireException;
+import AMS.AMSsideproject.web.exception.ExpireJWTTokenException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.TokenExpiredException;
@@ -64,6 +64,7 @@ public class JwtProvider {
                 .withClaim("role", role)
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
     }
+
     //my_session token 만 생성 -> refresh 토큰 요청이 왔을때
     public String createMySessionToken(Long user_id) {
         return JWT.create()
@@ -72,7 +73,6 @@ public class JwtProvider {
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
     }
 
-
     //사용자 Token 유효기간 검증
     public String validTokenExpired(String Token) {
 
@@ -80,7 +80,7 @@ public class JwtProvider {
             JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(Token).getToken();
 
         }catch (TokenExpiredException e) { //Token 이 만료된 경우
-            throw new JWTTokenExpireException("토큰이 만료되었습니다.");
+            throw new ExpireJWTTokenException("토큰이 만료되었습니다.");
         }
 
         return Token;
@@ -123,20 +123,26 @@ public class JwtProvider {
         Long userId = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(token).getClaim("userId").asLong();
         return userId;
     }
+
     //JWT 토큰에서 user nickname 가져오는 기능
     public String getNickNameToToken(String token) {
         String nickName= JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(token).getClaim("nickName").asString();
         return nickName;
     }
+
     //JWT 토큰에서 user role 가져오는 기능
     public String getRoleToToken(String token) {
         String role = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(token).getClaim("role").asString();
         return role;
     }
 
-//    public Long getExpiration(String accessToken){
-//        Date expiration = Jwts.parserBuilder().setSigningKey()
-//
-//
-//    }
+    //JWT 토큰의 만료시간
+    public Long getExpiration(String accessToken){
+
+        Date expiration = Jwts.parserBuilder().setSigningKey(JwtProperties.SECRET.getBytes())
+                .build().parseClaimsJws(accessToken).getBody().getExpiration();
+
+        long now = new Date().getTime();
+        return expiration.getTime() - now;
+    }
 }
