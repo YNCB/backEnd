@@ -10,10 +10,12 @@ import AMS.AMSsideproject.web.response.BaseResponse;
 import AMS.AMSsideproject.web.response.DataResponse;
 import AMS.AMSsideproject.web.responseDto.follow.FollowersDto;
 import AMS.AMSsideproject.web.responseDto.follow.FollowingsDto;
+import AMS.AMSsideproject.web.swagger.userController.Join_406;
 import io.swagger.annotations.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,10 +30,6 @@ public class FollowController {
     private final FollowService followService;
     private final JwtProvider jwtProvider;
 
-    /**
-     * - Bean validation 적용하기
-     */
-
     //팔로우 저장
     @PostMapping("/follow/add")
     @ApiOperation(value = "팔로우 저장 api", notes = "특정 사용자를 팔로우 합니다.")
@@ -40,13 +38,14 @@ public class FollowController {
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
             @ApiResponse(code=400, message = "잘못된 요청", response = BaseResponse.class),
             @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     @ApiImplicitParams({
             @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰", required = true)
     })
     public BaseResponse addFollow(@RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken,
-                                  @RequestBody FollowSaveForm form) {
+                                  @Validated @RequestBody FollowSaveForm form) {
 
         Long userId = jwtProvider.getUserIdToToken(accessToken);
         Follow follow = followService.addFollow(userId, form.getUserId());

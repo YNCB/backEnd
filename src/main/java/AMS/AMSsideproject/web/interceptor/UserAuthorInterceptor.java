@@ -46,9 +46,7 @@ public class UserAuthorInterceptor implements HandlerInterceptor {
             sendErrorResponse("권한이 없습니다", response);
             return false;
         }
-
     }
-
     private void sendErrorResponse(String message, HttpServletResponse response) throws IOException {
         BaseErrorResult errorResult = new BaseErrorResult(message,"403", "Forbidden");
         String res = objectMapper.writeValueAsString(errorResult);
@@ -58,5 +56,4 @@ public class UserAuthorInterceptor implements HandlerInterceptor {
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(res);
     }
-
 }

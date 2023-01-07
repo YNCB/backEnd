@@ -20,7 +20,7 @@ public class RepliesDto {
     private String title;
     @ApiModelProperty(example = "test")
     private String content;
-    @ApiModelProperty(example = "2022-2-2 13:00:00")
+    @ApiModelProperty(example = "2022-2-2")
     private String redate;
 
     private List<RepliesDto> children = new ArrayList<>();

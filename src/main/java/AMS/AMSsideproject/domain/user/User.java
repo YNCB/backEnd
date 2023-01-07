@@ -1,8 +1,10 @@
 package AMS.AMSsideproject.domain.user;
 
 import AMS.AMSsideproject.domain.token.RefreshToken;
+import AMS.AMSsideproject.web.apiController.user.requestDto.UserEditForm;
 import AMS.AMSsideproject.web.apiController.user.requestDto.UserJoinForm2;
 import lombok.Data;
+import lombok.Getter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -53,6 +55,11 @@ public class User {
         return user;
     }
 
+    public void update(UserEditForm userEditForm) {
+        this.nickname = userEditForm.nickName;
+        this.job = userEditForm.job;
+        this.main_lang = userEditForm.main_lang;
+    }
 
     //setter 메서드
     public RefreshToken setRefreshToken(RefreshToken refreshToken) {

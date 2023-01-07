@@ -32,7 +32,6 @@ public class PostEditDto {
 
 
     public PostEditDto(String title, String problem_uri, String content, String type, String language, Integer level) {
-
         this.title = title;
         this.problem_uri = problem_uri;
         this.content = content;

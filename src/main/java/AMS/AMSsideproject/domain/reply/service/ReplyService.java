@@ -47,11 +47,11 @@ public class ReplyService {
         Reply newReply = Reply.createReply(replySaveForm.getTitle(), replySaveForm.getContent(), findUser.get(), findPost);
         if(parent != null) { //루트 댓글이 아닌 경우
             newReply.setParent(parent); //parent 댓글과 양방향 연관관계 성정
+        }else{
+            findPost.addReplyNum(); //게시물에 달린 댓글수 늘리기 - 루트 댓글일때만 증가시키기
         }
 
         replyRepository.save(newReply); //댓글 저장
-        findPost.addReplyNum(); //게시물에 달린 댓글수 늘리기 - 댓글, 대댓글 모든 댓글에 대해서 개수 늘림!!!!!!
-
         return newReply;
     }
 
@@ -91,7 +91,12 @@ public class ReplyService {
 
     //댓글 삭제
     @Transactional
-    public void deleteReply(Long replyId, Long userId) {
+    public void deleteReply(Long postId, Long replyId, Long userId) {
+
+        //존재하는 게시물인지 확인
+        Post findPost = postRepository.findPostByPostId(postId);
+        if(findPost==null)
+            throw new NotExistingPost("존재하지 않는 게시물 입니다.");
 
         Reply findReply = replyRepository.findReply(replyId);
         if(findReply == null)
@@ -99,6 +104,9 @@ public class ReplyService {
 
         if(findReply.getUser().getUser_id() != userId)  //프록시 초기화
             throw new NotUserEq("권한이 없습니다.");
+
+        if(findReply.getParent()==null) //루트댓글이 삭제될 경우만 댓글수 줄이기
+            findPost.subReplyNum();
 
         replyRepository.delete(findReply); //"orphanRemoval=true" 로 인해 자식 댓글도 자동 삭제!!
     }

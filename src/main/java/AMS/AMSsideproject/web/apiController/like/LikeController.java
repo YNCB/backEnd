@@ -25,14 +25,13 @@ public class LikeController {
     private final LikeService likeService;
     private final LikeDtoRepository likeDtoRepository;
 
-
     //게시물 좋아요 ,삭제
     @PostMapping("/{nickname}/{postId}/like")
     @ApiOperation(value = "게시물 좋아요 api", notes = "게시물 좋아요 추가, 삭제를 합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
-            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
+            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     @ApiImplicitParams({
@@ -52,13 +51,13 @@ public class LikeController {
         return new DataResponse("200", "좋아요 추가 또는 삭제가 완료되었습니다.", likeDto);
     }
 
-
     //게시물 좋아요 리스트 보기
     @GetMapping("/{nickname}/{postId}/like")
+    @ApiOperation(value = "게시물 좋아요 리스트 api", notes = "게시물 리스트를 보여줍니다. 리스트의 닉네임을 통해 회원페이지로 이동가능합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
-            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
+            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     @ApiImplicitParams({
@@ -69,11 +68,8 @@ public class LikeController {
     public DataResponse likeList(@PathVariable("nickname") String nickname,
                                  @PathVariable("postId") Long postId,
                                  @RequestHeader(JwtProperties.ACCESS_HEADER_STRING)String accessToken) {
-        /**
-         * 1. 프록시 초기화 하는거는 쿼리문 2개?!
-         * 2. 그냥 바로 sql문으로 쿼리문 1개?!
-         */
-        //List<LikesDto> likes = likeDtoRepository.findLikes(postId);
+
+        //성능을 위해서 DTO 바로 변환 사용 - 쿼리한번
         List<String> likes = likeDtoRepository.findLikes(postId);
         return new DataResponse("200", "게시물 좋아요 닉네임 리스트 입니다.", likes);
     }

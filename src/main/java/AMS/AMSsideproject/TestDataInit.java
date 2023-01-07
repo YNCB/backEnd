@@ -100,5 +100,7 @@ public class TestDataInit {
         ReplySaveForm replySaveForm4 = new ReplySaveForm("test4", "test4", null);
         Reply saveReply4 = replyService.addReply(registration1.getPost_id(), join2.getUser_id(), replySaveForm1);
 
+        //팔로우 데이터
+
     }
 }

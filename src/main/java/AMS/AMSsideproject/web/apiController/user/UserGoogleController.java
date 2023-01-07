@@ -84,7 +84,7 @@ public class UserGoogleController {
     @GetMapping("/login/token/google")
     @ApiOperation(value = "구글 로그인을 처리하는 api - google", notes = "회원가입 한 사용자이면 구글 로그인 처리 ," +
             " 회원가입을 하지않는 사용자이면 회원가입 진행(2차 회원가입), " +
-            " 로그인 성공시 -> /codebox/{nickname} api 호출하면됌 ")
+            " 로그인 성공시 -> /codebox/{nickname} api 호출하면 됩니다. ")
     @ApiResponses({
             @ApiResponse(code=200, message = "로그인 성공", response =  GoogleLogin_200.class),
             @ApiResponse(code=201, message = "회원가입 진행",response = GoogleLogin_201.class),
@@ -116,6 +116,7 @@ public class UserGoogleController {
                     .password(GoogleInfo.GoogleLoginPassWord) //소셜 로그인은 비밀번호가 중요하지 않으니 그냥 세팅
                     .social_type("Google")
                     .build();
+
             response.setStatus(HttpStatus.CREATED.value());
             return new DataResponse<>("201", "회원가입하지 않은 사용자입니다. 회원가입을 진행합니다.", userJoinDto);
         }

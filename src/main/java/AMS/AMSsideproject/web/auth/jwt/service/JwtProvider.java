@@ -6,6 +6,7 @@ import AMS.AMSsideproject.web.exception.JWTTokenExpireException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
@@ -133,4 +134,9 @@ public class JwtProvider {
         return role;
     }
 
+//    public Long getExpiration(String accessToken){
+//        Date expiration = Jwts.parserBuilder().setSigningKey()
+//
+//
+//    }
 }

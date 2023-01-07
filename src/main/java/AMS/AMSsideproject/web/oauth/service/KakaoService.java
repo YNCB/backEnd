@@ -34,8 +34,7 @@ public class KakaoService {
         params.add("code", code);
         params.add("client_secret", KakaoInfo.client_secret);
 
-
-        System.out.println(params);
+        //System.out.println(params);
 
         //http 요청 및 응답(non blocking)
         String response = wc.post()

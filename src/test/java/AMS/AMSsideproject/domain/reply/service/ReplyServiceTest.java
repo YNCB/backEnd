@@ -69,7 +69,7 @@ class ReplyServiceTest {
         Reply saveReply2 = replyService.addReply(newPost.getPost_id(), newUser.getUser_id(), replySaveForm2);
 
         //then
-        Assertions.assertThat(newPost.getReplyNum()).isEqualTo(2);
+        Assertions.assertThat(newPost.getReplyNum()).isEqualTo(1); //루트댓글일때만 댓글수 증가
         Assertions.assertThat(saveReply2.getParent().getReply_id()).isEqualTo(saveReply1.getReply_id());
         Assertions.assertThat(saveReply1.getChildren().size()).isEqualTo(1);
     }
@@ -95,7 +95,7 @@ class ReplyServiceTest {
         Reply saveReply3 = replyService.addReply(newPost.getPost_id(), newUser.getUser_id(), replySaveForm3);
 
         //then
-        Assertions.assertThat(newPost.getReplyNum()).isEqualTo(3);
+        Assertions.assertThat(newPost.getReplyNum()).isEqualTo(1);
         Assertions.assertThat(saveReply3.getParent().getReply_id()).isEqualTo(saveReply2.getReply_id());
         Assertions.assertThat(saveReply1.getChildren().size()).isEqualTo(1);
         Assertions.assertThat(saveReply2.getChildren().size()).isEqualTo(1);
@@ -144,7 +144,7 @@ class ReplyServiceTest {
         Reply saveReply3 = replyService.addReply(newPost.getPost_id(), newUser.getUser_id(), replySaveForm3);
 
         //when
-        replyService.deleteReply(saveReply2.getReply_id(), newUser.getUser_id());
+        replyService.deleteReply(newPost.getPost_id(), saveReply2.getReply_id(), newUser.getUser_id());
 
         //then
         List<Reply> replies = replyRepository.findReplies(newPost.getPost_id());
@@ -169,7 +169,7 @@ class ReplyServiceTest {
         Reply saveReply1 = replyService.addReply(newPost.getPost_id(), newUser1.getUser_id(), replySaveForm1);
 
         //when ,then
-        Assertions.assertThatThrownBy( () -> replyService.deleteReply(saveReply1.getReply_id(), newUser2.getUser_id()))
+        Assertions.assertThatThrownBy( () -> replyService.deleteReply(newPost.getPost_id(), saveReply1.getReply_id(), newUser2.getUser_id()))
                 .isInstanceOf(NotUserEq.class);
 
     }

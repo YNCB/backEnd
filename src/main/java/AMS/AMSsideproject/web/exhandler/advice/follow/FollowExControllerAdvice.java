@@ -25,15 +25,11 @@ public class FollowExControllerAdvice {
         return new BaseErrorResult(e.getMessage(), "400", "BAD_REQUEST");
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(NotExistingFollow.class)
     public BaseErrorResult NotExistingFollow(NotExistingFollow e) {
         return new BaseErrorResult(e.getMessage(), "400", "BAD_REQUEST");
     }
 
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(Exception.class)
-    public BaseErrorResult EtcException(Exception e) {
-        return new BaseErrorResult(e.getMessage(), "500", "INTERNAL_SERVER_ERROR");
-    }
 
 }

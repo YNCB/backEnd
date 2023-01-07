@@ -2,6 +2,7 @@ package AMS.AMSsideproject.web.apiController.user;
 
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
+import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
 import AMS.AMSsideproject.web.auth.jwt.JwtToken;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtService;
 import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
@@ -16,10 +17,7 @@ import AMS.AMSsideproject.web.oauth.service.KakaoService;
 import AMS.AMSsideproject.web.swagger.userKakaoController.KakaoLogin_200;
 import AMS.AMSsideproject.web.swagger.userKakaoController.KakaoLogin_201;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -85,12 +83,13 @@ public class UserKakaoController {
     @GetMapping("/login/token/kakao")
     @ApiOperation(value = "카카오 로그인을 처리하는 api - google", notes = "회원가입 한 사용자이면 카카오 로그인 처리 ," +
             " 회원가입을 하지않는 사용자이면 회원가입 진행(2차 회원가입), " +
-            " 로그인 성공시 -> /codebox/{nickname} api 호출하면됌 ")
+            " 로그인 성공시 -> /codebox/{nickname} api 호출하면 됩니다. ")
     @ApiResponses({
             @ApiResponse(code=200, message = "로그인 성공", response =  KakaoLogin_200.class),
             @ApiResponse(code=201, message = "회원가입 진행",response = KakaoLogin_201.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
+    @ApiImplicitParam(name = "code", value = "인가 코드", required = true)
     public DataResponse<?> KakaoLogin(@RequestParam("code") String code, HttpServletResponse response) throws JsonProcessingException {
 
         //엑세스 토큰 받기
@@ -118,8 +117,9 @@ public class UserKakaoController {
                     .nickname(userProfile.kakao_account.profile.nickname)
                     .social_type("Kakao")
                     .build();
+
             response.setStatus(HttpStatus.CREATED.value());
-            return new DataResponse<>("200", "회원가입하지 않은 사용자입니다. 회원가입을 진행합니다.", userJoinDto);
+            return new DataResponse<>("201", "회원가입하지 않은 사용자입니다. 회원가입을 진행합니다.", userJoinDto);
 
         }
     }

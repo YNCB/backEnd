@@ -60,7 +60,6 @@ public class PostRepositoryQueryDto {
         return postEditDto;
     }
 
-
     //단건 조회에서 사용하는 법(게시물 한개) - 게시물 태그 검색
     private List<String> findPostTags(Long postId) {
         return query.select(QTag.tag.name)

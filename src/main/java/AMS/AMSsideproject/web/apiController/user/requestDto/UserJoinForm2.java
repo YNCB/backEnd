@@ -27,8 +27,8 @@ public class UserJoinForm2 {
     private String nickname;
 
     @NotBlank (message = "필수 입력값 입니다.")
-    @ApiModelProperty(example = "google")
-    private String social_type; //google, kakao ,basic
+    @ApiModelProperty(example = "Google")
+    private String social_type; //Google, Kakao ,Basic
 
     @NotBlank (message = "필수 입력값 입니다.")
     @ApiModelProperty(example = "학생")
@@ -36,6 +36,6 @@ public class UserJoinForm2 {
 
     @NotBlank (message = "필수 입력값 입니다.")
     @ApiModelProperty(example = "Java")
-    private String main_lang; // java, python, c++, c, kotlin..
+    private String main_lang; // Java, Python, C++, C, Kotlin..
 
 }

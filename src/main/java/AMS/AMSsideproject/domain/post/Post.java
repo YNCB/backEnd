@@ -46,12 +46,13 @@ public class Post {
             orphanRemoval = true )
     private List<PostTag> postTagList = new ArrayList<>();
 
-    @OneToMany(
-            fetch = FetchType.LAZY,
-            mappedBy = "post",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
-    private List<Like> likes = new ArrayList<>(); //좋아요들
+    //굳이 필요없다고 생각이 듬
+//    @OneToMany(
+//            fetch = FetchType.LAZY,
+//            mappedBy = "post",
+//            cascade = CascadeType.ALL,
+//            orphanRemoval = true)
+//    private List<Like> likes = new ArrayList<>();
 
     @Column(name = "like_num")
     private Integer likeNum; //좋아요 총 개수 -> 정렬에 컬럼 조건으로 사용되기 때문에
@@ -62,35 +63,26 @@ public class Post {
     @Column(name = "count_view")
     private Integer countView; //조회수
 
-
     //양방향 연관관계 메서드
     public void addPostTag(PostTag postTag) {
         postTag.setPost(this);
         postTagList.add(postTag);
     }
 
-    public void addLike(Like like){
-        likes.add(like);
-    }
-    public void setLikeNum(){
-        this.likeNum = this.likes.size();
-    }
+    //like 와 양방향 관계 사용됨. (like_v1)
+//    public void addLike(Like like){likes.add(like);}
+//    public void setLikeNum(){this.likeNum = this.likes.size();}
 
-    /**
-     * test
-     */
-    //조회수
-    public void addLikeNum() {
-        this.likeNum++;
-    }
-    public void subLikeNum() {
-        this.likeNum--;
-    }
+    //좋아요 관련
+    public void addLikeNum() {this.likeNum++;}
+    public void subLikeNum() {this.likeNum--;}
+
     //게시물 조회시 조회 수 늘림 -> "지연 감지" 사용시
-    public void addCountView() {
-        this.countView++;
-    }
-    //댓글수
+//    public void addCountView() {
+//        this.countView++;
+//    }
+
+    //댓글수 관련
     public void addReplyNum() { this.replyNum++; }
     public void subReplyNum() { this.replyNum--; };
 
@@ -124,12 +116,8 @@ public class Post {
         this.type = postEditForm.getType();
         this.language = postEditForm.getLanguage();
         this.level = postEditForm.getLevel();
-
         this.chdate = LocalDateTime.now();
     }
-
-
-
 
 
 

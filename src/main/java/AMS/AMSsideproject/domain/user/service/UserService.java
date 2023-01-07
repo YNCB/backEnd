@@ -73,10 +73,7 @@ public class UserService {
     @Transactional
     public User update(Long user_id, UserEditForm userEditForm) {
         User findUser = userRepository.findByUserId(user_id).get();
-
-        findUser.setNickname(userEditForm.getNickName());
-        findUser.setJob(userEditForm.getJob());
-        findUser.setMain_lang(userEditForm.getMain_lang());
+        findUser.update(userEditForm);
 
         return findUser;
     }

@@ -37,8 +37,8 @@ public class PostListDtoAboutSpecificUser {
         language = post.getLanguage();
         type = post.getType();
 
-        //likeNum = post.getLikeNum();
-        likeNum = post.getLikes().size();
+        likeNum = post.getLikeNum();
+        //likeNum = post.getLikes().size(); //양방향시 사용
         countView = post.getCountView();
         replyNum = post.getReplyNum();
 

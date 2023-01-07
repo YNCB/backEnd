@@ -31,12 +31,4 @@ public class ReplyExControllerAdvice {
         return new BaseErrorResult(e.getMessage(), "403", "FORBIDDEN");
     }
 
-
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(Exception.class)
-    public BaseErrorResult EtcException(Exception e) {
-        return new BaseErrorResult(e.getMessage(), "500", "INTERNAL_SERVER_ERROR");
-    }
-
-
 }

@@ -10,7 +10,7 @@ public class UserEditDto {
 
     @ApiModelProperty(example = "test")
     private String nickName;
-    @ApiModelProperty(example = "student")
+    @ApiModelProperty(example = "학생")
     private String job;
     @ApiModelProperty(example = "Java")
     private String main_lang;

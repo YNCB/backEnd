@@ -25,7 +25,7 @@ public class PostDto {
     @ApiModelProperty(example = "user")
     private String nickname; //작성자 닉네임
 
-    @ApiModelProperty(example = "2020-2-2")
+    @ApiModelProperty(example = "2020-02-02")
     private String redate; //게시물 등록 일자
 
     @ApiModelProperty(example = "Java")

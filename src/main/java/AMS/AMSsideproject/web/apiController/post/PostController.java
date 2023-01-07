@@ -17,10 +17,12 @@ import AMS.AMSsideproject.web.response.post.PostListResponse;
 import AMS.AMSsideproject.web.responseDto.post.*;
 import AMS.AMSsideproject.web.swagger.postController.MainPage_200;
 import AMS.AMSsideproject.web.swagger.postController.UserPage_200;
+import AMS.AMSsideproject.web.swagger.userController.Join_406;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Slice;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -41,19 +43,15 @@ public class PostController {
     private final JwtProvider jwtProvider;
     private final LikeService likeService;
 
-    /**
-     * - Bean validation 적용해야됌!
-     * - 같은 api에 대해서 swagger가 인식을 못해 api를 임시로 아래와 같이 임시로 설정
-     */
-
-    //모든 사용자들의 게시물 리스트 조회 (로그인, 비로그인)
+    //모든 사용자들의 게시물 리스트 조회-로그인 사용자
     @GetMapping(value = "/")
     @ApiOperation(value = "서비스 메인페이지, 비회원 - 게시물 리스트 조회 api", notes = "모든 회원 게시물들에 대해서 필터링 조건에 맞게 게시물을 조회합니다.")
     @ApiResponses({
-            @ApiResponse(code=200, message="정상 호출", response = MainPage_200.class),
+            @ApiResponse(code=200, message="정상 호출"),
+            @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
-    public DataResponse<PostListResponse> mainPage(@RequestBody SearchFormAboutAllUserPost form) {
+    public DataResponse<PostListResponse> mainPage(@Validated @RequestBody SearchFormAboutAllUserPost form) {
 
         Slice<Post> result = postService.findPostsAboutAllUser(form);
 
@@ -66,21 +64,25 @@ public class PostController {
         PostListResponse postListResponse = new PostListResponse(findPostDtos, result.getNumberOfElements(), result.hasNext());
         return new DataResponse<>("200", "모든 사용자들의 게시물 리스트 결과입니다.", postListResponse);
     }
+
+    //모든 사용자들의 게시물 리스트 조회-비로그인 사용자
     @GetMapping(value = "/", headers = JwtProperties.ACCESS_HEADER_STRING)
-    @UserAuthen //로그인 전용 인증 체크
+    @UserAuthen
     @UserAuthor
     @ApiOperation(value = "서비스 메인페이지, 로그인 회원 - 게시물 리스트 조회 api", notes = "모든 회원 게시물들에 대해서 필터링 조건에 맞게 게시물을 조회합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출", response = MainPage_200.class),
-            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
+            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     @ApiImplicitParams({
             @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰", required = true)
     })
-    public DataResponse<PostListResponse> mainPage(@RequestBody SearchFormAboutAllUserPost form,
+    public DataResponse<PostListResponse> mainPage(@Validated @RequestBody SearchFormAboutAllUserPost form,
                                                    @RequestHeader(value = JwtProperties.ACCESS_HEADER_STRING ,required = true)String accessToken) {
+
         Slice<Post> result = postService.findPostsAboutAllUser(form);
 
         //Dto 변환
@@ -99,13 +101,14 @@ public class PostController {
             notes = "특정 회원 게시물들에 대해서 필터링 조건에 맞게 리스트를 조회합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출", response = UserPage_200.class),
+            @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     @ApiImplicitParams({
             @ApiImplicitParam(name = "nickname", value = "회원 닉네임", required = true)
     })
     public DataResponse<PostListResponse> userPage1(@PathVariable("nickname")String nickname ,
-                                                   @RequestBody SearchFormAboutOtherUserPost form) {
+                                                   @Validated @RequestBody SearchFormAboutOtherUserPost form) {
 
         Slice<Post> findPosts = postService.findPostsAboutOtherUser(nickname, form);
 
@@ -127,8 +130,9 @@ public class PostController {
             notes = "특정 회원 게시물들에 대해서 필터링 조건에 맞게 리스트를 조회합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출", response = UserPage_200.class),
-            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
+            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     @ApiImplicitParams({
@@ -137,7 +141,7 @@ public class PostController {
     })
     public DataResponse<PostListResponse> userPage2(@PathVariable("nickname")String nickname,
                                                    @RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken,
-                                                   @RequestBody SearchFormAboutOtherUserPost form) {
+                                                   @Validated @RequestBody SearchFormAboutOtherUserPost form) {
 
         Slice<Post> findPosts = findPosts = postService.findPostsAboutOtherUser(nickname, form);
 
@@ -160,8 +164,9 @@ public class PostController {
             notes = "특정 회원 게시물들에 대해서 필터링 조건에 맞게 리스트를 조회합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출", response = UserPage_200.class),
-            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
+            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     @ApiImplicitParams({
@@ -172,7 +177,7 @@ public class PostController {
     public DataResponse<PostListResponse> userPage3(@PathVariable("nickname")String nickname,
                                                    @RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken,
                                                    @RequestHeader(JwtProperties.MYSESSION_HEADER_STRING) String my_sessionToken,
-                                                   @RequestBody SearchFormAboutSelfUserPost form) {
+                                                   @Validated @RequestBody SearchFormAboutSelfUserPost form) {
 
         Slice<Post> findPosts = findPosts = postService.findPostsAboutOneSelf(nickname, form);
 
@@ -187,15 +192,14 @@ public class PostController {
     }
 
 
-    // 게시물 상세조회(로그인, 비로그인)
+    // 게시물 상세조회 - 로그인 사용자
     /**
      * <나중에 더 찾아볼 내용!></나중에>
      * - "postID" : 내부적으로는 int pk, 외부적으로는 UUID 사용하는 방법은 움..
      * => "postID" 를 알게되더라도 게시물작성, 수정등은 토큰을 통해 "권한" 체크를 하니깐 유출되어도 상관없움??!!
      */
     @GetMapping(value = "/{nickname}/{postId}")
-    @ApiOperation(value = "비로그인 사용자 - 게시물 상세조회 api",
-            notes = "게시물의 상세 정보를 보여줍니다.")
+    @ApiOperation(value = "비로그인 사용자 - 게시물 상세조회 api", notes = "게시물의 상세 정보를 보여줍니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
@@ -204,7 +208,7 @@ public class PostController {
             @ApiImplicitParam(name = "nickname", value = "회원 닉네임", required = true),
             @ApiImplicitParam(name = "postId", value = "게시물 아이디", required = true)
     })
-    public DataResponse<PostDto> postPage(@PathVariable("postId") Long postId,
+    public DataResponse<PostDto> postPage1(@PathVariable("postId") Long postId,
                                           @PathVariable("nickname") String nickname) {
 
         //최적화 Dto 버전 사용 - post 정보만
@@ -218,15 +222,15 @@ public class PostController {
         return new DataResponse<>("200", "문제 상제 조회 결과입니다.", findPostDto);
     }
 
+    // 게시물 상세조회 - 비로그인 사용자
     @GetMapping(value = "/{nickname}/{postId}", headers = JwtProperties.ACCESS_HEADER_STRING)
-    @ApiOperation(value = "로그인 사용자 - 게시물 상세조회 api",
-            notes = "게시물의 상세 정보를 보여줍니다. 추가로 게시물 좋아요 누른 유무도 알려줍니다.")
+    @ApiOperation(value = "로그인 사용자 - 게시물 상세조회 api", notes = "게시물의 상세 정보를 보여줍니다. 추가로 게시물 좋아요 누른 유무도 알려줍니다.")
     @UserAuthen
     @UserAuthor
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출 - 추가로 Header 에 해당 게시물 id를 포함시킨 쿠키를 포함함"),
-            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
+            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     @ApiImplicitParams({
@@ -235,7 +239,7 @@ public class PostController {
             @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰", required = true),
             @ApiImplicitParam(name = "postView", value = "게시물 중복 조회 증가 방지 쿠키", required = false, paramType = "cookie")
     })
-    public DataResponse<LoginPostDto> postPage(@PathVariable("postId") Long postId,
+    public DataResponse<LoginPostDto> postPage2(@PathVariable("postId") Long postId,
                                                @PathVariable("nickname") String nickname,
                                                @RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken,
                                                @ApiIgnore @CookieValue(value = "postView" ,required = false) Cookie postViewCookie, //쿠키가 없을수 있음
@@ -262,36 +266,30 @@ public class PostController {
     }
 
 
-    //게시물 작성 -> JWT 토큰에 있는 user_id 로 게시물을 저장시킨다.
+    //게시물 작성 -> JWT 토큰에 있는 userId 로 게시물을 저장시킨다.
     /**
      * "context" 부분이 "마크업"으로 되야된다.!!!
-     * "PostSaveForm" validated 적용하기
-     * "406" error 정의
      */
     @ApiOperation(value = "게시물 작성 api", notes = "게시물을 작성하는 api 입니다.")
     @PostMapping("/write")
-    @UserAuthen
-    @UserAuthor
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
-            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
-            //@ApiResponse(code=403, message = "잘못된 접근입니다. 권한이 없습니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
-    public BaseResponse writePost(@RequestHeader(JwtProperties.ACCESS_HEADER_STRING)String accessToken, //swagger 에 표시를 위해
-                                  @RequestBody PostSaveForm form) {
+    @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING,value = "엑세스 토큰", required = true)
+    public BaseResponse writePost(@RequestHeader(JwtProperties.ACCESS_HEADER_STRING)String accessToken,
+                                  @Validated @RequestBody PostSaveForm form) {
 
         Long userId = jwtProvider.getUserIdToToken(accessToken);
 
-        /**
-         * 나중에 다시 보기 -> 태그가 하나씩 모두 쿼리문을 통해서 존재 유무를 확인함.
-         */
+        //태그 하나하나 쿼리문이 발생함 존재 유무를 확인하기 위해
         Post savaPost = postService.registration(userId, form);
 
         return new BaseResponse("200", "게시물이 저장되었습니다.");
     }
-
 
     //게시물 수정 form
     //이어지는 고민인 "게시물 PK"를 path 에 두는게 좋은건가!??
@@ -300,10 +298,15 @@ public class PostController {
     @ApiOperation(value = "게시물 수정 api", notes = "게시물에서 수정가능한 항목들을 보여줍니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
-            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
+            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
             @ApiResponse(code=403, message = "잘못된 접근입니다. 권한이 없습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
+    })
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "nickname", value = "회원 닉네임", required = true),
+            @ApiImplicitParam(name = "postId", value = "게시물 아이디", required = true),
+            @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰", required = true)
     })
     public DataResponse<PostEditDto> edit(@PathVariable("nickname")String nickname,
                                           @PathVariable("postId")Long postId,
@@ -330,23 +333,28 @@ public class PostController {
      */
     @PutMapping("/{nickname}/{postId}/edit")
     @PostAuthor //추가 권한 검사 대상
-    @ApiOperation(value = "게시물 수정 api", notes = "실제 게시물을 수정하는 api 입니다.")
+    @ApiOperation(value = "게시물 수정 api", notes = "실제 게시물을 수정하는 api 입니다. 이후 게시물 상세 페이지 api 호출바랍니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
-            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
+            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
             @ApiResponse(code=403, message = "잘못된 접근입니다. 권한이 없습니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
+    })
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "nickname", value = "회원 닉네임", required = true),
+            @ApiImplicitParam(name = "postId", value = "게시물 아이디", required = true),
+            @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰", required = true)
     })
     public BaseResponse edit(@PathVariable("nickname")String nickname,
                              @PathVariable("postId")Long postId,
-                             @RequestBody PostEditForm postEditForm,
+                             @Validated @RequestBody PostEditForm postEditForm,
                              @RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken) {
 
         postService.updatePost(postId, postEditForm);
 
         return new BaseResponse("200", "게시물 수정이 완료되었습니다.");
-        //redirect 로 "게시물 상세 조회" 로 이동해야됌
     }
 
     //게시물 삭제
@@ -363,13 +371,17 @@ public class PostController {
             @ApiResponse(code=403, message = "잘못된 접근입니다. 권한이 없습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "nickname", value = "회원 닉네임", required = true),
+            @ApiImplicitParam(name = "postId", value = "게시물 아이디", required = true),
+            @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰", required = true)
+    })
     public BaseResponse delete(@PathVariable("nickname")String nickname,
                                @PathVariable("postId")Long postId,
                                @RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken) {
 
         postService.deletePost(postId);
         return new BaseResponse("200", "게시물 삭제가 완료되었습니다.");
-        //redirect 로 "유저 페이지"로 이동해야됌
     }
 
 }
