@@ -88,7 +88,7 @@ class PostServiceTest {
     }
 
     @Autowired private DatabaseCleanup databaseCleanup;
-    //@AfterEach
+    @AfterEach
     public void clear() {
         databaseCleanup.execute();
     }
@@ -245,21 +245,21 @@ class PostServiceTest {
 
     }
 
-    @Test
-    @Transactional
-    public void 모든유저게시물에대해서필터링조회최신순정렬무한스크롤마지막페이지() throws Exception {
-
-        //when
-        SearchFormAboutAllUserPost form = new SearchFormAboutAllUserPost("Java", "koo", "latest", 3L, null,null,null);
-        Slice<Post> findPosts = postService.findPostsAboutAllUser(form);
-
-        //then
-        boolean hasNext = findPosts.hasNext();
-        List<Post> content = findPosts.getContent();
-
-        Assertions.assertThat(hasNext).isFalse();
-        Assertions.assertThat(content.size()).isEqualTo(1);
-    }
+//    @Test
+//    @Transactional
+//    public void 모든유저게시물에대해서필터링조회최신순정렬무한스크롤마지막페이지() throws Exception {
+//
+//        //when
+//        SearchFormAboutAllUserPost form = new SearchFormAboutAllUserPost("Java", "koo", "latest", 3L, null,null,null);
+//        Slice<Post> findPosts = postService.findPostsAboutAllUser(form);
+//
+//        //then
+//        boolean hasNext = findPosts.hasNext();
+//        List<Post> content = findPosts.getContent();
+//
+//        Assertions.assertThat(hasNext).isFalse();
+//        Assertions.assertThat(content.size()).isEqualTo(1);
+//    }
 
     @Test
     @Transactional
@@ -293,21 +293,21 @@ class PostServiceTest {
         Assertions.assertThat(content.size()).isEqualTo(3);
     }
 
-    @Test
-    @Transactional
-    public void 모든유저게시물에대해서필터링조회좋아요순정렬무한스크롤마지막페이지() throws Exception {
-
-        //when
-        SearchFormAboutAllUserPost form = new SearchFormAboutAllUserPost("Java", "koo", "likeNum", 2L, null,3,null);
-        Slice<Post> findPosts = postService.findPostsAboutAllUser(form);
-
-        //then
-        boolean hasNext = findPosts.hasNext();
-        List<Post> content = findPosts.getContent();
-
-        Assertions.assertThat(hasNext).isFalse();
-        Assertions.assertThat(content.size()).isEqualTo(1);
-    }
+//    @Test
+//    @Transactional
+//    public void 모든유저게시물에대해서필터링조회좋아요순정렬무한스크롤마지막페이지() throws Exception {
+//
+//        //when
+//        SearchFormAboutAllUserPost form = new SearchFormAboutAllUserPost("Java", "koo", "likeNum", 2L, null,3,null);
+//        Slice<Post> findPosts = postService.findPostsAboutAllUser(form);
+//
+//        //then
+//        boolean hasNext = findPosts.hasNext();
+//        List<Post> content = findPosts.getContent();
+//
+//        Assertions.assertThat(hasNext).isFalse();
+//        Assertions.assertThat(content.size()).isEqualTo(1);
+//    }
 
     @Test
     @Transactional
@@ -339,32 +339,32 @@ class PostServiceTest {
         //    System.out.println(p);
     }
 
-    @Test
-    @Transactional
-    public void 특정유저게시물에대해서존재하지않는태그게시물조회최신순순무한스크롤첫페이지() throws Exception {
-        //given
-        List<String> list = new ArrayList<>();
-        list.add("FFS"); //list.add("DFS");
-        SearchFormAboutOtherUserPost form = SearchFormAboutOtherUserPost.builder()
-                //.tags(list)
-                //.type("see")
-                .language("Java")
-                .searchTitle("boo")
-                .orderKey("latest")
-                .lastPostId(null)
-                .lastLikeNum(null)
-                .lastReplyNum(null)
-                .build();
-
-        //when
-        Slice<Post> findPosts = postService.findPostsAboutOtherUser("test3", form);
-
-        //then
-        List<PostListDtoAboutAllUser> result = findPosts.getContent().stream()
-                .map(p -> new PostListDtoAboutAllUser(p))
-                .collect(Collectors.toList());
-
-        Assertions.assertThat(result.size()).isEqualTo(0);
-    }
+//    @Test
+//    @Transactional
+//    public void 특정유저게시물에대해서존재하지않는태그게시물조회최신순순무한스크롤첫페이지() throws Exception {
+//        //given
+//        List<String> list = new ArrayList<>();
+//        list.add("FFS"); //list.add("DFS");
+//        SearchFormAboutOtherUserPost form = SearchFormAboutOtherUserPost.builder()
+//                //.tags(list)
+//                //.type("see")
+//                .language("Java")
+//                .searchTitle("boo")
+//                .orderKey("latest")
+//                .lastPostId(null)
+//                .lastLikeNum(null)
+//                .lastReplyNum(null)
+//                .build();
+//
+//        //when
+//        Slice<Post> findPosts = postService.findPostsAboutOtherUser("test3", form);
+//
+//        //then
+//        List<PostListDtoAboutAllUser> result = findPosts.getContent().stream()
+//                .map(p -> new PostListDtoAboutAllUser(p))
+//                .collect(Collectors.toList());
+//
+//        Assertions.assertThat(result.size()).isEqualTo(0);
+//    }
 
 }

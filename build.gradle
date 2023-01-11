@@ -93,8 +93,6 @@ configurations {
 	querydsl.extendsFrom compileClasspath
 }
 
-
-
 tasks.named('test') {
 	useJUnitPlatform()
 }

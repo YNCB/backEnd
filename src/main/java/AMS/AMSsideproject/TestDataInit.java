@@ -32,15 +32,15 @@ public class TestDataInit {
     public void init() {
 
         //사용자 데이터
-        UserJoinForm2 userJoinForm1 = new UserJoinForm2("test1@naver.com","test1", "test1", "basic", "학생", "Java");
+        UserJoinForm2 userJoinForm1 = new UserJoinForm2("data1@naver.com","data1", "data1", "basic", "학생", "Java");
         User join1 = userService.join(userJoinForm1);
-        UserJoinForm2 userJoinForm2 = new UserJoinForm2("test2@google.com", "test2", "test2", "basic", "학생","Java");
+        UserJoinForm2 userJoinForm2 = new UserJoinForm2("data2@google.com", "data2", "data2", "basic", "학생","Java");
         User join2 = userService.join(userJoinForm2);
-        UserJoinForm2 userJoinForm3 = new UserJoinForm2("test3@google.com", "test3", "test3", "basic", "학생","Java");
+        UserJoinForm2 userJoinForm3 = new UserJoinForm2("data3@google.com", "data3", "data3", "basic", "학생","Java");
         User join3 = userService.join(userJoinForm3);
-        UserJoinForm2 userJoinForm4 = new UserJoinForm2("test4@naver.com", "test4", "test4", "basic", "학생","Java");
+        UserJoinForm2 userJoinForm4 = new UserJoinForm2("data4@naver.com", "data4", "data4", "basic", "학생","Java");
         User join4 = userService.join(userJoinForm4);
-        UserJoinForm2 userJoinForm5 = new UserJoinForm2("test5@google.com", "test5", "test5", "basic", "학생","Java");
+        UserJoinForm2 userJoinForm5 = new UserJoinForm2("data5@google.com", "data5", "data5", "basic", "학생","Java");
         User join5 = userService.join(userJoinForm5);
 
         //게시물 데이터
@@ -91,13 +91,13 @@ public class TestDataInit {
 
 
         //댓글 데이터
-        ReplySaveForm replySaveForm1 = new ReplySaveForm("test1", "test1", null);
+        ReplySaveForm replySaveForm1 = new ReplySaveForm("reply1", "reply1", null);
         Reply saveReply1 = replyService.addReply(registration1.getPost_id(), join3.getUser_id(), replySaveForm1);
-        ReplySaveForm replySaveForm2 = new ReplySaveForm("test2", "test2", saveReply1.getReply_id());
+        ReplySaveForm replySaveForm2 = new ReplySaveForm("reply2", "reply2", saveReply1.getReply_id());
         Reply saveReply2 = replyService.addReply(registration1.getPost_id(), join4.getUser_id(), replySaveForm2);
-        ReplySaveForm replySaveForm3 = new ReplySaveForm("test3", "test3", saveReply2.getReply_id());
+        ReplySaveForm replySaveForm3 = new ReplySaveForm("reply3", "reply3", saveReply2.getReply_id());
         Reply saveReply3 = replyService.addReply(registration1.getPost_id(), join5.getUser_id(), replySaveForm3);
-        ReplySaveForm replySaveForm4 = new ReplySaveForm("test4", "test4", null);
+        ReplySaveForm replySaveForm4 = new ReplySaveForm("reply4", "reply4", null);
         Reply saveReply4 = replyService.addReply(registration1.getPost_id(), join2.getUser_id(), replySaveForm1);
 
         //팔로우 데이터
