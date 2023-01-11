@@ -8,7 +8,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 @Controller
 @RequiredArgsConstructor
-@ApiIgnore
+//@ApiIgnore
 public class TestController {
 
     @GetMapping("/test")

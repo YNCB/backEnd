@@ -66,7 +66,6 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             if(!jwtProvider.validTokenHeaderUser(token))
                 throw new Exception();
 
-
             /**
              * 권한을 그냥 "USER" 체크 할까?? -> 그럼 spring security context 안에 넣어서 스프링 시큐리티에게 권한처리 위임하면 되는데....
              * 이게 좋은 방식인가?!!!!???????
