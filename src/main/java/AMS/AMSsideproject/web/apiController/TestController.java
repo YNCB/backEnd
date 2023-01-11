@@ -8,8 +8,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 @Controller
 @RequiredArgsConstructor
-@Api(tags = "Test 관련 api")
-//@ApiIgnore
+@ApiIgnore
 public class TestController {
 
     @GetMapping("/test!!!!!")
