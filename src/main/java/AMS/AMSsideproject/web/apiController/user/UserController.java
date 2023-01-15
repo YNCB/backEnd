@@ -142,6 +142,9 @@ public class UserController {
         return new DataResponse<>("200", "회원 수정이 완료되었습니다. 토큰이 재발급되었습니다.", dto);
     }
 
+    /**
+     * refreshToken도 삭제해야된다!!
+     */
     @GetMapping("/logout")
     @ApiOperation(value = "로그아웃 api", notes = "엑세스 토큰을 블랙리스트 처리니다.")
     @ApiResponses({
