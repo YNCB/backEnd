@@ -6,7 +6,7 @@ package AMS.AMSsideproject.web.auth.jwt;
 public interface JwtProperties {
 
     public String SECRET = "YNCB CODEBOX-sideProject JWT SecretKey ddddddddddddddddddddddddddddddddddddddddddddddd";
-    public int ACCESSTOKEN_TIME = 10000000; // (1/1000초)
+    public int ACCESSTOKEN_TIME = 60000; // (1/1000초)
     public int REFRESHTOKEN_TIME = 3000000;
     public String ACCESS_HEADER_STRING = "accessToken";
     public String REFRESH_HEADER_STRING = "refreshToken";

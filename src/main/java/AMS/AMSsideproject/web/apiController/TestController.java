@@ -11,7 +11,7 @@ import springfox.documentation.annotations.ApiIgnore;
 @ApiIgnore
 public class TestController {
 
-    @GetMapping("/test!!!!!")
+    @GetMapping("/test")
     public String home() {
         return "test";
     }

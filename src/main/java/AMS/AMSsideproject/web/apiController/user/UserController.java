@@ -145,6 +145,7 @@ public class UserController {
     /**
      * refreshToken도 삭제해야된다!!
      */
+    //인증,권한 검사하는 api-토큰의 유효기간이 끝이 나면 어차피 로그아웃 처리하지 않아도 사용못하니
     @GetMapping("/logout")
     @ApiOperation(value = "로그아웃 api", notes = "엑세스 토큰을 블랙리스트 처리니다.")
     @ApiResponses({
@@ -157,6 +158,7 @@ public class UserController {
     public BaseResponse userLogout(@RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken){
 
         userService.logout(accessToken);
+
         return new BaseResponse("200", "로그아웃이 되었습니다");
     }
 
