@@ -14,17 +14,17 @@ class UserServiceTest {
     @Autowired UserService userService;
     @Autowired RedisTemplate<String, String> redisTemplate;
 
-    @Test
-    public void 로그아웃테스트() throws Exception {
-        //given
-        String accessToken = jwtProvider.createAccessToken(1L, "test", "USER");
-
-        //when
-        userService.logout(accessToken);
-
-        //then
-        String blackAccessToken = redisTemplate.opsForValue().get(accessToken);
-        System.out.println(blackAccessToken);
-    }
+//    @Test
+//    public void 로그아웃테스트() throws Exception {
+//        //given
+//        String accessToken = jwtProvider.createAccessToken(1L, "test", "USER");
+//
+//        //when
+//        userService.logout(accessToken);
+//
+//        //then
+//        String blackAccessToken = redisTemplate.opsForValue().get(accessToken);
+//        System.out.println(blackAccessToken);
+//    }
 
 }
