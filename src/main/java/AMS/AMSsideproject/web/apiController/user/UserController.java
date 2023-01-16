@@ -143,7 +143,7 @@ public class UserController {
     }
 
     /**
-     * refreshToken도 삭제해야된다!!
+     * refreshToken도 삭제해야된다!!!!!
      */
     //인증,권한 검사하는 api-토큰의 유효기간이 끝이 나면 어차피 로그아웃 처리하지 않아도 사용못하니
     @GetMapping("/logout")
