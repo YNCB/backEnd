@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
@@ -38,6 +39,6 @@ public class PostSaveForm {
     private String language;
 
     @ApiModelProperty(example = "3")
-    @NotBlank(message = "필수 입력값 입니다.")
+    @NotNull(message = "필수 입력값 입니다.")
     private Integer level;
 }
