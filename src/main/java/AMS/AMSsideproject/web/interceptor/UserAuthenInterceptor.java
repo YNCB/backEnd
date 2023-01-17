@@ -48,18 +48,23 @@ public class UserAuthenInterceptor implements HandlerInterceptor {
             if(!StringUtils.hasText(token))  //토큰이 없는 경우
                 throw new Exception();
 
+            System.out.println("111111111111111111111111");
+
             //로그아웃된 토큰인지 검사
             validBlackToken(token);
 
+            System.out.println("222222222222222222222222");
             //JWT 토큰 만료기간 검증
             jwtProvider.validTokenExpired(token);
 
+            System.out.println("33333333333333333");
             /**
              * refreshToken이 탈취당하였을때 refreshToken을 accessToken인척 사용할수 있기 때문에 구분해주기 위해서!!!
              */
             if(!jwtProvider.validTokenHeaderUser(token))
                 throw new Exception();
 
+            System.out.println("444444444444444444");
             return true;
 
         }catch (ExpireJWTTokenException e) {
