@@ -76,7 +76,7 @@ public class UserAuthenInterceptor implements HandlerInterceptor {
             return false;
         } catch (Exception e ) {
             message = "토큰이 없거나 정상적인 값이 아닙니다.";
-            sendErrorResponse(message, response);
+            sendErrorResponse(e.getMessage(), response);
             return false;
         }
     }
