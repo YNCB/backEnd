@@ -2,6 +2,7 @@ version: "3.0"
 services:
   web:
     image: bonsik/codebox-project-images:1.0
+    container_name: codebox
     ports:
       - 8888:8888
 
