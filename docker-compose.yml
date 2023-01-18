@@ -1,13 +1,14 @@
 version: "3.0"
 services:
   web:
-    image: "bonsik/codebox-images:1.0"
+    image: bonsik/codebox-images:1.0
     ports:
-      - "8888:8888"
+      - 8888:8888
 
   redis:
     image: redis:alpine
     container_name: redis_boot
     command: redis-server --port 6379
-    hostname: redis_boot
-    
+    hostname: redis
+    ports:
+      - 6379:6379
