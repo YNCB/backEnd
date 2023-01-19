@@ -13,15 +13,15 @@ import javax.validation.constraints.NotBlank;
 public class SearchFormAboutAllUserPost {
 
     @ApiModelProperty(example = "Java")
-    @NotBlank(message = "필수 입력값 입니다.")
+    //@NotBlank(message = "필수 입력값 입니다.")
     private String language; //사용 언어
 
     @ApiModelProperty(example = "test", notes = "게시물 제목 대상")
-    @NotBlank(message = "필수 입력값 입니다.")
+    //@NotBlank(message = "필수 입력값 입니다.")
     private String searchTitle; //제목 검색
 
     @ApiModelProperty(example = "latest(최신순)", notes = "정렬기준 -> latest(최신순), oldest(오래된순), likeNum(좋아요순), replyNum(댓글많은순), countView(조회수순)")
-    @NotBlank(message = "필수 입력값 입니다.")
+    //@NotBlank(message = "필수 입력값 입니다.")
     private String orderKey; // 정렬 기준 -> latest(최신순), oldest(오래된순), likeNum(좋아요순), replyNum(댓글많은순), countView(조회수순)
 
 

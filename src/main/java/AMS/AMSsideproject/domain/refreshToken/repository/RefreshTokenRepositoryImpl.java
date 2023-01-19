@@ -39,6 +39,13 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
         em.persist(refreshToken);
     }
 
+    @Override
+    public void delete(Long userId) {
+        query.delete(QRefreshToken.refreshToken)
+                .where(userIdEq(userId))
+                .execute();
+    }
+
     private BooleanExpression userIdEq(Long userId) {
         return (userId==null)?null: QUser.user.user_id.eq(userId);
     }

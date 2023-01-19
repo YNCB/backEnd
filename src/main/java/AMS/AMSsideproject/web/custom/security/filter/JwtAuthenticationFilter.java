@@ -4,10 +4,13 @@ import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
 import AMS.AMSsideproject.web.custom.security.PrincipalDetails;
-import AMS.AMSsideproject.web.exception.BlackJWTToken;
-import AMS.AMSsideproject.web.exception.ExpireJWTTokenException;
+import AMS.AMSsideproject.web.exception.BlackToken;
+import AMS.AMSsideproject.web.exception.ExpireTokenException;
+import AMS.AMSsideproject.web.exception.NotExistingToken;
+import AMS.AMSsideproject.web.exception.NotValidToken;
 import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
 import AMS.AMSsideproject.web.response.BaseResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
@@ -47,12 +50,11 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
 
         String token = jwtProvider.validAccessTokenHeader(request);
-        String message = null;
 
         try {
             //header 에서 JWT 토큰이 있는지 검사
             if(!StringUtils.hasText(token))  //토큰이 없는 경우
-                throw new Exception();
+                throw new NotExistingToken("토큰이 없습니다.");
 
             //로그아웃된 토큰인지 검사
             validBlackToken(token);
@@ -64,7 +66,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
              * refreshToken이 탈취당하였을때 refreshToken을 accessToken인척 사용할수 있기 때문에 구분해주기 위해서!!!
              */
             if(!jwtProvider.validTokenHeaderUser(token))
-                throw new Exception();
+                throw new NotValidToken("정상적이지 않은 토큰입니다.");
 
             /**
              * 권한을 그냥 "USER" 체크 할까?? -> 그럼 spring security context 안에 넣어서 스프링 시큐리티에게 권한처리 위임하면 되는데....
@@ -83,16 +85,26 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 
             chain.doFilter(request,response);
 
-        }catch (ExpireJWTTokenException e) {
-            message = "엑세스 토큰의 유효기간이 만료되었습니다. 리프레쉬 토큰을 요청해주십시오.";
-            sendRefreshResponse(message, response);
+        }catch (ExpireTokenException e) { //기한만료된 토큰-201
+            sendResponse(response, e.getMessage(),
+                    HttpStatus.CREATED.value(), HttpStatus.CREATED.getReasonPhrase());
             return;
-        }catch (BlackJWTToken e) {
-            sendBlackTokenResponse(e.getMessage(), response);
+        }catch (BlackToken e) { //로그아웃된 토큰-401
+            sendResponse(response, e.getMessage(),
+                    HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
             return;
-        } catch (Exception e ) {
-            message = "토큰이 없거나 정상적인 값이 아닙니다.";
-            sendErrorResponse(message, response);
+        } catch (NotExistingToken e){ //헤더에 토큰이 없는경우-412
+            sendResponse(response, e.getMessage(),
+                    HttpStatus.PRECONDITION_FAILED.value(),HttpStatus.PRECONDITION_FAILED.getReasonPhrase() );
+            return;
+        }catch (NotValidToken e) { //정상적이지 않은 토큰-401
+            sendResponse(response, e.getMessage(),
+                    HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
+            return;
+        }
+        catch (Exception e) { //나머지 서버 에러-500
+            sendResponse(response, e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
             return;
         }
     }
@@ -102,38 +114,17 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
         //Redis에 있는 엑세스 토큰인 경우 로그아웃 처리된 엑세스 토큰임.
         String blackToken = redisTemplate.opsForValue().get(accessToken);
         if(StringUtils.hasText(blackToken))
-            throw new BlackJWTToken("로그아웃 처리된 엑세스 토큰입니다.");
+            throw new BlackToken("로그아웃 처리된 엑세스 토큰입니다.");
     }
 
-    private void sendBlackTokenResponse(String message, HttpServletResponse response) throws IOException {
-        BaseErrorResult baseResponse =
-                new BaseErrorResult(message, String.valueOf(HttpStatus.PRECONDITION_FAILED.value()), HttpStatus.PRECONDITION_FAILED.getReasonPhrase());
-        String res = objectMapper.writeValueAsString(baseResponse);
+    private void sendResponse(HttpServletResponse response, String message, int code, String status ) throws IOException {
 
-        response.setStatus(HttpStatus.PRECONDITION_FAILED.value());
+        BaseErrorResult result = new BaseErrorResult(message, String.valueOf(code), status);
+
+        String res = objectMapper.writeValueAsString(result);
+        response.setStatus(code);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(res);
     }
-
-    private void sendErrorResponse(String message, HttpServletResponse response) throws IOException {
-        BaseErrorResult errorResult = new BaseErrorResult(message,"401", "Unauthorized");
-        String res = objectMapper.writeValueAsString(errorResult);
-
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        response.getWriter().write(res);
-    }
-
-    private void sendRefreshResponse(String message, HttpServletResponse response) throws IOException {
-        BaseResponse baseResponse = new BaseResponse("201", message);
-        String res = objectMapper.writeValueAsString(baseResponse);
-
-        response.setStatus(HttpStatus.CREATED.value());
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        response.getWriter().write(res);
-    }
-
 }

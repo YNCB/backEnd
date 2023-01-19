@@ -23,7 +23,8 @@ public class RefreshTokenController {
             "리프레시 토큰이 정상적이지 않거나 기한이 만료되었으면 재로그인을 요청합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message = "엑세스,리프레시 토큰 재생성 성공"),
-            @ApiResponse(code=400, message = "리프레시토큰이 없거나 잘못된 값 또는 유효기간이 만료되었습니다. 재로그인 해주세요.", response = BaseErrorResult.class),
+            @ApiResponse(code=401, message = "재로그인 해주시기 바랍니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=412, message = "토큰이 없습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     @ApiImplicitParam(name = JwtProperties.REFRESH_HEADER_STRING, value = "리프레쉬 토큰",required = true)

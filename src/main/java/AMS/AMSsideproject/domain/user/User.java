@@ -1,6 +1,5 @@
 package AMS.AMSsideproject.domain.user;
 
-import AMS.AMSsideproject.domain.refreshToken.RefreshToken;
 import AMS.AMSsideproject.web.apiController.user.requestDto.UserEditForm;
 import AMS.AMSsideproject.web.apiController.user.requestDto.UserJoinForm2;
 import lombok.Data;
@@ -28,11 +27,6 @@ public class User {
 
     private String role; //USER, MANAGER, ADMIN
 
-    //리프레시 토큰
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "refresh_token_id")
-    private RefreshToken refreshToken;
-
 
     //생성 메서드
     public static User createUser(UserJoinForm2 joinForm) {
@@ -45,7 +39,6 @@ public class User {
         user.setJob(joinForm.getJob());
         user.setMain_lang(joinForm.getMain_lang());
         user.setRedate(LocalDateTime.now());
-
         /**
          * 임시
          */
@@ -59,13 +52,6 @@ public class User {
         this.job = userEditForm.job;
         this.main_lang = userEditForm.main_lang;
     }
-
-    //setter 메서드
-    public RefreshToken setRefreshToken(RefreshToken refreshToken) {
-        this.refreshToken = refreshToken;
-        return this.refreshToken;
-    }
-
 
 
 }

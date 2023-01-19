@@ -2,7 +2,7 @@ package AMS.AMSsideproject.web.auth.jwt.service;
 
 import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
 import AMS.AMSsideproject.web.auth.jwt.JwtToken;
-import AMS.AMSsideproject.web.exception.ExpireJWTTokenException;
+import AMS.AMSsideproject.web.exception.ExpireTokenException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.TokenExpiredException;
@@ -80,7 +80,7 @@ public class JwtProvider {
             JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(Token).getToken();
 
         }catch (TokenExpiredException e) { //Token 이 만료된 경우
-            throw new ExpireJWTTokenException("토큰이 만료되었습니다.");
+            throw new ExpireTokenException("토큰이 만료되었습니다.");
         }
 
         return Token;
@@ -145,4 +145,5 @@ public class JwtProvider {
         long now = new Date().getTime();
         return expiration.getTime() - now;
     }
+
 }

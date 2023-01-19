@@ -26,6 +26,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
 
+        //리프레시토큰 인증체크
         registry.addInterceptor(refreshTokenInterceptor())
                 .order(1)
                 .addPathPatterns("/codebox/refreshToken")

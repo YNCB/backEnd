@@ -48,7 +48,7 @@ class JwtServiceTest {
         Assertions.assertThat(nickName).isEqualTo("test1");
 
         Optional<RefreshToken> refreshToken = refreshTokenService.findRefreshToken(findUser.getUser_id());
-        Assertions.assertThat(jwtToken.getRefreshToken()).isEqualTo(refreshToken.get().getRefresh_token());
+        Assertions.assertThat(jwtToken.getRefreshToken()).isEqualTo(refreshToken.get().getValue());
     }
     
     @Test

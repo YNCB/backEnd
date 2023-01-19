@@ -16,9 +16,11 @@ import javax.validation.constraints.Pattern;
 public class UserJoinForm2 {
 
     @ApiModelProperty(example = "test@gmail.com")
+    @NotBlank(message = "필수 입력값 입니다.")
     private String email;
 
     @ApiModelProperty(example = "test1234!")
+    @NotBlank(message = "필수 입력값 입니다.")
     private String password;
 
     @NotBlank(message = "필수 입력값 입니다.")

@@ -1,5 +1,6 @@
 package AMS.AMSsideproject.domain.user.service;
 
+import AMS.AMSsideproject.domain.refreshToken.repository.RefreshTokenRepository;
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.repository.UserRepository;
 import AMS.AMSsideproject.web.apiController.user.requestDto.UserEditForm;
@@ -25,6 +26,7 @@ public class UserService {
     private final BCryptPasswordEncoder encodePwd;
     private final RedisTemplate<String,String> redisTemplate;
     private final JwtProvider jwtProvider;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     //회원 가입 메서드
     @Transactional
@@ -84,13 +86,19 @@ public class UserService {
     }
 
     //로그아웃
+    @Transactional
     public void logout(String accessToken){
+
+        Long findUserId = jwtProvider.getUserIdToToken(accessToken);
 
         //엑세스 토큰 남은 유효시간
         Long expiration = jwtProvider.getExpiration(accessToken);
 
         //Redis Cache에 저장
         redisTemplate.opsForValue().set(accessToken, "logout", expiration, TimeUnit.MILLISECONDS);
+
+        //리프레쉬 토큰 삭제
+        refreshTokenRepository.delete(findUserId);
     }
 
 }

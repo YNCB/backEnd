@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Null;
 
 @Data
 @AllArgsConstructor
@@ -21,7 +22,7 @@ public class ReplySaveForm {
     private String content;
 
     @ApiModelProperty(example = "null", notes = "상위 댓글 id 입니다. 상위 댓글이 없는 경우 null 입니다.")
-    @NotBlank(message = "필수 입력값 입니다.")
+    //@Null
     private Long parent_id; //루트일경우에는 null
 
 }

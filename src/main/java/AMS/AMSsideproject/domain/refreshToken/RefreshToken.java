@@ -12,9 +12,9 @@ public class RefreshToken {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long refresh_token_id;
+    private Long token_id;
 
-    private String refresh_token;
+    private String value;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -22,15 +22,14 @@ public class RefreshToken {
 
     //생성자
     public RefreshToken() {}
-
-    public RefreshToken(String refresh_token) {this.refresh_token = refresh_token;}
+    public RefreshToken(String refresh_token) {this.value = refresh_token;}
 
     //setter
     public void setUser(User user){
         this.user = user;
     }
     public void setRefreshToken(String refreshToken){
-        this.refresh_token = refreshToken;
+        this.value = refreshToken;
     }
 
 }

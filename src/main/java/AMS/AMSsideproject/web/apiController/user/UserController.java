@@ -23,6 +23,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
+import javax.validation.Valid;
 import java.io.UnsupportedEncodingException;
 
 @RestController
@@ -44,7 +45,7 @@ public class UserController {
             @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
-    public DataResponse<UserJoinForm1> join1(@Validated @RequestBody UserJoinForm1 userJoinForm) {
+    public DataResponse<UserJoinForm1> join1(@RequestBody @Valid UserJoinForm1 userJoinForm) {
 
         return new DataResponse<>("200","1차 회원가입이 완료되었습니다.",userJoinForm);
     }
@@ -58,7 +59,7 @@ public class UserController {
             @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
-    public BaseResponse join2(@Validated @RequestBody UserJoinForm2 userJoinForm) {
+    public BaseResponse join2(@RequestBody @Valid UserJoinForm2 userJoinForm) {
 
         User joinUser = userService.join(userJoinForm);
         return new BaseResponse("200", "회원가입이 정상적으로 완료되었습니다.");
@@ -73,7 +74,7 @@ public class UserController {
             @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
-    public DataResponse<ValidNickNameDto> ValidDuplicateNickName(@Validated @RequestBody ValidNickNameDto validNickName) {
+    public DataResponse<ValidNickNameDto> ValidDuplicateNickName(@RequestBody @Valid ValidNickNameDto validNickName) {
 
         //이거도 굳이 리턴할필요가 있나?! 닉네임을?!
         String nickName= userService.validDuplicateUserNickName(validNickName.nickname);
@@ -89,7 +90,7 @@ public class UserController {
             @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
-    public DataResponse<ResponseAuthCode> mailConfirm(@Validated @RequestBody RequestEmailAuthDto emailDto) throws MessagingException, UnsupportedEncodingException {
+    public DataResponse<ResponseAuthCode> mailConfirm(@RequestBody @Valid RequestEmailAuthDto emailDto) throws MessagingException, UnsupportedEncodingException {
 
         String authCode = emailService.sendEmail(emailDto.email);
         return new DataResponse<>("200", "인증코드를 전송하였습니다. 생성된 인증코드 입니다.", new ResponseAuthCode(authCode));
@@ -101,8 +102,8 @@ public class UserController {
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
-            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
-            @ApiResponse(code=412, message = "로그아웃 처리된 엑세스 토큰입니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=401, message ="정상적이지 않은 토큰입니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=412, message = "토큰이 없습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰",required = true)
@@ -121,14 +122,14 @@ public class UserController {
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
-            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다.", response = BaseErrorResult.class),
             @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
-            @ApiResponse(code=412, message = "로그아웃 처리된 엑세스 토큰입니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=412, message = "토큰이 없습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰",required = true)
     public DataResponse<UserEditSuccessDto> UserEdit(@RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken,
-                                                     @Validated @RequestBody UserEditForm userEditForm) {
+                                                     @RequestBody @Valid UserEditForm userEditForm) {
 
         //Token 정보에서 User 찾기
         Long findUserId = jwtProvider.getUserIdToToken(accessToken);
@@ -142,16 +143,15 @@ public class UserController {
         return new DataResponse<>("200", "회원 수정이 완료되었습니다. 토큰이 재발급되었습니다.", dto);
     }
 
-    /**
-     * refreshToken도 삭제해야된다!!!!!
-     */
-    //인증,권한 검사하는 api-토큰의 유효기간이 끝이 나면 어차피 로그아웃 처리하지 않아도 사용못하니
+
+    //인증,권한 검사하는 해야함 - 토큰의 유효기간이 끝이 나면 어차피 로그아웃 처리하지 않아도 사용못하니
     @GetMapping("/logout")
     @ApiOperation(value = "로그아웃 api", notes = "엑세스 토큰을 블랙리스트 처리니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
             @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
-            @ApiResponse(code=401, message ="JWT 토큰이 토큰이 없거나 정상적인 값이 아닙니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=412, message = "토큰이 없습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰", required = true)

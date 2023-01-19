@@ -23,7 +23,6 @@ public class JwtService {
     private final UserService userService;
 
     //토큰 생성 및 저장
-    //@Transactional
     public JwtToken createAndSaveToken(Long userId, String nickName, String role) {
 
         //토큰 생성
@@ -57,7 +56,6 @@ public class JwtService {
     }
 
     //Token 에서 user 찾는 메서드 -> 회원 수정할때 사용
-    //@Transactional(readOnly = true)
     public User findUserToToken(String token) {
 
         Long findUserId = jwtProvider.getUserIdToToken(token);
