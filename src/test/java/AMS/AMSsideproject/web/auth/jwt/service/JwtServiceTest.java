@@ -1,7 +1,7 @@
 package AMS.AMSsideproject.web.auth.jwt.service;
 
-import AMS.AMSsideproject.domain.token.RefreshToken;
-import AMS.AMSsideproject.domain.token.service.RefreshTokenService;
+import AMS.AMSsideproject.domain.refreshToken.RefreshToken;
+import AMS.AMSsideproject.domain.refreshToken.service.RefreshTokenService;
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
 import AMS.AMSsideproject.web.apiController.user.requestDto.UserJoinForm2;

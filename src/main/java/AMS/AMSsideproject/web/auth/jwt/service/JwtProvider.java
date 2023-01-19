@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Jwt(access,refresh) 토큰과 관련된 기능
+ * 토큰과 관련된 기능
  */
 @Configuration //빈으로 등록
 @RequiredArgsConstructor

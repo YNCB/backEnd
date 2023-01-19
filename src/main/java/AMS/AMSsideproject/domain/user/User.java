@@ -1,10 +1,9 @@
 package AMS.AMSsideproject.domain.user;
 
-import AMS.AMSsideproject.domain.token.RefreshToken;
+import AMS.AMSsideproject.domain.refreshToken.RefreshToken;
 import AMS.AMSsideproject.web.apiController.user.requestDto.UserEditForm;
 import AMS.AMSsideproject.web.apiController.user.requestDto.UserJoinForm2;
 import lombok.Data;
-import lombok.Getter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

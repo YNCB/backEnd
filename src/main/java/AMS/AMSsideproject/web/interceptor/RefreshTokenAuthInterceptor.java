@@ -1,6 +1,6 @@
 package AMS.AMSsideproject.web.interceptor;
 
-import AMS.AMSsideproject.domain.token.service.RefreshTokenService;
+import AMS.AMSsideproject.domain.refreshToken.service.RefreshTokenService;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
 import AMS.AMSsideproject.web.exception.ExpireJWTTokenException;
 import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
