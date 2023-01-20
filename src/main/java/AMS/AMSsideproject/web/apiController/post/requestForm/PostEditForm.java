@@ -13,16 +13,14 @@ import java.util.List;
 @NoArgsConstructor
 public class PostEditForm {
 
-    @ApiModelProperty(example = "DFS", notes = "문제 태그들 여러개 가능")
-    @NotBlank(message = "필수 입력값 입니다.")
+    @ApiModelProperty(example = "DFS", notes = "문제 태그들 여러개 가능. 없을시 null로 채워주시면 됩니다.")
     private List<String> tags;
 
     @ApiModelProperty(example = "test")
     @NotBlank(message = "필수 입력값 입니다.")
     private String title;
 
-    @ApiModelProperty(example = "test")
-    @NotBlank(message = "필수 입력값 입니다.")
+    @ApiModelProperty(example = "test", notes = "없을시 null로 채워주시면 됩니다.")
     private String problem_uri;
 
     @ApiModelProperty(example = "test")

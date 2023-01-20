@@ -47,7 +47,7 @@ public class FollowController {
             @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰", required = true)
     })
     public BaseResponse addFollow(@RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken,
-                                  @RequestBody @Valid FollowSaveForm form) {
+                                  @Validated @RequestBody FollowSaveForm form) {
 
         Long userId = jwtProvider.getUserIdToToken(accessToken);
         Follow follow = followService.addFollow(userId, form.getUserId());

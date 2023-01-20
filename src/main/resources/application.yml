@@ -9,12 +9,12 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     #AWS RDS IP 주소
-    url: jdbc:mysql://ams-sideproject.cplvn3gq33xj.ap-northeast-2.rds.amazonaws.com:3306/ams_sideproject?serverTimezone=UTC&characterEncoding=UTF-8
-    username: admin
-    password: rnqhstlr123!
-    #url: jdbc:mysql://localhost:3306/ams_sideproject?serverTimezone=UTC&characterEncoding=UTF-8
-    #username: root
-    #password: 1234
+    #url: jdbc:mysql://ams-sideproject.cplvn3gq33xj.ap-northeast-2.rds.amazonaws.com:3306/ams_sideproject?serverTimezone=UTC&characterEncoding=UTF-8
+    #username: admin
+    #password: rnqhstlr123!
+    url: jdbc:mysql://localhost:3306/ams_sideproject?serverTimezone=UTC&characterEncoding=UTF-8
+    username: root
+    password: 1234
 
   jpa:
     hibernate:
@@ -64,7 +64,7 @@ spring:
 
   #Redis Cache
   redis:
-    #host: 127.0.0.1
-    host: redis
+    host: 127.0.0.1
+    #host: redis
     port: 6379
 

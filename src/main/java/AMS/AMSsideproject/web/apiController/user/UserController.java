@@ -45,7 +45,7 @@ public class UserController {
             @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
-    public DataResponse<UserJoinForm1> join1(@RequestBody @Valid UserJoinForm1 userJoinForm) {
+    public DataResponse<UserJoinForm1> join1(@Validated @RequestBody UserJoinForm1 userJoinForm) {
 
         return new DataResponse<>("200","1차 회원가입이 완료되었습니다.",userJoinForm);
     }
@@ -59,7 +59,7 @@ public class UserController {
             @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
-    public BaseResponse join2(@RequestBody @Valid UserJoinForm2 userJoinForm) {
+    public BaseResponse join2(@Validated @RequestBody UserJoinForm2 userJoinForm) {
 
         User joinUser = userService.join(userJoinForm);
         return new BaseResponse("200", "회원가입이 정상적으로 완료되었습니다.");
@@ -74,7 +74,7 @@ public class UserController {
             @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
-    public DataResponse<ValidNickNameDto> ValidDuplicateNickName(@RequestBody @Valid ValidNickNameDto validNickName) {
+    public DataResponse<ValidNickNameDto> ValidDuplicateNickName(@Validated @RequestBody ValidNickNameDto validNickName) {
 
         //이거도 굳이 리턴할필요가 있나?! 닉네임을?!
         String nickName= userService.validDuplicateUserNickName(validNickName.nickname);
@@ -90,7 +90,8 @@ public class UserController {
             @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
-    public DataResponse<ResponseAuthCode> mailConfirm(@RequestBody @Valid RequestEmailAuthDto emailDto) throws MessagingException, UnsupportedEncodingException {
+    public DataResponse<ResponseAuthCode> mailConfirm(@Validated @RequestBody RequestEmailAuthDto emailDto)
+            throws MessagingException, UnsupportedEncodingException {
 
         String authCode = emailService.sendEmail(emailDto.email);
         return new DataResponse<>("200", "인증코드를 전송하였습니다. 생성된 인증코드 입니다.", new ResponseAuthCode(authCode));
@@ -129,7 +130,7 @@ public class UserController {
     })
     @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰",required = true)
     public DataResponse<UserEditSuccessDto> UserEdit(@RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken,
-                                                     @RequestBody @Valid UserEditForm userEditForm) {
+                                                     @Validated @RequestBody UserEditForm userEditForm) {
 
         //Token 정보에서 User 찾기
         Long findUserId = jwtProvider.getUserIdToToken(accessToken);

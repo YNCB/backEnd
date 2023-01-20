@@ -39,11 +39,6 @@ import java.util.stream.Collectors;
 @RequestMapping("/codebox")
 public class PostController {
 
-    /**
-     * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-     * 검색 항목에 null값 넣을수 있자나!!!!! - 그럼 Valid를 적용할 필요가 있나..움...null받아도 되는데...
-     */
-
     private final PostService postService;
     private final PostRepositoryQueryDto postRepositoryQueryDto; //성능 튜닝한 repository
     private final JwtProvider jwtProvider;
@@ -57,7 +52,7 @@ public class PostController {
             @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
-    public DataResponse<PostListResponse> mainPage(@RequestBody @Valid SearchFormAboutAllUserPost form) {
+    public DataResponse<PostListResponse> mainPage(@Validated @RequestBody SearchFormAboutAllUserPost form) {
 
         Slice<Post> result = postService.findPostsAboutAllUser(form);
 
@@ -87,8 +82,9 @@ public class PostController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰", required = true)
     })
-    public DataResponse<PostListResponse> mainPage(@RequestBody @Valid SearchFormAboutAllUserPost form,
-                                                   @RequestHeader(value = JwtProperties.ACCESS_HEADER_STRING ,required = true)String accessToken) {
+    public DataResponse<PostListResponse> mainPage(@Validated @RequestBody SearchFormAboutAllUserPost form,
+                                                   @RequestHeader(value = JwtProperties.ACCESS_HEADER_STRING ,required = true)
+                                                           String accessToken) {
 
         Slice<Post> result = postService.findPostsAboutAllUser(form);
 
@@ -115,7 +111,7 @@ public class PostController {
             @ApiImplicitParam(name = "nickname", value = "회원 닉네임", required = true)
     })
     public DataResponse<PostListResponse> userPage1(@PathVariable("nickname")String nickname ,
-                                                   @RequestBody @Valid SearchFormAboutOtherUserPost form) {
+                                                   @Validated @RequestBody SearchFormAboutOtherUserPost form) {
 
         Slice<Post> findPosts = postService.findPostsAboutOtherUser(nickname, form);
 
@@ -149,7 +145,7 @@ public class PostController {
     })
     public DataResponse<PostListResponse> userPage2(@PathVariable("nickname")String nickname,
                                                    @RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken,
-                                                   @RequestBody @Valid SearchFormAboutOtherUserPost form) {
+                                                   @Validated @RequestBody SearchFormAboutOtherUserPost form) {
 
         Slice<Post> findPosts = findPosts = postService.findPostsAboutOtherUser(nickname, form);
 
@@ -186,7 +182,7 @@ public class PostController {
     public DataResponse<PostListResponse> userPage3(@PathVariable("nickname")String nickname,
                                                    @RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken,
                                                    @RequestHeader(JwtProperties.MYSESSION_HEADER_STRING) String my_sessionToken,
-                                                   @RequestBody @Valid SearchFormAboutSelfUserPost form) {
+                                                   @Validated @RequestBody SearchFormAboutSelfUserPost form) {
 
         Slice<Post> findPosts = findPosts = postService.findPostsAboutOneSelf(nickname, form);
 

@@ -234,10 +234,10 @@ public class PostService {
                 }
             }
 
-            pageable = PageRequest.of(0, 3, Sort.by(orders)); //10개 씩
+            pageable = PageRequest.of(0, 10, Sort.by(orders)); //10개 씩
 
         }else //구조상 이경우는 없음.
-            pageable = PageRequest.of(0,3);
+            pageable = PageRequest.of(0,10);
 
         return new NoOffsetPage(pageable, builder);
     }

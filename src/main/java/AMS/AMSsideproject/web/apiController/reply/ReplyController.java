@@ -47,7 +47,7 @@ public class ReplyController {
     public BaseResponse storeReply(@PathVariable("nickname") String nickname,
                                    @PathVariable("postId") Long postId ,
                                    @RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken,
-                                   @RequestBody @Valid ReplySaveForm replySaveForm) {
+                                   @Validated @RequestBody ReplySaveForm replySaveForm) {
 
         Long userIdToToken = jwtProvider.getUserIdToToken(accessToken);
         Reply saveReply = replyService.addReply(postId, userIdToToken, replySaveForm);
@@ -132,7 +132,7 @@ public class ReplyController {
     public BaseResponse editReply(@PathVariable("nickname") String nickname,
                                   @PathVariable("postId") Long postId,
                                   @PathVariable("replyId") Long replyId,
-                                  @RequestBody @Valid ReplyEditForm replyEditForm,
+                                  @Validated @RequestBody ReplyEditForm replyEditForm,
                                   @RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken) {
 
         Long userId = jwtProvider.getUserIdToToken(accessToken);
