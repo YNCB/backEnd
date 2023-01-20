@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 public class PostEditForm {
 
-    @ApiModelProperty(example = "DFS", notes = "문제 태그들 여러개 가능. 없을시 null로 채워주시면 됩니다.")
+    @ApiModelProperty(example = "DFS", notes = "문제 태그들 여러개 가능. 없을시 빈배열([])로 주시기 바랍니다.")
     private List<String> tags;
 
     @ApiModelProperty(example = "test")

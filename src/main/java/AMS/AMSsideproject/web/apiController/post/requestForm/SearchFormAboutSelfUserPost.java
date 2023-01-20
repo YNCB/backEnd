@@ -20,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 public class SearchFormAboutSelfUserPost {
 
-    @ApiModelProperty(example = "BFS,DFS", notes = "없을시 null로 채워주시면 됩니다.")
+    @ApiModelProperty(example = "BFS,DFS", notes = "없을시 빈배열([])로 주시기 바랍니다.")
     private List<String> tags; //tags
 
     @ApiModelProperty(example = "see", notes = "see(보고푼문제), alone(혼자푼문제), 모든 문제일 경우 null로 채워주시면 됩니다.")
