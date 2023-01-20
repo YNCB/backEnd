@@ -36,6 +36,8 @@
 //    @Test
 //    public void 회원가입후첫로그인일경우의JWT토큰생성테스트() throws Exception {
 //        //given
+//        UserJoinForm2 userJoinForm = new UserJoinForm2("test1","test1", "test1", "test1", "test1", "test1");
+//        userService.join(userJoinForm);
 //        User findUser = userService.findUserByNickName("test1");
 //
 //        //when
