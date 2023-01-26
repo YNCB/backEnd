@@ -46,13 +46,15 @@ public class PostController {
 
     //모든 사용자들의 게시물 리스트 조회-비로그인 사용자
     @PostMapping(value = "/")
-    @ApiOperation(value = "서비스 메인페이지, 비회원 - 게시물 리스트 조회 api", notes = "모든 회원 게시물들에 대해서 필터링 조건에 맞게 게시물을 조회합니다.")
+    @ApiOperation(value = "서비스 메인페이지, 비로그인 회원 - 게시물 리스트 조회 api", notes = "모든 회원 게시물들에 대해서 필터링 조건에 맞게 게시물을 조회합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
             @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
-    public DataResponse<PostListResponse> mainPage(@Validated @RequestBody SearchFormAboutAllUserPost form) {
+    public DataResponse<PostListResponse> mainPage1(@Validated @RequestBody SearchFormAboutAllUserPost form) {
+
+        System.out.println("11111111111111111111111111111111111111111111111111111111");
 
         Slice<Post> result = postService.findPostsAboutAllUser(form);
 
@@ -82,9 +84,10 @@ public class PostController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰", required = true)
     })
-    public DataResponse<PostListResponse> mainPage(@Validated @RequestBody SearchFormAboutAllUserPost form,
-                                                   @RequestHeader(value = JwtProperties.ACCESS_HEADER_STRING ,required = true)
-                                                           String accessToken) {
+    public DataResponse<PostListResponse> mainPage2(@Validated @RequestBody SearchFormAboutAllUserPost form,
+                                                   @RequestHeader(value = JwtProperties.ACCESS_HEADER_STRING ,required = true) String accessToken) {
+
+        System.out.println("222222222222222222222222222222222222222222222222222");
 
         Slice<Post> result = postService.findPostsAboutAllUser(form);
 
