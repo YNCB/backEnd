@@ -44,8 +44,8 @@ public class PostController {
     private final JwtProvider jwtProvider;
     private final LikeService likeService;
 
-    //모든 사용자들의 게시물 리스트 조회-로그인 사용자
-    @GetMapping(value = "/")
+    //모든 사용자들의 게시물 리스트 조회-비로그인 사용자
+    @PostMapping(value = "/")
     @ApiOperation(value = "서비스 메인페이지, 비회원 - 게시물 리스트 조회 api", notes = "모든 회원 게시물들에 대해서 필터링 조건에 맞게 게시물을 조회합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
@@ -66,8 +66,8 @@ public class PostController {
         return new DataResponse<>("200", "모든 사용자들의 게시물 리스트 결과입니다.", postListResponse);
     }
 
-    //모든 사용자들의 게시물 리스트 조회-비로그인 사용자
-    @GetMapping(value = "/", headers = JwtProperties.ACCESS_HEADER_STRING)
+    //모든 사용자들의 게시물 리스트 조회-로그인 사용자
+    @PostMapping(value = "/", headers = JwtProperties.ACCESS_HEADER_STRING)
     @UserAuthen
     @UserAuthor
     @ApiOperation(value = "서비스 메인페이지, 로그인 회원 - 게시물 리스트 조회 api", notes = "모든 회원 게시물들에 대해서 필터링 조건에 맞게 게시물을 조회합니다.")
@@ -99,7 +99,7 @@ public class PostController {
     }
 
     //비로그인 사용자 - 특정 사용자 페이지(내 페이지, 상대방 페이지 -> 같음)
-    @GetMapping(value = "/{nickname}")
+    @PostMapping(value = "/{nickname}")
     @ApiOperation(value = "비로그인 회원 - 특정 회원에 대한 게시물 리스트 조회",
             notes = "특정 회원 게시물들에 대해서 필터링 조건에 맞게 리스트를 조회합니다.")
     @ApiResponses({
@@ -126,7 +126,7 @@ public class PostController {
     }
 
     //로그인 사용자 - 다른 사용자 페이지 접속하는 경우
-    @GetMapping(value = "/{nickname}", headers = JwtProperties.ACCESS_HEADER_STRING)
+    @PostMapping(value = "/{nickname}", headers = JwtProperties.ACCESS_HEADER_STRING)
     @UserAuthen
     @UserAuthor
     @ApiOperation(value = "로그인 회원 - 다른사용자 페이지에 대한 게시물 리스트 조회",
@@ -161,7 +161,7 @@ public class PostController {
 
     //로그인 사용자 - 내 페이지 접속하는 경우
     //"my_session token"은 기본정보 검증안해도 되나???!!(유효기간 등)????
-    @GetMapping(value = "/{nickname}", headers = {JwtProperties.ACCESS_HEADER_STRING, JwtProperties.MYSESSION_HEADER_STRING})
+    @PostMapping(value = "/{nickname}", headers = {JwtProperties.ACCESS_HEADER_STRING, JwtProperties.MYSESSION_HEADER_STRING})
     @UserAuthen
     @UserAuthor
     @ApiOperation(value = "로그인 회원 - 자신의 페이지에 대한 게시물 리스트 조회",
