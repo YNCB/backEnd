@@ -19,7 +19,7 @@ public class UserEditDto {
 
         UserEditDto userEditDto =new UserEditDto();
         userEditDto.nickName = user.getNickname();
-        userEditDto.job = user.getJob();
+        userEditDto.job = user.getJob().name();
         userEditDto.main_lang = user.getMain_lang();
         return userEditDto;
     }

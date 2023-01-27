@@ -30,7 +30,7 @@ public class ExControllerAdvice {
 
         List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
         for(FieldError fieldError : fieldErrors) {
-            UserValidExceptionDto dto = new UserValidExceptionDto(fieldError.getField(),(String)fieldError.getRejectedValue(), fieldError.getDefaultMessage());
+            UserValidExceptionDto dto = new UserValidExceptionDto(fieldError.getField(),fieldError.getRejectedValue(), fieldError.getDefaultMessage());
             result.add(dto);
 
 

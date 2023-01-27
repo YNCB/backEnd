@@ -16,8 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/codebox")
@@ -32,9 +30,8 @@ public class ReplyController {
     @ApiOperation(value = "댓글 저장 api", notes = "댓글을 저장합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
-            @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
             @ApiResponse(code=400, message = "잘못된 요청", response = BaseResponse.class),
-            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 엑세스 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
             @ApiResponse(code=412, message = "토큰이 없습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
@@ -49,7 +46,7 @@ public class ReplyController {
                                    @RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken,
                                    @Validated @RequestBody ReplySaveForm replySaveForm) {
 
-        Long userIdToToken = jwtProvider.getUserIdToToken(accessToken);
+        Long userIdToToken = jwtProvider.getUserId(accessToken);
         Reply saveReply = replyService.addReply(postId, userIdToToken, replySaveForm);
 
         return new BaseResponse("200", "댓글이 저장되었습니다.");
@@ -60,9 +57,8 @@ public class ReplyController {
     @ApiOperation(value = "댓글 삭제 api", notes = "댓글을 삭제합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
-            @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
             @ApiResponse(code=400, message = "잘못된 요청", response = BaseResponse.class),
-            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 엑세스 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=403, message = "권한이 없음", response = BaseResponse.class),
             @ApiResponse(code=412, message = "토큰이 없습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
@@ -78,7 +74,7 @@ public class ReplyController {
                                     @PathVariable("replyId") Long replyId,
                                     @RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken) {
 
-        Long userId = jwtProvider.getUserIdToToken(accessToken);
+        Long userId = jwtProvider.getUserId(accessToken);
         replyService.deleteReply(postId, replyId, userId);
 
         return new BaseResponse("200", "댓글이 삭제되었습니다.");
@@ -89,8 +85,7 @@ public class ReplyController {
     @ApiOperation(value = "댓글 수정 폼 api", notes = "댓글 수정 항목을 보여줍니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
-            @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
-            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 엑세스 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=412, message = "토큰이 없습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
@@ -116,9 +111,8 @@ public class ReplyController {
     @ApiOperation(value = "댓글 수정 api", notes = "댓글을 수정합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
-            @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
+            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 엑세스 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=403, message = "권한이 없음", response = BaseResponse.class),
-            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다.", response = BaseErrorResult.class),
             @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
             @ApiResponse(code=412, message = "토큰이 없습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
@@ -135,7 +129,7 @@ public class ReplyController {
                                   @Validated @RequestBody ReplyEditForm replyEditForm,
                                   @RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken) {
 
-        Long userId = jwtProvider.getUserIdToToken(accessToken);
+        Long userId = jwtProvider.getUserId(accessToken);
         replyService.updateReply(userId, replyId, replyEditForm);
 
         return  new BaseResponse("200", "댓글이 수정되었습니다");

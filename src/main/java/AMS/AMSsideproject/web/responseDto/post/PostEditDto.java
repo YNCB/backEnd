@@ -21,13 +21,13 @@ public class PostEditDto {
     private String problem_uri;
     @ApiModelProperty(example = "test")
     private String content;
-    @ApiModelProperty(example = "alone")
+    @ApiModelProperty(example = "SEE")
     private String type;
     @ApiModelProperty(example = "Java")
     private String language;
     @ApiModelProperty(example = "3")
     private Integer level;
-    @ApiModelProperty(example = "DFS", notes = "문제 태그들 여러개 가능")
+    @ApiModelProperty(example = "[]", notes = "문제 태그들 여러개 가능")
     private List<String> tags;
 
 
@@ -46,7 +46,7 @@ public class PostEditDto {
         postEditDto.setTitle(post.getTitle());
         postEditDto.setProblem_uri(post.getProblem_uri());
         postEditDto.setContent(post.getContext());
-        postEditDto.setType(post.getType());
+        postEditDto.setType(post.getType().name());
         postEditDto.setLanguage(post.getLanguage());
         postEditDto.setLevel(post.getLevel());
 

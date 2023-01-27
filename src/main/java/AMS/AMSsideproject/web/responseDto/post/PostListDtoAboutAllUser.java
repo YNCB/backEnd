@@ -43,7 +43,7 @@ public class PostListDtoAboutAllUser {
         //user_id = post.getUser().getUser_id(); //"fetchJoin" 으로 쿼리문 발생 x
         nickname = post.getUser().getNickname(); //"fetchJoin" 으로 쿼리문 발생 x
         language = post.getLanguage();
-        type = post.getType();
+        type = post.getType().name();
 
         likeNum = post.getLikeNum();
         //likeNum = post.getLikes().size(); //양방향시 사용

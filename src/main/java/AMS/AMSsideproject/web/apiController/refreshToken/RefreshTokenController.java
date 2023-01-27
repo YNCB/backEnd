@@ -23,7 +23,7 @@ public class RefreshTokenController {
             "리프레시 토큰이 정상적이지 않거나 기한이 만료되었으면 재로그인을 요청합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message = "엑세스,리프레시 토큰 재생성 성공"),
-            @ApiResponse(code=401, message = "재로그인 해주시기 바랍니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 엑세스 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=412, message = "토큰이 없습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })

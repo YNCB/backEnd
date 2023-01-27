@@ -17,13 +17,11 @@ import AMS.AMSsideproject.web.service.email.EmailService;
 import AMS.AMSsideproject.web.swagger.userController.Join_406;
 import AMS.AMSsideproject.web.swagger.userController.ValidDuplicateNickName_400;
 import io.swagger.annotations.*;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
-import javax.validation.Valid;
 import java.io.UnsupportedEncodingException;
 
 @RestController
@@ -53,7 +51,7 @@ public class UserController {
     //2차 회원가입 - 실제 회원가입하는 부분
     @PostMapping("/join2")
     @ApiOperation(value = "2차 회원가입을 진행하는 api", notes = "2차 회원가입을 진행합니다. 실제 회원가입이 완료됩니다. " +
-            "일반회원가입일 경우에는 social_type key 값을 Basic 으로 주시면 됩니다.")
+            "일반회원가입일 경우에는 social_type key 값을 BASIC 으로 주시면 됩니다.")
     @ApiResponses({
             @ApiResponse(code=200, message = "2차 회원가입 성공"),
             @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
@@ -102,8 +100,7 @@ public class UserController {
     @ApiOperation(value = "회원 정보 수정 api", notes = "회원 수정을 위해 사용자 정보를 제공해주는 api 입니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
-            @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
-            @ApiResponse(code=401, message ="정상적이지 않은 토큰입니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 엑세스 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=412, message = "토큰이 없습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
@@ -122,8 +119,7 @@ public class UserController {
             "회원 정보가 수정되면 JWT 토큰 회원 정보도 수정해야되기 때문에 토큰도 재발급됩니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
-            @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
-            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 엑세스 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
             @ApiResponse(code=412, message = "토큰이 없습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
@@ -133,25 +129,23 @@ public class UserController {
                                                      @Validated @RequestBody UserEditForm userEditForm) {
 
         //Token 정보에서 User 찾기
-        Long findUserId = jwtProvider.getUserIdToToken(accessToken);
+        Long findUserId = jwtProvider.getUserId(accessToken);
 
         User updateUser = userService.update(findUserId, userEditForm);
 
         //토큰 새로 발급
-        JwtToken jwtToken = jwtService.createAndSaveToken(updateUser.getUser_id(), updateUser.getNickname(), updateUser.getRole());
+        JwtToken jwtToken = jwtService.createAndSaveToken(updateUser.getUser_id(), updateUser.getNickname(), updateUser.getRole().name());
 
         UserEditSuccessDto dto = new UserEditSuccessDto(updateUser.getUser_id(), updateUser.getNickname(), jwtToken);
         return new DataResponse<>("200", "회원 수정이 완료되었습니다. 토큰이 재발급되었습니다.", dto);
     }
-
 
     //인증,권한 검사하는 해야함 - 토큰의 유효기간이 끝이 나면 어차피 로그아웃 처리하지 않아도 사용못하니
     @GetMapping("/logout")
     @ApiOperation(value = "로그아웃 api", notes = "엑세스 토큰을 블랙리스트 처리니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
-            @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
-            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 엑세스 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=412, message = "토큰이 없습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })

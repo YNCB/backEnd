@@ -22,6 +22,9 @@ public class PostDto {
     @ApiModelProperty(example = "test")
     private String title; //제목
 
+    @ApiModelProperty(example = "['DFS','BFS']", notes = "문제 태그 리스트")
+    private List<String> tags; //태그들
+
     @ApiModelProperty(example = "user")
     private String nickname; //작성자 닉네임
 
@@ -44,8 +47,8 @@ public class PostDto {
     @ApiModelProperty(example = "6")
     private Integer countView; //조회수
 
-    @ApiModelProperty(example = "['DFS','BFS']", notes = "문제 태그 리스트")
-    private List<String> tags; //태그들
+    @ApiModelProperty(example = "true", notes = "좋아요 누른 유무")
+    private boolean likeExisting; //좋아요 누른 유무
 
     private List<RepliesDto> replies; //댓글 리스트
 
@@ -63,5 +66,6 @@ public class PostDto {
         this.context = context;
         this.replyNum = replyNum;
         this.countView = countView;
+        this.likeExisting = false; //초기값
     }
 }

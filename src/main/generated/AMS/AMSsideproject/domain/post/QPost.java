@@ -46,7 +46,7 @@ public class QPost extends EntityPathBase<Post> {
 
     public final StringPath title = createString("title");
 
-    public final StringPath type = createString("type");
+    public final EnumPath<Type> type = createEnum("type", Type.class);
 
     public final AMS.AMSsideproject.domain.user.QUser user;
 

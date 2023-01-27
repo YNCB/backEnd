@@ -45,7 +45,7 @@ public class PostAuthInterceptor implements HandlerInterceptor {
         String accessToken = request.getHeader(JwtProperties.ACCESS_HEADER_STRING);
 
         //토큰에서 사용자 고유 아이디 추츨
-        String findNickName = jwtProvider.getNickNameToToken(accessToken);
+        String findNickName = jwtProvider.getNickname(accessToken);
 
         //Request URI 에서의 사용자 닉네임과 게시물 작성 요청한 사용자의 닉네임 동일 여부 확인
         String requestURI = request.getRequestURI();
@@ -54,7 +54,7 @@ public class PostAuthInterceptor implements HandlerInterceptor {
 
         //일치하지 않는 경우
         if(!findNickName.equals(RequestURI_nickname)) {
-            sendErrorResponse("잘못된 접근입니다.", response);
+            sendErrorResponse("권한이 없습니다.", response);
             return false;
         }
 

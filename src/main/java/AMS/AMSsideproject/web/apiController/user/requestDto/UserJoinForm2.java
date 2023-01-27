@@ -29,15 +29,21 @@ public class UserJoinForm2 {
     private String nickname;
 
     @NotBlank (message = "필수 입력값 입니다.")
-    @ApiModelProperty(example = "Google")
-    private String social_type; //Google, Kakao ,Basic
+    @Pattern(regexp = "KAKAO|GOOGLE|BASIC",
+            message = "KAKAO,GOOGLE,BASIC 중 하나입니다.")
+    @ApiModelProperty(example = "BASIC", notes = "GOOGLE, KAKAO, BASIC" )
+    private String social_type; //GOOGLE,KAKAO,BASIC
 
     @NotBlank (message = "필수 입력값 입니다.")
+    @Pattern(regexp = "학생|취준생|회사원|기타",
+            message = "학생|취준생|회사원|기타 중 하나입니다.")
     @ApiModelProperty(example = "학생")
-    private String job; //학생, 취준생, 직장인, 백수..
+    private String job;
 
     @NotBlank (message = "필수 입력값 입니다.")
+    @Pattern(regexp = "C|C++|C#|Python|JS|Java|Swift|Kotlin|Ruby|Swift|Go|Etc",
+            message = "C++/Python/JS/Java/C/C#/Swift/Kotlin/Ruby/Swift/Go/Etc 중 하나입니다.")
     @ApiModelProperty(example = "Java")
-    private String main_lang; // Java, Python, C++, C, Kotlin..
+    private String main_lang;
 
 }

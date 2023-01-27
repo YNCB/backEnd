@@ -52,7 +52,8 @@ public class SecurityConfig {
                 .antMatchers("/codebox/refreshToken")
 
                 //게시물 관련(정규식 표현)
-                .antMatchers(HttpMethod.GET,"/codebox/","/codebox/{nickname:^((?!setting|logout).)*$}","/codebox/*/{*[0-9]*$+}")
+                .antMatchers(HttpMethod.POST,"/codebox/","/codebox/{nickname:^((?!setting|logout|write).)*$}")
+                .antMatchers(HttpMethod.GET,"/codebox/*/{*[0-9]*$+}" )
 
                 //swagger
                 .antMatchers("/swagger-ui.html/**", "/swagger/**", "/v2/api-docs", "/swagger-resources/**", "/webjars/**")

@@ -1,7 +1,7 @@
 package AMS.AMSsideproject.domain.post.service;
 
 import AMS.AMSsideproject.domain.post.Post;
-import AMS.AMSsideproject.domain.post.repository.PostRepository;
+import AMS.AMSsideproject.domain.post.repository.PostRepositoryV1;
 import AMS.AMSsideproject.web.apiController.post.requestForm.*;
 import AMS.AMSsideproject.domain.tag.Tag.Tag;
 import AMS.AMSsideproject.domain.tag.Tag.repository.TagRepository;
@@ -32,9 +32,11 @@ import java.util.stream.Collectors;
 class PostServiceTest {
 
     @Autowired UserService userService;
-    @Autowired PostService postService;
+    @Autowired
+    PostServiceImplV1 postService;
     @Autowired TagRepository tagRepository;
-    @Autowired PostRepository postRepository;
+    @Autowired
+    PostRepositoryV1 postRepository;
     @Autowired HttpServletRequest request;
     @Autowired HttpServletResponse response;
 
@@ -205,7 +207,7 @@ class PostServiceTest {
     public void 모든유저게시물에대해서필터링조회최신순정렬무한스크롤테스트() throws Exception {
 
         //when
-        SearchFormAboutAllUserPost form = new SearchFormAboutAllUserPost("Java", "koo", "latest", null, null,null,null);
+        PostSearchFormAboutAllUser form = new PostSearchFormAboutAllUser("Java", "koo", "latest", null, null,null,null);
         Slice<Post> findPosts = postService.findPostsAboutAllUser(form);
 
         //then
@@ -251,7 +253,7 @@ class PostServiceTest {
     public void 모든유저게시물에대해서필터링조회좋아요순정렬무한스크롤테스트() throws Exception {
 
         //when
-        SearchFormAboutAllUserPost form = new SearchFormAboutAllUserPost("Java", "koo", "likeNum", null, null,null,null);
+        PostSearchFormAboutAllUser form = new PostSearchFormAboutAllUser("Java", "koo", "likeNum", null, null,null,null);
         Slice<Post> findPosts = postService.findPostsAboutAllUser(form);
 
         //then

@@ -2,6 +2,7 @@ package AMS.AMSsideproject.domain.post.repository;
 
 import AMS.AMSsideproject.domain.post.Post;
 import AMS.AMSsideproject.domain.post.QPost;
+import AMS.AMSsideproject.domain.post.Type;
 import AMS.AMSsideproject.domain.tag.Tag.QTag;
 import AMS.AMSsideproject.domain.tag.postTag.QPostTag;
 import AMS.AMSsideproject.domain.user.QUser;
@@ -26,12 +27,12 @@ import java.util.List;
 import static com.querydsl.jpa.JPAExpressions.select;
 
 @Repository
-public class PostRepositoryImpl implements PostRepository {
+public class PostRepositoryImplV1 implements PostRepositoryV1 {
 
     @Autowired private EntityManager em;
     private JPAQueryFactory query;
 
-    public PostRepositoryImpl(EntityManager em) {
+    public PostRepositoryImplV1(EntityManager em) {
         this.query = new JPAQueryFactory(em);
     }
 
@@ -94,6 +95,7 @@ public class PostRepositoryImpl implements PostRepository {
          */
         return checkEndPage(pageable, posts);
     }
+
 
     //특정 유저 페이지 게시물 조회
     public Slice<Post> findPostsByOtherUser(String nickname, String language, String title , Pageable pageable, BooleanBuilder builder) {
@@ -167,7 +169,6 @@ public class PostRepositoryImpl implements PostRepository {
                 .execute();
     }
 
-
     private BooleanExpression postIdEqAboutPost(Long postId) {
         if(postId == null)
             return null;
@@ -211,6 +212,6 @@ public class PostRepositoryImpl implements PostRepository {
     private BooleanExpression TypeEq(String type) {
         if(!StringUtils.hasText(type))
             return null;
-        return QPost.post.type.eq(type);
+        return QPost.post.type.eq(Type.valueOf(type));
     }
 }

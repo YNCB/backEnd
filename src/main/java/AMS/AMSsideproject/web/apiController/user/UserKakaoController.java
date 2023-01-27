@@ -1,5 +1,6 @@
 package AMS.AMSsideproject.web.apiController.user;
 
+import AMS.AMSsideproject.domain.user.LoginType;
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
 import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
@@ -103,7 +104,7 @@ public class UserKakaoController {
             User findUser = userService.findUserByEmail(userProfile.kakao_account.email);
 
             //토큰(access, refresh) 생성
-            JwtToken jwtToken = jwtService.createAndSaveToken(findUser.getUser_id(), findUser.getNickname(), findUser.getRole());
+            JwtToken jwtToken = jwtService.createAndSaveToken(findUser.getUser_id(), findUser.getNickname(), findUser.getRole().name());
 
             UserLoginDto userLoginDto = new UserLoginDto(findUser.getUser_id(), findUser.getNickname(), jwtToken);
 
@@ -115,7 +116,7 @@ public class UserKakaoController {
                     .email(userProfile.kakao_account.email)
                     .password(KakaoInfo.KakaoLoginPassWord) //소셜 로그인은 비밀번호가 중요하지 않으니 그냥 세팅
                     .nickname(userProfile.kakao_account.profile.nickname)
-                    .social_type("Kakao")
+                    .social_type(LoginType.KAKAO.name())
                     .build();
 
             response.setStatus(HttpStatus.CREATED.value());

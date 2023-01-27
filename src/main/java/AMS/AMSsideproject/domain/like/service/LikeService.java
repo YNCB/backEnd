@@ -3,16 +3,13 @@ package AMS.AMSsideproject.domain.like.service;
 import AMS.AMSsideproject.domain.like.Like;
 import AMS.AMSsideproject.domain.like.repository.LikeRepository;
 import AMS.AMSsideproject.domain.post.Post;
-import AMS.AMSsideproject.domain.post.repository.PostRepository;
-import AMS.AMSsideproject.domain.user.User;
-import AMS.AMSsideproject.domain.user.repository.UserRepository;
+import AMS.AMSsideproject.domain.post.repository.PostRepositoryV1;
 import AMS.AMSsideproject.web.responseDto.like.LikeDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,7 +18,7 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class LikeService {
 
-    private final PostRepository postRepository;
+    private final PostRepositoryV1 postRepository;
     private final LikeRepository likeRepository;
 //    private final UserRepository userRepository;
 

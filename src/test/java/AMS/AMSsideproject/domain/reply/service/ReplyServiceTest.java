@@ -1,7 +1,7 @@
 package AMS.AMSsideproject.domain.reply.service;
 
 import AMS.AMSsideproject.domain.post.Post;
-import AMS.AMSsideproject.domain.post.service.PostService;
+import AMS.AMSsideproject.domain.post.service.PostServiceImplV1;
 import AMS.AMSsideproject.domain.reply.Reply;
 import AMS.AMSsideproject.domain.reply.repository.ReplyRepository;
 import AMS.AMSsideproject.domain.user.User;
@@ -25,7 +25,8 @@ class ReplyServiceTest {
 
     @Autowired ReplyService replyService;
     @Autowired ReplyRepository replyRepository;
-    @Autowired PostService postService;
+    @Autowired
+    PostServiceImplV1 postService;
     @Autowired UserService userService;
 
     @Test

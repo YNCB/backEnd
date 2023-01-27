@@ -1,7 +1,7 @@
 package AMS.AMSsideproject.domain.reply.service;
 
 import AMS.AMSsideproject.domain.post.Post;
-import AMS.AMSsideproject.domain.post.repository.PostRepository;
+import AMS.AMSsideproject.domain.post.repository.PostRepositoryV1;
 import AMS.AMSsideproject.domain.reply.Reply;
 import AMS.AMSsideproject.domain.reply.repository.ReplyRepository;
 import AMS.AMSsideproject.domain.user.User;
@@ -25,7 +25,7 @@ public class ReplyService {
 
     private final ReplyRepository replyRepository;
     private final UserRepository userRepository;
-    private final PostRepository postRepository;
+    private final PostRepositoryV1 postRepository;
 
     //댓글 저장
     @Transactional

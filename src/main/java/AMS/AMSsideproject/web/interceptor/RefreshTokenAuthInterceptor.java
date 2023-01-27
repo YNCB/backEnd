@@ -2,9 +2,10 @@ package AMS.AMSsideproject.web.interceptor;
 
 import AMS.AMSsideproject.domain.refreshToken.service.RefreshTokenService;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
-import AMS.AMSsideproject.web.exception.ExpireTokenException;
+import AMS.AMSsideproject.web.exception.JWT.JwtExpireException;
+import AMS.AMSsideproject.web.exception.JWT.JwtValidException;
 import AMS.AMSsideproject.web.exception.NotEqRefreshToken;
-import AMS.AMSsideproject.web.exception.NotExistingToken;
+import AMS.AMSsideproject.web.exception.JWT.JwtExistingException;
 import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,33 +34,32 @@ public class RefreshTokenAuthInterceptor implements HandlerInterceptor {
         try{
             //header 에서 JWT 토큰이 있는지 검사
             if(!StringUtils.hasText(refreshToken))  //토큰이 없는 경우
-                throw new NotExistingToken("토큰이 없습니다.");
+                throw new JwtExistingException("토큰이 없습니다.");
 
-            //토큰 유효기간 검증
-            jwtProvider.validTokenExpired(refreshToken);
+            //토큰 유효성 체크
+            jwtProvider.validateToken(refreshToken);
 
             //토큰에서 userId 추출
-            Long findUserId = jwtProvider.getUserIdToToken(refreshToken);
+            Long findUserId = jwtProvider.getUserId(refreshToken);
 
             //요청한 사용자의 refreshToken 과 일치하는지 검증
             refreshTokenService.validRefreshTokenValue(findUserId, refreshToken);
 
             return true; //정상적인 경우
 
-        }catch (NotExistingToken e){ //헤더에 토큰이 없는경우-412
+        }catch (JwtExistingException e){ //헤더에 토큰이 없는경우-412
             sendResponse(response, e.getMessage(),
                     HttpStatus.PRECONDITION_FAILED.value(),HttpStatus.PRECONDITION_FAILED.getReasonPhrase() );
             return false;
-        }catch (ExpireTokenException e){ //토큰 유효기간이 만료-401
-            sendResponse(response, e.getMessage(),
+        }catch (JwtValidException e) { //정상적이지 않은 토큰-401
+            sendResponse(response, "정상적이지 않은 토큰입니다.",
                     HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
             return false;
-        }catch (NotEqRefreshToken e) { //자신의 토큰이 아님-401
-            sendResponse(response, e.getMessage(),
+        }catch (JwtExpireException e){ //토큰 유효기간이 만료-401
+            sendResponse(response, "리프레쉬 토큰의 기한이 만료되었습니다.",
                     HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
             return false;
-        }
-        catch (Exception e) { //서버 에러
+        } catch (Exception e) { //서버 에러
             sendResponse(response, e.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
             return false;

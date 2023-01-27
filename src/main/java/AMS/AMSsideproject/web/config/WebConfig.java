@@ -1,9 +1,6 @@
 package AMS.AMSsideproject.web.config;
 
-import AMS.AMSsideproject.web.interceptor.PostAuthInterceptor;
-import AMS.AMSsideproject.web.interceptor.UserAuthenInterceptor;
-import AMS.AMSsideproject.web.interceptor.RefreshTokenAuthInterceptor;
-import AMS.AMSsideproject.web.interceptor.UserAuthorInterceptor;
+import AMS.AMSsideproject.web.interceptor.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,31 +38,20 @@ public class WebConfig implements WebMvcConfigurer {
                 //.addPathPatterns("/codebox/*/*") //delete 에 대해서
                 .excludePathPatterns("/css/**", "/*.ico", "/error", "/error-page/**"); //오류 페이지 경로 제외!!
 
-        //인증
-        //모든 uri를 지정하여도 인터셉터는 들어가지만 인증검사를 하지 않는다.
-        registry.addInterceptor(LoginAuthInterceptor())
+        //인증,권한 검사
+        registry.addInterceptor(authInterceptor())
                 .order(1)
-                .addPathPatterns("/**")
-                //.addPathPatterns("/codebox/", "/codebox/*", "/codebox/*/{postId:[\\d+]}")
-                .excludePathPatterns("/css/**", "/*.ico", "/error", "/error-page/**"); //오류 페이지 경로 제외!!
-
-        //권한
-        //모든 uri를 지정하여도 인터셉터는 들어가지만 권한검사를 하지 않는다.
-        registry.addInterceptor(userAuthorInterceptor())
-                .order(2)
                 .addPathPatterns("/**")
                 .excludePathPatterns("/css/**", "/*.ico", "/error", "/error-page/**"); //오류 페이지 경로 제외!!
 
     }
-
+    @Bean
+    public AuthInterceptor authInterceptor() {return new AuthInterceptor();}
     @Bean
     public RefreshTokenAuthInterceptor refreshTokenInterceptor() {return new RefreshTokenAuthInterceptor();}
     @Bean
     public PostAuthInterceptor postAuthorizationInterceptor() {return new PostAuthInterceptor(); }
-    @Bean
-    public UserAuthenInterceptor LoginAuthInterceptor() {return new UserAuthenInterceptor();}
-    @Bean
-    public UserAuthorInterceptor userAuthorInterceptor() {return new UserAuthorInterceptor();}
+
 
 
     /** DefaultMessageCodesResolver 구현체 수정 **/

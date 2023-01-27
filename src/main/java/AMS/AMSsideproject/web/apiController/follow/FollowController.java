@@ -12,13 +12,10 @@ import AMS.AMSsideproject.web.responseDto.follow.FollowersDto;
 import AMS.AMSsideproject.web.responseDto.follow.FollowingsDto;
 import AMS.AMSsideproject.web.swagger.userController.Join_406;
 import io.swagger.annotations.*;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,9 +33,8 @@ public class FollowController {
     @ApiOperation(value = "팔로우 저장 api", notes = "특정 사용자를 팔로우 합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
-            @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
             @ApiResponse(code=400, message = "잘못된 요청", response = BaseResponse.class),
-            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 엑세스 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
             @ApiResponse(code=412, message = "토큰이 없습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
@@ -49,7 +45,7 @@ public class FollowController {
     public BaseResponse addFollow(@RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken,
                                   @Validated @RequestBody FollowSaveForm form) {
 
-        Long userId = jwtProvider.getUserIdToToken(accessToken);
+        Long userId = jwtProvider.getUserId(accessToken);
         Follow follow = followService.addFollow(userId, form.getUserId());
 
         return new BaseResponse("200", "팔로우가 저장되었습니다");
@@ -60,9 +56,8 @@ public class FollowController {
     @ApiOperation(value = "팔로우 삭제 api", notes = "특정 사용자를 언팔로우합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
-            @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
             @ApiResponse(code=400, message = "잘못된 요청", response = BaseResponse.class),
-            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 엑세스 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=412, message = "토큰이 없습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
@@ -82,8 +77,7 @@ public class FollowController {
     @ApiOperation(value = "팔로워 리스트를 조회합니다.", notes = "내가 팔로우한 사용자 리스트를 조회합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message= "정상 호출"),
-            @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
-            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 엑세스 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=412, message = "토큰이 없습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
@@ -92,7 +86,7 @@ public class FollowController {
     })
     public DataResponse<List> followers(@RequestHeader(JwtProperties.ACCESS_HEADER_STRING)String accessToken) {
 
-        Long userId = jwtProvider.getUserIdToToken(accessToken);
+        Long userId = jwtProvider.getUserId(accessToken);
         List<Follow> followers = followService.findFollowersByUserId(userId);
 
         //Dto 변환
@@ -105,8 +99,7 @@ public class FollowController {
     @ApiOperation(value = "팔로잉 리스트를 조회합니다.", notes = "나를 팔로우한 사용자 리스트를 조회합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message= "정상 호출"),
-            @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
-            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 엑세스 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=412, message = "토큰이 없습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
@@ -115,7 +108,7 @@ public class FollowController {
     })
     public DataResponse following(@RequestHeader(JwtProperties.ACCESS_HEADER_STRING)String accessToken) {
 
-        Long userId = jwtProvider.getUserIdToToken(accessToken);
+        Long userId = jwtProvider.getUserId(accessToken);
         List<Follow> followings = followService.findFollowingsByUserId(userId);
 
         //Dto 변환

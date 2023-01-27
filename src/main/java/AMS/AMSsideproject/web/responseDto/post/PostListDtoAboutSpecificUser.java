@@ -27,7 +27,6 @@ public class PostListDtoAboutSpecificUser {
     @ApiModelProperty(example = "6")
     private Integer countView; //조회수
 
-
     @ApiModelProperty(example = "DFS", notes = "문제 태그들")
     private List<String> tags; //태그들
 
@@ -35,7 +34,7 @@ public class PostListDtoAboutSpecificUser {
         post_id = post.getPost_id();
         title = post.getTitle();
         language = post.getLanguage();
-        type = post.getType();
+        type = post.getType().name();
 
         likeNum = post.getLikeNum();
         //likeNum = post.getLikes().size(); //양방향시 사용

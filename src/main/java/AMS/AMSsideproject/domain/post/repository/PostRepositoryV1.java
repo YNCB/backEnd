@@ -7,7 +7,7 @@ import org.springframework.data.domain.Slice;
 
 import java.util.List;
 
-public interface PostRepository {
+public interface PostRepositoryV1 {
 
     //게시물 저장
     public Post save(Post post);

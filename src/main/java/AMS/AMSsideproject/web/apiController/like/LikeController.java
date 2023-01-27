@@ -8,7 +8,6 @@ import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
 import AMS.AMSsideproject.web.response.BaseResponse;
 import AMS.AMSsideproject.web.response.DataResponse;
 import AMS.AMSsideproject.web.responseDto.like.LikeDto;
-import AMS.AMSsideproject.web.responseDto.like.LikesDto;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -30,8 +29,7 @@ public class LikeController {
     @ApiOperation(value = "게시물 좋아요 api", notes = "게시물 좋아요 추가, 삭제를 합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
-            @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
-            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 엑세스 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=412, message = "토큰이 없습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
@@ -44,7 +42,7 @@ public class LikeController {
                                       @PathVariable("postId")Long postId,
                                       @RequestHeader(JwtProperties.ACCESS_HEADER_STRING)String accessToken ) {
 
-        Long findUserId = jwtProvider.getUserIdToToken(accessToken);
+        Long findUserId = jwtProvider.getUserId(accessToken);
 
         //LikeDto likeDto = likeService.like(postId, findUserId);
         LikeDto likeDto = likeService.like_v2(postId, findUserId);
@@ -57,8 +55,7 @@ public class LikeController {
     @ApiOperation(value = "게시물 좋아요 리스트 api", notes = "게시물 리스트를 보여줍니다. 리스트의 닉네임을 통해 회원페이지로 이동가능합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
-            @ApiResponse(code=201, message = "엑세스토큰 기한만료", response = BaseResponse.class),
-            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 엑세스 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=412, message = "토큰이 없습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })

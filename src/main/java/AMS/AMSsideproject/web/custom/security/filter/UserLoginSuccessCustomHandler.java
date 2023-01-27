@@ -37,7 +37,7 @@ public class UserLoginSuccessCustomHandler implements AuthenticationSuccessHandl
         User loginUser = principal.getUser();
 
         //토큰 생성
-        JwtToken jwtToken = jwtService.createAndSaveToken(loginUser.getUser_id(), loginUser.getNickname(), loginUser.getRole());
+        JwtToken jwtToken = jwtService.createAndSaveToken(loginUser.getUser_id(), loginUser.getNickname(), loginUser.getRole().name());
 
         //반환 json 객체 생성
         UserLoginDto userLoginDto = new UserLoginDto(loginUser.getUser_id(), loginUser.getNickname(), jwtToken);

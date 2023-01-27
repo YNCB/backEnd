@@ -22,7 +22,6 @@ public class ReplySaveForm {
     private String content;
 
     @ApiModelProperty(example = "null", notes = "상위 댓글 id 입니다. 상위 댓글이 없는 경우 null 입니다.")
-    //@Null
     private Long parent_id; //루트일경우에는 null
 
 }

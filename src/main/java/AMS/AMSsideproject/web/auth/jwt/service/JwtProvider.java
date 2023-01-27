@@ -2,25 +2,28 @@ package AMS.AMSsideproject.web.auth.jwt.service;
 
 import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
 import AMS.AMSsideproject.web.auth.jwt.JwtToken;
-import AMS.AMSsideproject.web.exception.ExpireTokenException;
+import AMS.AMSsideproject.web.exception.JWT.JwtExpireException;
+import AMS.AMSsideproject.web.exception.JWT.JwtValidException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.Set;
 
 /**
  * 토큰과 관련된 기능
  */
 @Configuration //빈으로 등록
+@Slf4j
 @RequiredArgsConstructor
 public class JwtProvider {
 
@@ -73,19 +76,6 @@ public class JwtProvider {
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
     }
 
-    //사용자 Token 유효기간 검증
-    public String validTokenExpired(String Token) {
-
-        try { //refreshToken 이 만료되지 않은 경우
-            JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(Token).getToken();
-
-        }catch (TokenExpiredException e) { //Token 이 만료된 경우
-            throw new ExpireTokenException("토큰이 만료되었습니다.");
-        }
-
-        return Token;
-    }
-
     //JWT 엑세스 토큰이 헤더에 있는지 검증
     public String validAccessTokenHeader(HttpServletRequest request) {
 
@@ -106,37 +96,19 @@ public class JwtProvider {
         return token;
     }
 
-    //JWT 토큰의 key 값들이 정상적인 검증
-    public Boolean validTokenHeaderUser(String token) {
-
-        List<String> keys = new ArrayList<>();
-        keys.add("userId"); keys.add("nickName"); keys.add("role"); //keys.add("sub"); keys.add("exp");
-
-        Set<String> strings = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(token).getClaims().keySet();
-        boolean check = strings.containsAll(keys);
-
-        return check;
+    public String getNickname(String token){
+        return Jwts.parserBuilder().setSigningKey(JwtProperties.SECRET.getBytes()).build().parseClaimsJws(token).getBody().get("nickName").toString();
     }
 
-    //JWT 토큰에서 user nickId 가져오는 기능
-    public Long getUserIdToToken(String token) {
-        Long userId = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(token).getClaim("userId").asLong();
-        return userId;
+    public Long getUserId(String token){
+        return Long.valueOf(Jwts.parserBuilder().setSigningKey(JwtProperties.SECRET.getBytes()).build().parseClaimsJws(token).getBody().get("userId").toString());
     }
 
-    //JWT 토큰에서 user nickname 가져오는 기능
-    public String getNickNameToToken(String token) {
-        String nickName= JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(token).getClaim("nickName").asString();
-        return nickName;
+    public String getRole(String token){
+        return Jwts.parserBuilder().setSigningKey(JwtProperties.SECRET.getBytes()).build().parseClaimsJws(token).getBody().get("role").toString();
     }
 
-    //JWT 토큰에서 user role 가져오는 기능
-    public String getRoleToToken(String token) {
-        String role = JWT.require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(token).getClaim("role").asString();
-        return role;
-    }
-
-    //JWT 토큰의 만료시간
+    //JWT 토큰의 만료시간 구하기
     public Long getExpiration(String accessToken){
 
         Date expiration = Jwts.parserBuilder().setSigningKey(JwtProperties.SECRET.getBytes())
@@ -144,6 +116,24 @@ public class JwtProvider {
 
         long now = new Date().getTime();
         return expiration.getTime() - now;
+    }
+
+    //JWT 토큰 유효성 검사
+    public void validateToken(String token){
+        try{
+            Jwts.parserBuilder().setSigningKey(JwtProperties.SECRET.getBytes())
+                    .build().parseClaimsJws(token).getBody();
+        }catch (SignatureException e ){
+            throw new JwtValidException(e.getMessage());
+        }catch (ExpiredJwtException e) {
+            throw new JwtExpireException(e.getMessage());
+        } catch (MalformedJwtException e) {
+            throw new JwtValidException(e.getMessage());
+        }catch (IllegalArgumentException e) {
+            throw new JwtValidException(e.getMessage());
+        }catch (Exception e ){
+            throw new JwtValidException(e.getMessage());
+        }
     }
 
 }

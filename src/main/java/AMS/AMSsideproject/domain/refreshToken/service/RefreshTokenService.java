@@ -4,6 +4,7 @@ import AMS.AMSsideproject.domain.refreshToken.RefreshToken;
 import AMS.AMSsideproject.domain.refreshToken.repository.RefreshTokenRepository;
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.repository.UserRepository;
+import AMS.AMSsideproject.web.exception.JWT.JwtValidException;
 import AMS.AMSsideproject.web.exception.NotEqRefreshToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class RefreshTokenService {
 
         //토큰의 값이 잘못된 경우
         if (!findRefreshToken.equals(refreshToken)) {
-            throw new NotEqRefreshToken("리프레시 토큰이 잘못된 값입니다.");
+            throw new JwtValidException("리프레시 토큰이 잘못된 값입니다.");
         }
         return refreshToken;
     }

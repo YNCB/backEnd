@@ -1,5 +1,7 @@
 package AMS.AMSsideproject.web.apiController.user;
 
+import AMS.AMSsideproject.domain.user.LoginType;
+import AMS.AMSsideproject.domain.user.Role;
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
 import AMS.AMSsideproject.web.auth.jwt.JwtToken;
@@ -103,7 +105,7 @@ public class UserGoogleController {
             User findUser = userService.findUserByEmail(userProfile.email);
 
             //토큰(access, refresh) 생성
-            JwtToken jwtToken = jwtService.createAndSaveToken(findUser.getUser_id(), findUser.getNickname(), findUser.getRole());
+            JwtToken jwtToken = jwtService.createAndSaveToken(findUser.getUser_id(), findUser.getNickname(), findUser.getRole().name());
 
             UserLoginDto userLoginDto = new UserLoginDto(findUser.getUser_id(), findUser.getNickname(), jwtToken);
 
@@ -114,7 +116,7 @@ public class UserGoogleController {
             GoogleUserJoinDto userJoinDto = GoogleUserJoinDto.builder()
                     .email(userProfile.email)
                     .password(GoogleInfo.GoogleLoginPassWord) //소셜 로그인은 비밀번호가 중요하지 않으니 그냥 세팅
-                    .social_type("Google")
+                    .social_type(LoginType.GOOGLE.name())
                     .build();
 
             response.setStatus(HttpStatus.CREATED.value());

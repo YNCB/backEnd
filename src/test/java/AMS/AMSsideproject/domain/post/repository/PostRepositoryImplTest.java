@@ -9,7 +9,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class PostRepositoryImplTest {
 
-    @Autowired PostRepository postRepository;
+    @Autowired
+    PostRepositoryV1 postRepository;
 
     @Test
     public void 기능테스트() throws Exception {

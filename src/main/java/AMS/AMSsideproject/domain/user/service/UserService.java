@@ -89,7 +89,7 @@ public class UserService {
     @Transactional
     public void logout(String accessToken){
 
-        Long findUserId = jwtProvider.getUserIdToToken(accessToken);
+        Long findUserId = jwtProvider.getUserId(accessToken);
 
         //엑세스 토큰 남은 유효시간
         Long expiration = jwtProvider.getExpiration(accessToken);

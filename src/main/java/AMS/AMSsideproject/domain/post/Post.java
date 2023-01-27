@@ -31,8 +31,11 @@ public class Post {
     @Column(columnDefinition = "TEXT")
     private String context;
 
-    private String type; //문제 유형(다시풀문제, 다푼문제)
-    private String language; //문제 푼 언어(Java, Python 등)
+    @Enumerated(value = EnumType.STRING)
+    private Type type;
+    //private String type;
+
+    private String language;
 
     private LocalDateTime redate;
     private LocalDateTime chdate;
@@ -96,7 +99,9 @@ public class Post {
         post.problem_uri = postSaveForm.getProblem_uri();
         post.context = postSaveForm.getContent();
 
-        post.type = postSaveForm.getType();
+        post.type = Type.valueOf(postSaveForm.getType());
+        //post.type = postSaveForm.getType();
+
         post.language = postSaveForm.getLanguage();
         post.level = postSaveForm.getLevel();
 
@@ -113,7 +118,7 @@ public class Post {
         this.title = postEditForm.getTitle();
         this.problem_uri = postEditForm.getProblem_uri();
         this.context = postEditForm.getContent();
-        this.type = postEditForm.getType();
+        this.type = Type.valueOf(postEditForm.getType());
         this.language = postEditForm.getLanguage();
         this.level = postEditForm.getLevel();
         this.chdate = LocalDateTime.now();

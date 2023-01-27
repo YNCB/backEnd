@@ -21,7 +21,7 @@ public class PrincipalDetails implements UserDetails {
         Collection<GrantedAuthority> authorities  = new ArrayList<>();
 
         List<String> list = new ArrayList<>();
-        list.add(user.getRole());
+        list.add(user.getRole().name());
 
         list.stream().forEach( r -> {
             authorities.add(() -> r);

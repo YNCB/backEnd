@@ -4,13 +4,10 @@ import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
 import AMS.AMSsideproject.web.custom.security.PrincipalDetails;
-import AMS.AMSsideproject.web.exception.BlackToken;
-import AMS.AMSsideproject.web.exception.ExpireTokenException;
-import AMS.AMSsideproject.web.exception.NotExistingToken;
-import AMS.AMSsideproject.web.exception.NotValidToken;
+import AMS.AMSsideproject.web.exception.JWT.JwtExpireException;
+import AMS.AMSsideproject.web.exception.JWT.JwtExistingException;
+import AMS.AMSsideproject.web.exception.JWT.JwtValidException;
 import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
-import AMS.AMSsideproject.web.response.BaseResponse;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
@@ -54,19 +51,13 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
         try {
             //header 에서 JWT 토큰이 있는지 검사
             if(!StringUtils.hasText(token))  //토큰이 없는 경우
-                throw new NotExistingToken("토큰이 없습니다.");
+                throw new JwtExistingException("토큰이 없습니다.");
 
             //로그아웃된 토큰인지 검사
             validBlackToken(token);
 
-            //JWT 토큰 만료기간 검증
-            jwtProvider.validTokenExpired(token);
-
-            /**
-             * refreshToken이 탈취당하였을때 refreshToken을 accessToken인척 사용할수 있기 때문에 구분해주기 위해서!!!
-             */
-            if(!jwtProvider.validTokenHeaderUser(token))
-                throw new NotValidToken("정상적이지 않은 토큰입니다.");
+            //토큰 유효성 검사
+            jwtProvider.validateToken(token);
 
             /**
              * 권한을 그냥 "USER" 체크 할까?? -> 그럼 spring security context 안에 넣어서 스프링 시큐리티에게 권한처리 위임하면 되는데....
@@ -74,7 +65,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
              * 이방식이에서 궁금한점이 uri 요청올 때 spring security context에 Authentication 객체 저장했다가 모든 응답이 끝나면 해당 객체는 사라지나?!!!!!!!!!!!!!
              * -> 그러면 괜찮은거지!!!!!!! (지속적인 세션을 사용하지 않는거고 권한처리도 쉬우니!!!!!!!!!!!!!!!!!!!!!!!)
              */
-            Long userId = jwtProvider.getUserIdToToken(token);
+            Long userId = jwtProvider.getUserId(token);
             User findUser = userService.findUserByUserId(userId);
             PrincipalDetails principalDetails = new PrincipalDetails(findUser);
             Authentication authentication = new UsernamePasswordAuthenticationToken(
@@ -85,20 +76,16 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 
             chain.doFilter(request,response);
 
-        }catch (ExpireTokenException e) { //기한만료된 토큰-201
-            sendResponse(response, e.getMessage(),
-                    HttpStatus.CREATED.value(), HttpStatus.CREATED.getReasonPhrase());
-            return;
-        }catch (BlackToken e) { //로그아웃된 토큰-401
-            sendResponse(response, e.getMessage(),
+        }catch (JwtExpireException e) { //기한만료된 토큰-401
+            sendResponse(response, "엑세스 토큰의 기한이 만료되었습니다.",
                     HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
             return;
-        } catch (NotExistingToken e){ //헤더에 토큰이 없는경우-412
+        }catch (JwtExistingException e){ //헤더에 토큰이 없는경우-412
             sendResponse(response, e.getMessage(),
                     HttpStatus.PRECONDITION_FAILED.value(),HttpStatus.PRECONDITION_FAILED.getReasonPhrase() );
             return;
-        }catch (NotValidToken e) { //정상적이지 않은 토큰-401
-            sendResponse(response, e.getMessage(),
+        }catch (JwtValidException e) { //정상적이지 않은 토큰-401
+            sendResponse(response, "정상적이지 않은 토큰입니다.",
                     HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
             return;
         }
@@ -114,7 +101,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
         //Redis에 있는 엑세스 토큰인 경우 로그아웃 처리된 엑세스 토큰임.
         String blackToken = redisTemplate.opsForValue().get(accessToken);
         if(StringUtils.hasText(blackToken))
-            throw new BlackToken("로그아웃 처리된 엑세스 토큰입니다.");
+            throw new JwtValidException("로그아웃 처리된 엑세스 토큰입니다.");
     }
 
     private void sendResponse(HttpServletResponse response, String message, int code, String status ) throws IOException {

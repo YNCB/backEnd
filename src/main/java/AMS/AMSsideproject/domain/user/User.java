@@ -17,39 +17,40 @@ public class User {
 
     private String email;
     private String password;
-    private String nickname; //Unique!!
+    private String nickname;
 
-    private String social_type; //google, kakao, etc
+    @Enumerated(value = EnumType.STRING)
+    private LoginType type;
+    //private String social_type; //google, kakao, etc
+
     private LocalDateTime redate; //회원가입 일자
 
-    private String job; //학생, 취준생, 직장인, 백수..
-    private String main_lang; // java, python, c++, c, kotlin..
+    @Enumerated(value = EnumType.STRING)
+    private Job job; //학생, 취준생, 직장인, 기타
+    //private String job;
 
-    private String role; //USER, MANAGER, ADMIN
+    private String main_lang;
 
+    private Role role; //USER, MANAGER, ADMIN
 
     //생성 메서드
     public static User createUser(UserJoinForm2 joinForm) {
         User user = new User();
-        user.setEmail(joinForm.getEmail());
-        user.setPassword(joinForm.getPassword());
-        user.setNickname(joinForm.getNickname());
+        user.email = joinForm.getEmail();
+        user.password = joinForm.getPassword();
+        user.nickname = joinForm.getNickname();
+        user.type = LoginType.valueOf(joinForm.getSocial_type());
+        user.job = Job.valueOf(joinForm.getJob());
+        user.main_lang = joinForm.getMain_lang();
+        user.redate = LocalDateTime.now();
 
-        user.setSocial_type(joinForm.getSocial_type());
-        user.setJob(joinForm.getJob());
-        user.setMain_lang(joinForm.getMain_lang());
-        user.setRedate(LocalDateTime.now());
-        /**
-         * 임시
-         */
-        user.setRole("USER");
-
+        user.role = Role.USER;
         return user;
     }
 
     public void update(UserEditForm userEditForm) {
         this.nickname = userEditForm.nickName;
-        this.job = userEditForm.job;
+        this.job = Job.valueOf(userEditForm.job);
         this.main_lang = userEditForm.main_lang;
     }
 
