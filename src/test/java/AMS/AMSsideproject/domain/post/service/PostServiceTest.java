@@ -70,7 +70,7 @@ class PostServiceTest {
         Post post7 = postService.registration(findUser.getUser_id(), postSaveForm7);
         Post post8 = postService.registration(findUser.getUser_id(), postSaveForm8);
 
-        UserJoinForm2 userJoinForm3 = new UserJoinForm2("test3@gamil.com", "test1234!", "test3", "Basic","Student","Java");
+        UserJoinForm2 userJoinForm3 = new UserJoinForm2("test3@gamil.com", "test1234!", "test3", LoginType.BASIC.name(), Job.학생.name(), "Java");
         User findUser2 = userService.join(userJoinForm3);
 
         PostSaveForm postSaveForm9 = new PostSaveForm(tags,"boo1", "boo1","boo1", Type.SEE.name(),"Java",1);
