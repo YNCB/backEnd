@@ -1,7 +1,11 @@
 package AMS.AMSsideproject.domain.post.service;
 
 import AMS.AMSsideproject.domain.post.Post;
+import AMS.AMSsideproject.domain.post.Type;
 import AMS.AMSsideproject.domain.post.repository.PostRepositoryV1;
+import AMS.AMSsideproject.domain.user.Job;
+import AMS.AMSsideproject.domain.user.LoginType;
+import AMS.AMSsideproject.web.apiController.post.OrderKey;
 import AMS.AMSsideproject.web.apiController.post.requestForm.*;
 import AMS.AMSsideproject.domain.tag.Tag.Tag;
 import AMS.AMSsideproject.domain.tag.Tag.repository.TagRepository;
@@ -13,6 +17,7 @@ import AMS.AMSsideproject.web.test.DatabaseCleanup;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,19 +47,19 @@ class PostServiceTest {
 
     @BeforeEach
     public void init() {
-        UserJoinForm2 userJoinForm2 = new UserJoinForm2("test2@gamil.com", "test1234!", "test2", "Basic","Student","Java");
+        UserJoinForm2 userJoinForm2 = new UserJoinForm2("test2@gamil.com", "test1234!", "test2", LoginType.BASIC.name(), Job.학생.name(),"Java");
         User findUser = userService.join(userJoinForm2);
 
         List<String> tags = new ArrayList<>();
         tags.add("BFS"); tags.add("DFS");
-        PostSaveForm postSaveForm1 = new PostSaveForm(tags,"koo1", "koo1","koo1", "see","C++",1);
-        PostSaveForm postSaveForm2 = new PostSaveForm(tags,"koo2", "koo2","koo2", "see","Java",3);
-        PostSaveForm postSaveForm3 = new PostSaveForm(tags,"koo3", "koo3","koo3", "see","Java",2);
-        PostSaveForm postSaveForm4 = new PostSaveForm(tags,"koo4", "koo4","koo4", "see","Java",5);
-        PostSaveForm postSaveForm5 = new PostSaveForm(tags,"koo5", "koo5","koo5", "see","Java",6);
-        PostSaveForm postSaveForm6 = new PostSaveForm(tags,"koo6", "koo6","koo6", "see","Java",6);
-        PostSaveForm postSaveForm7 = new PostSaveForm(tags,"koo7", "koo7","koo7", "see","Java",8);
-        PostSaveForm postSaveForm8 = new PostSaveForm(tags,"koo8", "koo8","koo8", "see","Java",6);
+        PostSaveForm postSaveForm1 = new PostSaveForm(tags,"koo1", "koo1","koo1", Type.SEE.name(),"C++",1);
+        PostSaveForm postSaveForm2 = new PostSaveForm(tags,"koo2", "koo2","koo2", Type.SEE.name(),"Java",3);
+        PostSaveForm postSaveForm3 = new PostSaveForm(tags,"koo3", "koo3","koo3", Type.SEE.name(),"Java",2);
+        PostSaveForm postSaveForm4 = new PostSaveForm(tags,"koo4", "koo4","koo4", Type.SEE.name(),"Java",5);
+        PostSaveForm postSaveForm5 = new PostSaveForm(tags,"koo5", "koo5","koo5", Type.SEE.name(),"Java",5);
+        PostSaveForm postSaveForm6 = new PostSaveForm(tags,"koo6", "koo6","koo6", Type.SEE.name(),"Java",5);
+        PostSaveForm postSaveForm7 = new PostSaveForm(tags,"koo7", "koo7","koo7", Type.SEE.name(),"Java",4);
+        PostSaveForm postSaveForm8 = new PostSaveForm(tags,"koo8", "koo8","koo8", Type.SEE.name(),"Java",4);
 
         Post post1 = postService.registration(findUser.getUser_id(), postSaveForm1);
         Post post2 = postService.registration(findUser.getUser_id(), postSaveForm2);
@@ -68,9 +73,9 @@ class PostServiceTest {
         UserJoinForm2 userJoinForm3 = new UserJoinForm2("test3@gamil.com", "test1234!", "test3", "Basic","Student","Java");
         User findUser2 = userService.join(userJoinForm3);
 
-        PostSaveForm postSaveForm9 = new PostSaveForm(tags,"boo1", "boo1","boo1", "see","Java",1);
-        PostSaveForm postSaveForm10 = new PostSaveForm(tags,"boo2", "boo2","boo2", "see","Java",3);
-        PostSaveForm postSaveForm11 = new PostSaveForm(tags,"boo3", "boo3","boo3", "see","Java",2);
+        PostSaveForm postSaveForm9 = new PostSaveForm(tags,"boo1", "boo1","boo1", Type.SEE.name(),"Java",1);
+        PostSaveForm postSaveForm10 = new PostSaveForm(tags,"boo2", "boo2","boo2", Type.SEE.name(),"Java",3);
+        PostSaveForm postSaveForm11 = new PostSaveForm(tags,"boo3", "boo3","boo3", Type.SEE.name(),"Java",2);
         postService.registration(findUser2.getUser_id(), postSaveForm9);
         postService.registration(findUser2.getUser_id(), postSaveForm10);
         postService.registration(findUser2.getUser_id(), postSaveForm11);
@@ -91,7 +96,7 @@ class PostServiceTest {
 
         List<String> tags = new ArrayList<>();
         tags.add("test1"); tags.add("test2");
-        PostSaveForm postSaveForm = new PostSaveForm(tags,"test", "test","test", "SEE","Java",4);
+        PostSaveForm postSaveForm = new PostSaveForm(tags,"test", "test","test",  Type.SEE.name(),"Java",4);
 
         //when
         Post addPost = postService.registration(findUser.getUser_id(), postSaveForm);
@@ -114,13 +119,13 @@ class PostServiceTest {
         User findUser = userService.findUserByNickName("test2");
         List<String> tags1 = new ArrayList<>();
         tags1.add("test1"); tags1.add("test2");
-        PostSaveForm postSaveForm1 = new PostSaveForm(tags1,"test1", "test1","test1", "SEE","Java",4);
+        PostSaveForm postSaveForm1 = new PostSaveForm(tags1,"test1", "test1","test1",  Type.SEE.name(),"Java",4);
         Post addPost1 = postService.registration(findUser.getUser_id(), postSaveForm1);
 
         //게시물 등록2
         List<String> tags2 = new ArrayList<>();
         tags2.add("test1");
-        PostSaveForm postSaveForm2 = new PostSaveForm(tags2,"test2", "test2","test2", "SEE","Java",4);
+        PostSaveForm postSaveForm2 = new PostSaveForm(tags2,"test2", "test2","test2",  Type.SEE.name(),"Java",4);
         Post addPost2 = postService.registration(findUser.getUser_id(), postSaveForm2);
 
         //when
@@ -144,7 +149,7 @@ class PostServiceTest {
         User findUser = userService.findUserByNickName("test2");
         List<String> tags1 = new ArrayList<>();
         tags1.add("test1"); tags1.add("test2");
-        PostSaveForm postSaveForm1 = new PostSaveForm(tags1,"test1", "test1","test1", "SEE","Java",4);
+        PostSaveForm postSaveForm1 = new PostSaveForm(tags1,"test1", "test1","test1",  Type.SEE.name(),"Java",4);
         Post addPost1 = postService.registration(findUser.getUser_id(), postSaveForm1);
 
         //when
@@ -164,7 +169,7 @@ class PostServiceTest {
         User findUser = userService.findUserByNickName("test2");
         List<String> tags1 = new ArrayList<>();
         tags1.add("test1"); tags1.add("test2");
-        PostSaveForm postSaveForm1 = new PostSaveForm(tags1,"test1", "test1","test1", "SEE","Java",4);
+        PostSaveForm postSaveForm1 = new PostSaveForm(tags1,"test1", "test1","test1",  Type.SEE.name(),"Java",4);
         Post addPost1 = postService.registration(findUser.getUser_id(), postSaveForm1);
 
         Cookie cookie = new Cookie("postView", "["+ addPost1.getPost_id() + "]");
@@ -186,7 +191,7 @@ class PostServiceTest {
         User findUser = userService.findUserByNickName("test2");
         List<String> tags1 = new ArrayList<>();
         tags1.add("test1"); tags1.add("test2");
-        PostSaveForm postSaveForm1 = new PostSaveForm(tags1,"test1", "test1","test1", "SEE","Java",4);
+        PostSaveForm postSaveForm1 = new PostSaveForm(tags1,"test1", "test1","test1",  Type.SEE.name(),"Java",4);
         Post addPost1 = postService.registration(findUser.getUser_id(), postSaveForm1);
 
         Cookie cookie = null;
@@ -207,7 +212,7 @@ class PostServiceTest {
     public void 모든유저게시물에대해서필터링조회최신순정렬무한스크롤테스트() throws Exception {
 
         //when
-        PostSearchFormAboutAllUser form = new PostSearchFormAboutAllUser("Java", "koo", "latest", null, null,null,null);
+        PostSearchFormAboutAllUser form = new PostSearchFormAboutAllUser("Java", "koo", OrderKey.latest.name(), null, null,null,null);
         Slice<Post> findPosts = postService.findPostsAboutAllUser(form);
 
         //then
@@ -253,7 +258,7 @@ class PostServiceTest {
     public void 모든유저게시물에대해서필터링조회좋아요순정렬무한스크롤테스트() throws Exception {
 
         //when
-        PostSearchFormAboutAllUser form = new PostSearchFormAboutAllUser("Java", "koo", "likeNum", null, null,null,null);
+        PostSearchFormAboutAllUser form = new PostSearchFormAboutAllUser("Java", "koo", OrderKey.likeNum.name(), null, null,null,null);
         Slice<Post> findPosts = postService.findPostsAboutAllUser(form);
 
         //then
@@ -300,10 +305,11 @@ class PostServiceTest {
         SearchFormAboutOtherUserPost form = SearchFormAboutOtherUserPost.builder()
                 .language("Java")
                 .searchTitle("boo")
-                .orderKey("latest")
+                .orderKey(OrderKey.latest.name())
                 .lastPostId(null)
                 .lastLikeNum(null)
                 .lastReplyNum(null)
+                .countView(null)
                 .build();
         //when
         Slice<Post> findPosts = postService.findPostsAboutOtherUser("test3", form);
@@ -328,10 +334,11 @@ class PostServiceTest {
                  .type(null)
                 .language("Java")
                 .searchTitle(null)
-                .orderKey("latest")
+                .orderKey(OrderKey.latest.name())
                 .lastPostId(null)
                 .lastLikeNum(null)
                 .lastReplyNum(null)
+                .countView(null)
                 .build();
 
         //when

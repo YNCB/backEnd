@@ -1,7 +1,10 @@
 package AMS.AMSsideproject.domain.like.service;
 
 import AMS.AMSsideproject.domain.post.Post;
+import AMS.AMSsideproject.domain.post.Type;
 import AMS.AMSsideproject.domain.post.service.PostServiceImplV1;
+import AMS.AMSsideproject.domain.user.Job;
+import AMS.AMSsideproject.domain.user.LoginType;
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
 import AMS.AMSsideproject.web.apiController.post.requestForm.PostSaveForm;
@@ -30,11 +33,11 @@ class LikeServiceTest {
     @Transactional
     public void 좋아요_version2_추가테스트() throws Exception {
         //given
-        UserJoinForm2 userJoinForm2 = new UserJoinForm2("test", "test", "test","test","test","test");
+        UserJoinForm2 userJoinForm2 = new UserJoinForm2("test", "test", "test", LoginType.BASIC.name(), Job.학생.name(), "Java");
         User join = userService.join(userJoinForm2);
 
         List<String> tag = new ArrayList<>(); tag.add("BFS");
-        PostSaveForm postSaveForm = new PostSaveForm(tag, "test", "test", "test","test", "test" ,1);
+        PostSaveForm postSaveForm = new PostSaveForm(tag, "test", "test", "test", Type.SEE.name(), "test" ,1);
         Post registration = postService.registration(join.getUser_id(), postSaveForm);
 
         //when

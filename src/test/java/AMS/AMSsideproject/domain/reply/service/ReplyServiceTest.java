@@ -1,9 +1,12 @@
 package AMS.AMSsideproject.domain.reply.service;
 
 import AMS.AMSsideproject.domain.post.Post;
+import AMS.AMSsideproject.domain.post.Type;
 import AMS.AMSsideproject.domain.post.service.PostServiceImplV1;
 import AMS.AMSsideproject.domain.reply.Reply;
 import AMS.AMSsideproject.domain.reply.repository.ReplyRepository;
+import AMS.AMSsideproject.domain.user.Job;
+import AMS.AMSsideproject.domain.user.LoginType;
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
 import AMS.AMSsideproject.web.apiController.post.requestForm.PostSaveForm;
@@ -33,11 +36,11 @@ class ReplyServiceTest {
     @Transactional
     public void 댓글저장테스트() throws Exception {
 
-        UserJoinForm2 userJoinForm2 = new UserJoinForm2("test@naver.com", "test1234", "test", "basic", "학생","java");
+        UserJoinForm2 userJoinForm2 = new UserJoinForm2("test@naver.com", "test1234", "test", LoginType.BASIC.name(), Job.학생.name(),"java");
         User newUser = userService.join(userJoinForm2);
 
         List<String> tags = new ArrayList<>(); tags.add("DFS");
-        PostSaveForm postSaveForm = new PostSaveForm(tags, "test", "test", "test", "see", "java",3);
+        PostSaveForm postSaveForm = new PostSaveForm(tags, "test", "test", "test", Type.SEE.name(), "java",3);
         Post newPost = postService.registration(newUser.getUser_id(), postSaveForm);
 
         //given
@@ -54,11 +57,11 @@ class ReplyServiceTest {
     @Test
     @Transactional
     public void 대댓글저장테스트() throws Exception {
-        UserJoinForm2 userJoinForm2 = new UserJoinForm2("test@naver.com", "test1234", "test", "basic", "학생","java");
+        UserJoinForm2 userJoinForm2 = new UserJoinForm2("test@naver.com", "test1234", "test", LoginType.BASIC.name(), Job.학생.name(), "java");
         User newUser = userService.join(userJoinForm2);
 
         List<String> tags = new ArrayList<>(); tags.add("DFS");
-        PostSaveForm postSaveForm = new PostSaveForm(tags, "test", "test", "test", "see", "java",3);
+        PostSaveForm postSaveForm = new PostSaveForm(tags, "test", "test", "test",Type.SEE.name(), "java",3);
         Post newPost = postService.registration(newUser.getUser_id(), postSaveForm);
 
         //given
@@ -78,11 +81,11 @@ class ReplyServiceTest {
     @Test
     @Transactional
     public void 대대댓글저장테스트() throws Exception {
-        UserJoinForm2 userJoinForm2 = new UserJoinForm2("test@naver.com", "test1234", "test", "basic", "학생","java");
+        UserJoinForm2 userJoinForm2 = new UserJoinForm2("test@naver.com", "test1234", "test", LoginType.BASIC.name(), Job.학생.name(), "java");
         User newUser = userService.join(userJoinForm2);
 
         List<String> tags = new ArrayList<>(); tags.add("DFS");
-        PostSaveForm postSaveForm = new PostSaveForm(tags, "test", "test", "test", "see", "java",3);
+        PostSaveForm postSaveForm = new PostSaveForm(tags, "test", "test", "test",Type.SEE.name(), "java",3);
         Post newPost = postService.registration(newUser.getUser_id(), postSaveForm);
 
         //given
@@ -105,11 +108,11 @@ class ReplyServiceTest {
     @Test
     @Transactional
     public void 댓글리스트조회테스트() throws Exception {
-        UserJoinForm2 userJoinForm2 = new UserJoinForm2("test@naver.com", "test1234", "test", "basic", "학생","java");
+        UserJoinForm2 userJoinForm2 = new UserJoinForm2("test@naver.com", "test1234", "test", LoginType.BASIC.name(), Job.학생.name(), "java");
         User newUser = userService.join(userJoinForm2);
 
         List<String> tags = new ArrayList<>(); tags.add("DFS");
-        PostSaveForm postSaveForm = new PostSaveForm(tags, "test", "test", "test", "see", "java",3);
+        PostSaveForm postSaveForm = new PostSaveForm(tags, "test", "test", "test",Type.SEE.name(), "java",3);
         Post newPost = postService.registration(newUser.getUser_id(), postSaveForm);
 
         //given
@@ -130,11 +133,11 @@ class ReplyServiceTest {
     @Test
     public void 댓글삭제테스트() throws Exception {
         //given
-        UserJoinForm2 userJoinForm2 = new UserJoinForm2("test@naver.com", "test1234", "test", "basic", "학생","java");
+        UserJoinForm2 userJoinForm2 = new UserJoinForm2("test@naver.com", "test1234", "test", LoginType.BASIC.name(), Job.학생.name(), "java");
         User newUser = userService.join(userJoinForm2);
 
         List<String> tags = new ArrayList<>(); tags.add("DFS");
-        PostSaveForm postSaveForm = new PostSaveForm(tags, "test", "test", "test", "see", "java",3);
+        PostSaveForm postSaveForm = new PostSaveForm(tags, "test", "test", "test",Type.SEE.name(), "java",3);
         Post newPost = postService.registration(newUser.getUser_id(), postSaveForm);
 
         ReplySaveForm replySaveForm1 = new ReplySaveForm("reply1", "test1", null);
@@ -156,14 +159,14 @@ class ReplyServiceTest {
     @Test()
     public void 댓글삭제테스트권한에러() throws Exception {
         //given
-        UserJoinForm2 userJoinForm1 = new UserJoinForm2("test@naver.com", "test1234", "test", "basic", "학생","java");
+        UserJoinForm2 userJoinForm1 = new UserJoinForm2("test@naver.com", "test1234", "test", LoginType.BASIC.name(), Job.학생.name(), "java");
         User newUser1 = userService.join(userJoinForm1);
-        UserJoinForm2 userJoinForm2 = new UserJoinForm2("test@google.com", "test1234", "test", "basic", "학생","java");
+        UserJoinForm2 userJoinForm2 = new UserJoinForm2("test@google.com", "test1234", "test", LoginType.BASIC.name(), Job.학생.name(),"java");
         User newUser2 = userService.join(userJoinForm2);
 
 
         List<String> tags = new ArrayList<>(); tags.add("DFS");
-        PostSaveForm postSaveForm = new PostSaveForm(tags, "test", "test", "test", "see", "java",3);
+        PostSaveForm postSaveForm = new PostSaveForm(tags, "test", "test", "test", Type.SEE.name(), "java",3);
         Post newPost = postService.registration(newUser1.getUser_id(), postSaveForm);
 
         ReplySaveForm replySaveForm1 = new ReplySaveForm("test1", "test1", null);
@@ -178,11 +181,11 @@ class ReplyServiceTest {
     @Test
     public void 댓글수정테스트() throws Exception {
         //given
-        UserJoinForm2 userJoinForm1 = new UserJoinForm2("test@naver.com", "test1234", "test", "basic", "학생","java");
+        UserJoinForm2 userJoinForm1 = new UserJoinForm2("test@naver.com", "test1234", "test", LoginType.BASIC.name(), Job.학생.name(), "java");
         User newUser1 = userService.join(userJoinForm1);
 
         List<String> tags = new ArrayList<>(); tags.add("DFS");
-        PostSaveForm postSaveForm = new PostSaveForm(tags, "test", "test", "test", "see", "java",3);
+        PostSaveForm postSaveForm = new PostSaveForm(tags, "test", "test", "test", Type.SEE.name(), "java",3);
         Post newPost = postService.registration(newUser1.getUser_id(), postSaveForm);
 
         ReplySaveForm replySaveForm1 = new ReplySaveForm("test1", "test1", null);
