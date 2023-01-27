@@ -128,7 +128,7 @@ class PostServiceTest {
         List<String> updateTags = new ArrayList<>();
         updateTags.add("test2");
         PostEditForm postEditForm = new PostEditForm(updateTags, addPost1.getTitle(), addPost1.getProblem_uri(), addPost1.getContext(),
-                addPost1.getType(),addPost1.getLanguage(),addPost1.getLevel());
+                addPost1.getType().name(),addPost1.getLanguage(),addPost1.getLevel());
 
         postService.updatePost(addPost1.getPost_id(), postEditForm);
 
