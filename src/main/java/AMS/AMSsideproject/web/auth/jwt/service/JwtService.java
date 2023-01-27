@@ -50,9 +50,9 @@ public class JwtService {
         String role = jwtProvider.getRole(token);
 
         String accessToken = jwtProvider.createAccessToken(userId, nickName, role);
-        String mySessionToken = jwtProvider.createMySessionToken(userId);
+        //String mySessionToken = jwtProvider.createMySessionToken(userId);
 
-        return new JwtToken(accessToken, token, mySessionToken);
+        return new JwtToken(accessToken, token);
     }
 
     //Token 에서 user 찾는 메서드 -> 회원 수정할때 사용

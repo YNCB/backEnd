@@ -11,6 +11,6 @@ public class JwtToken {
 
     private String accessToken;
     private String refreshToken;
-    private String my_session;
+    //private String my_session;
 
 }

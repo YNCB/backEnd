@@ -24,8 +24,8 @@ public class UserEditSuccessDto {
     private String accessToken;
     @ApiModelProperty(example = "xxxx")
     private String refreshToken;
-    @ApiModelProperty(example = "xxxx")
-    private String my_session;
+//    @ApiModelProperty(example = "xxxx")
+//    private String my_session;
     @ApiModelProperty(example = "2021-09-02T14:56:20.699")
     private String expireTime;
 
@@ -34,7 +34,7 @@ public class UserEditSuccessDto {
         this.nickname = nickname;
         this.accessToken = jwtToken.getAccessToken();
         this.refreshToken = jwtToken.getRefreshToken();
-        this.my_session = jwtToken.getMy_session();
+       // this.my_session = jwtToken.getMy_session();
 
         LocalDateTime localDateTime = LocalDateTime.now().plusSeconds(JwtProperties.ACCESSTOKEN_TIME / 1000);
         this.expireTime = localDateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);

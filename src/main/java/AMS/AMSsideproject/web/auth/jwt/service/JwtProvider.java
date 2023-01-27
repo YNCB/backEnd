@@ -48,12 +48,12 @@ public class JwtProvider {
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
 
         //마이페이지 토큰 -> 나의 페이지에 접속할때 사용되는 토큰!!!!!!!!(나의 페이지와 다른 유저 페이지가 기능이 달라 구분되어야 되기때문에)
-        String my_session = JWT.create()
-                .withSubject(String.valueOf(user_id) + "_mySession")
-                .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.ACCESSTOKEN_TIME))
-                .sign(Algorithm.HMAC512(JwtProperties.SECRET));
+//        String my_session = JWT.create()
+//                .withSubject(String.valueOf(user_id) + "_mySession")
+//                .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.ACCESSTOKEN_TIME))
+//                .sign(Algorithm.HMAC512(JwtProperties.SECRET));
 
-        return new JwtToken(accessToken, refreshToken, my_session);
+        return new JwtToken(accessToken, refreshToken);
     }
 
     //access token 만 생성 -> refresh 토큰 요청이 왔을때

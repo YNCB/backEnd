@@ -10,6 +10,6 @@ public interface JwtProperties {
     public int REFRESHTOKEN_TIME = 3000000;
     public String ACCESS_HEADER_STRING = "accessToken";
     public String REFRESH_HEADER_STRING = "refreshToken";
-    public String MYSESSION_HEADER_STRING = "my_session";
+    //public String MYSESSION_HEADER_STRING = "my_session";
 
 }
