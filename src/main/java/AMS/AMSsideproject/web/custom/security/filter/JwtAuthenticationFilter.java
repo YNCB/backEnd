@@ -77,7 +77,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             chain.doFilter(request,response);
 
         }catch (JwtExpireException e) { //기한만료된 토큰-401
-            sendResponse(response, "엑세스 토큰의 기한이 만료되었습니다.",
+            sendResponse(response, "토큰의 기한이 만료되었습니다.",
                     HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
             return;
         }catch (JwtExistingException e){ //헤더에 토큰이 없는경우-412

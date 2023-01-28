@@ -75,7 +75,7 @@ public class PostControllerV2 {
     @ApiOperation(value = "사용자 페이지 api", notes = "특정 회원 게시물들에 대해서 필터링 조건에 맞게 게시물들을 조회합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출", response = UserPage_200.class),
-            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 엑세스 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
@@ -116,7 +116,7 @@ public class PostControllerV2 {
     @Auth
     @ApiResponses({
             @ApiResponse(code=200, message = "정상 호출.추가로 읽은 게시물 id를 포함시킨 쿠키 발급"),
-            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 엑세스 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     @ApiImplicitParams({
@@ -159,7 +159,7 @@ public class PostControllerV2 {
     @PostMapping("/write")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
-            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 엑세스 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
             @ApiResponse(code=412, message = "토큰이 없습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
@@ -183,7 +183,7 @@ public class PostControllerV2 {
     @ApiOperation(value = "게시물 수정 api", notes = "게시물에서 수정가능한 항목들을 보여줍니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
-            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 엑세스 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=403, message = "잘못된 접근입니다. 권한이 없습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=412, message = "토큰이 없습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
@@ -221,7 +221,7 @@ public class PostControllerV2 {
     @ApiOperation(value = "게시물 수정 api", notes = "실제 게시물을 수정하는 api 입니다. 이후 게시물 상세 페이지 api 호출바랍니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
-            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 엑세스 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=403, message = "잘못된 접근입니다. 권한이 없습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
             @ApiResponse(code=412, message = "토큰이 없습니다.", response = BaseErrorResult.class),
@@ -252,7 +252,7 @@ public class PostControllerV2 {
     @ApiOperation(value = "게시물 삭제 api", notes = "게시물을 삭제하는 api입니다.")
     @ApiResponses({
             @ApiResponse(code=200, message= "정상 호출"),
-            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 엑세스 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=403, message = "잘못된 접근입니다. 권한이 없습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=412, message = "토큰이 없습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)

@@ -23,7 +23,7 @@ public class RefreshTokenController {
             "리프레시 토큰이 정상적이지 않거나 기한이 만료되었으면 재로그인을 요청합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message = "엑세스,리프레시 토큰 재생성 성공"),
-            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 엑세스 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=412, message = "토큰이 없습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
@@ -31,7 +31,7 @@ public class RefreshTokenController {
     public DataResponse<UserTokenDto> recreateToken(@RequestHeader(JwtProperties.REFRESH_HEADER_STRING) String refreshToken) {
 
         //리프레시토큰 검증을 인터셉터에서 다 받았기 때문에 해당 컨트롤러가 호출되는 것은 accessToken 만 재발급 받아야되는 경우뿐이다!!!
-        JwtToken jwtToken = jwtService.recreateTokenUsingTokenInfo(refreshToken);
+        JwtToken jwtToken = jwtService.recreateTokenUsingRefreshToken(refreshToken);
 
         UserTokenDto userTokenDto = new UserTokenDto(jwtToken);
         return new DataResponse<>("200", "토큰이 재발급되었습니다.",userTokenDto);

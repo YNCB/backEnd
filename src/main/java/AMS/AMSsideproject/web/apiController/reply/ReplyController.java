@@ -31,7 +31,7 @@ public class ReplyController {
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
             @ApiResponse(code=400, message = "잘못된 요청", response = BaseResponse.class),
-            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 엑세스 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
             @ApiResponse(code=412, message = "토큰이 없습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
@@ -58,7 +58,7 @@ public class ReplyController {
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
             @ApiResponse(code=400, message = "잘못된 요청", response = BaseResponse.class),
-            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 엑세스 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=403, message = "권한이 없음", response = BaseResponse.class),
             @ApiResponse(code=412, message = "토큰이 없습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
@@ -85,7 +85,7 @@ public class ReplyController {
     @ApiOperation(value = "댓글 수정 폼 api", notes = "댓글 수정 항목을 보여줍니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
-            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 엑세스 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=412, message = "토큰이 없습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
@@ -111,7 +111,7 @@ public class ReplyController {
     @ApiOperation(value = "댓글 수정 api", notes = "댓글을 수정합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
-            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 엑세스 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
+            @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=403, message = "권한이 없음", response = BaseResponse.class),
             @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
             @ApiResponse(code=412, message = "토큰이 없습니다.", response = BaseErrorResult.class),
