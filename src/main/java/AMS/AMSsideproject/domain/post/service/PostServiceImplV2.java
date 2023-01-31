@@ -68,11 +68,11 @@ public class PostServiceImplV2 implements PostService{
 
         //게시물 정보 조회
         PostDto findPostDto = postRepositoryQueryDto.findQueryPostDtoByPostId(postId);
+
         //게시물의 댓글 정보 조회
         List<RepliesDto> findRepliesDto = replyService.findRepliesByPostId(postId);
 
         findPostDto.setReplies(findRepliesDto);
-
         return findPostDto;
     }
 

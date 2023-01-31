@@ -1,6 +1,7 @@
 package AMS.AMSsideproject.web.responseDto.post;
 
 import AMS.AMSsideproject.domain.post.Post;
+import AMS.AMSsideproject.domain.post.Type;
 import AMS.AMSsideproject.domain.post.repository.query.form.LikeDto;
 import AMS.AMSsideproject.web.responseDto.reply.RepliesDto;
 import io.swagger.annotations.ApiModelProperty;
@@ -52,7 +53,7 @@ public class PostDto {
 
     private List<RepliesDto> replies; //댓글 리스트
 
-    public PostDto(Long postId, String title, String nickname, LocalDateTime redate, Integer likeNum, Integer countView, String language, String type,
+    public PostDto(Long postId, String title, String nickname, LocalDateTime redate, Integer likeNum, Integer countView, String language, Type type,
                    Integer level, String context, Integer replyNum) {
 
         this.post_id = postId;
@@ -61,11 +62,12 @@ public class PostDto {
         this.redate = redate.format(DateTimeFormatter.ISO_LOCAL_DATE);
         this.likeNum = likeNum;
         this.language = language;
-        this.type = type;
+        this.type = type.name();
         this.level = level;
         this.context = context;
         this.replyNum = replyNum;
         this.countView = countView;
+
         this.likeExisting = false; //초기값
     }
 }
