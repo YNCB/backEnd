@@ -60,7 +60,7 @@ public class SecurityConfig {
                 .antMatchers("/v3/api-docs/**", "/swagger-ui/**")
 
                 //test
-                .antMatchers( "/test", "/login/oauth2/code/kakao", "/login/oauth2/code/google");
+                .antMatchers( "/test", "/login/oauth2/code/kakao", "/login/oauth2/code/google", "/tokenParsingTest");
     }
 
     @Bean

@@ -40,15 +40,18 @@ public class AuthInterceptor implements HandlerInterceptor {
         if(!StringUtils.hasText(token))
             return true;
 
+        //token parsing
+        String accessToken = jwtProvider.parsingAccessToken(token);
+
         /** 인증 검사 - 토큰 유효성 검사 **/
         //로그아웃 처리된 토큰인지 검사
-        validBlackToken(token);
+        validBlackToken(accessToken);
 
         //토큰 유효성 검사
-        jwtProvider.validateToken(token);
+        jwtProvider.validateToken(accessToken);
 
         /** 권한 검사 **/
-        String role = jwtProvider.getRole(token);
+        String role = jwtProvider.getRole(accessToken);
         if(role.equals(Role.USER.name()) || role.equals(Role.MANAGER.name()) || role.equals(Role.ADMIN.name()))
             return true;
 

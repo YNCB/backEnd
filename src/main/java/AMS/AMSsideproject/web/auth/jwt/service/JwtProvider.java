@@ -30,7 +30,7 @@ public class JwtProvider {
     //access token, refresh token, my_session 생성
     public JwtToken createJwtToken(Long user_id, String nickname ,String role) {
         //엑세스 토큰
-        String accessToken = JWT.create()
+        String accessToken = JwtProperties.ACCESS_PREPIX_STRING + JWT.create()
                 .withSubject(String.valueOf(user_id))
                 .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.ACCESSTOKEN_TIME))
                 .withClaim("userId", user_id)
@@ -47,19 +47,13 @@ public class JwtProvider {
 //                .withClaim("role", role)
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
 
-        //마이페이지 토큰 -> 나의 페이지에 접속할때 사용되는 토큰!!!!!!!!(나의 페이지와 다른 유저 페이지가 기능이 달라 구분되어야 되기때문에)
-//        String my_session = JWT.create()
-//                .withSubject(String.valueOf(user_id) + "_mySession")
-//                .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.ACCESSTOKEN_TIME))
-//                .sign(Algorithm.HMAC512(JwtProperties.SECRET));
-
         return new JwtToken(accessToken, refreshToken);
     }
 
     //access token 만 생성 -> refresh 토큰 요청이 왔을때
     public String createAccessToken(Long user_id, String nickname, String role) {
 
-        return JWT.create()
+        return JwtProperties.ACCESS_PREPIX_STRING + JWT.create()
                 .withSubject(String.valueOf(user_id))
                 .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.ACCESSTOKEN_TIME))
                 .withClaim("userId", user_id)
@@ -68,15 +62,7 @@ public class JwtProvider {
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
     }
 
-    //my_session token 만 생성 -> refresh 토큰 요청이 왔을때
-    public String createMySessionToken(Long user_id) {
-        return JWT.create()
-                .withSubject(String.valueOf(user_id) + "_mySession")
-                .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.ACCESSTOKEN_TIME))
-                .sign(Algorithm.HMAC512(JwtProperties.SECRET));
-    }
-
-    //JWT 엑세스 토큰이 헤더에 있는지 검증
+    //엑세스 토큰이 헤더에 있는지 검증
     public String validAccessTokenHeader(HttpServletRequest request) {
 
         String token = request.getHeader(JwtProperties.ACCESS_HEADER_STRING);
@@ -86,7 +72,23 @@ public class JwtProvider {
         return token;
     }
 
-    //JWT 리프레시 토큰이 헤더에 있는지 검증
+    //엑세스 토큰 포멧에서 엑세스 토큰값 파싱하기
+    public String parsingAccessToken(String token){
+
+        try{
+            //accessToken prefix 찾기
+            String replace = token.replace(JwtProperties.ACCESS_PREPIX_STRING, " ");
+
+            //공백 없애기
+            String accessToken = replace.trim();
+            return accessToken;
+
+        }catch (Exception e){
+            throw new JwtValidException("정상적이지 않은 토큰입니다.");
+        }
+    }
+
+    //리프레시 토큰이 헤더에 있는지 검증
     public String validRefreshTokenHeader(HttpServletRequest request) {
 
         String token = request.getHeader(JwtProperties.REFRESH_HEADER_STRING);
@@ -124,14 +126,19 @@ public class JwtProvider {
             Jwts.parserBuilder().setSigningKey(JwtProperties.SECRET.getBytes())
                     .build().parseClaimsJws(token).getBody();
         }catch (SignatureException e ){
+            log.error("SignatureException", e);
             throw new JwtValidException(e.getMessage());
         }catch (ExpiredJwtException e) {
+            log.error("ExpiredJwtException", e);
             throw new JwtExpireException(e.getMessage());
         } catch (MalformedJwtException e) {
+            log.error("MalformedJwtException", e);
             throw new JwtValidException(e.getMessage());
         }catch (IllegalArgumentException e) {
+            log.error("IllegalArgumentException", e);
             throw new JwtValidException(e.getMessage());
         }catch (Exception e ){
+            log.error("Exception", e);
             throw new JwtValidException(e.getMessage());
         }
     }

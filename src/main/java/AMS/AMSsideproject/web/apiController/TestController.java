@@ -1,5 +1,7 @@
 package AMS.AMSsideproject.web.apiController;
 
+import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
+import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -10,6 +12,8 @@ import springfox.documentation.annotations.ApiIgnore;
 @RequiredArgsConstructor
 @ApiIgnore
 public class TestController {
+
+    private final JwtProvider jwtProvider;
 
     @GetMapping("/test")
     public String home() {
@@ -37,6 +41,14 @@ public class TestController {
     public String jenkinkTest1() {
 
         return "!!!!!!!!!!!!!!!!jenkinkTest22!!!!!!!!!!!!!!!!!!!!!!";
+    }
+
+    @GetMapping("/tokenParsingTest")
+    @ResponseBody
+    public String tokenParsingTest(@RequestHeader("Authorization")String token ){
+
+        String accessToken = jwtProvider.parsingAccessToken(token);
+        return accessToken;
     }
 
 }

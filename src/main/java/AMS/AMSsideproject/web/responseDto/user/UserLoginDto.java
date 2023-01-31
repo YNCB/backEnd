@@ -23,9 +23,9 @@ public class UserLoginDto {
     private String nickname;
 
     @ApiModelProperty(example = "xxxxxx")
-    private String accessToken;
+    private String Authorization;
     @ApiModelProperty(example = "xxxxxx")
-    private String refreshToken;
+    private String RefreshToken;
 //    @ApiModelProperty(example = "xxxxxx")
 //    private String my_session;
     @ApiModelProperty(example = "2021-09-02T14:56:20.699")
@@ -34,8 +34,8 @@ public class UserLoginDto {
     public UserLoginDto(Long userId, String nickname, JwtToken jwtToken) {
         this.userId = userId;
         this.nickname = nickname;
-        this.accessToken = jwtToken.getAccessToken();
-        this.refreshToken = jwtToken.getRefreshToken();
+        this.Authorization = jwtToken.getAuthorization();
+        this.RefreshToken = jwtToken.getRefreshToken();
         //this.my_session = jwtToken#.getMy_session();
 
         LocalDateTime localDateTime = LocalDateTime.now().plusSeconds(JwtProperties.ACCESSTOKEN_TIME / 1000);

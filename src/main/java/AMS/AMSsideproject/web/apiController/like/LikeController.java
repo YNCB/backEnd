@@ -40,8 +40,9 @@ public class LikeController {
     })
     public DataResponse<LikeDto> like(@PathVariable("nickname")String nickname,
                                       @PathVariable("postId")Long postId,
-                                      @RequestHeader(JwtProperties.ACCESS_HEADER_STRING)String accessToken ) {
+                                      @RequestHeader(JwtProperties.ACCESS_HEADER_STRING)String token ) {
 
+        String accessToken = jwtProvider.parsingAccessToken(token);
         Long findUserId = jwtProvider.getUserId(accessToken);
 
         //LikeDto likeDto = likeService.like(postId, findUserId);

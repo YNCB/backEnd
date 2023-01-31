@@ -63,6 +63,7 @@ public class JwtService {
     public User findUserToToken(String token) {
 
         Long findUserId = jwtProvider.getUserId(token);
+
         return userService.findUserByUserId(findUserId);
     }
 

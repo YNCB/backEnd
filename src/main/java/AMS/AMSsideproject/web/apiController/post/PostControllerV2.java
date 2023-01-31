@@ -44,7 +44,7 @@ public class PostControllerV2 {
     private final LikeService likeService;
 
     //메인 페이지
-    @PostMapping(value = "/")
+    @PostMapping(value = {"/"})
     @ApiOperation(value = "서비스 메인페이지 api", notes = "모든 회원 게시물들에 대해서 필터링 조건에 맞게 게시물들을 조회합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
@@ -127,7 +127,7 @@ public class PostControllerV2 {
     })
     public DataResponse<PostDto> postPage(      @PathVariable("postId") Long postId,
                                                 @PathVariable("nickname") String nickname,
-                                                @RequestHeader(value = JwtProperties.ACCESS_HEADER_STRING, required = false) String accessToken,
+                                                @RequestHeader(value = JwtProperties.ACCESS_HEADER_STRING, required = false) String token,
                                                 @ApiIgnore @CookieValue(value = "postView" ,required = false) Cookie postViewCookie,
                                                 HttpServletResponse response) {
 
@@ -135,7 +135,8 @@ public class PostControllerV2 {
         PostDto findPostDto = postService.findPost(postId);
 
         //로그인한 사용자 일경우 추가 정보 적용-토큰 검증은 인터셉터에서 진행
-        if(StringUtils.hasText(accessToken)) {
+        if(StringUtils.hasText(token)) {
+            String accessToken = jwtProvider.parsingAccessToken(token);
             Long findUserId = jwtProvider.getUserId(accessToken);
 
             //좋아요 활성화 판단
@@ -165,9 +166,10 @@ public class PostControllerV2 {
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING,value = "엑세스 토큰", required = true)
-    public BaseResponse writePost(@RequestHeader(JwtProperties.ACCESS_HEADER_STRING)String accessToken,
+    public BaseResponse writePost(@RequestHeader(JwtProperties.ACCESS_HEADER_STRING)String token,
                                   @Validated @RequestBody PostSaveForm form) {
 
+        String accessToken = jwtProvider.parsingAccessToken(token);
         Long userId = jwtProvider.getUserId(accessToken);
 
         //태그 하나하나 쿼리문이 발생함 존재 유무를 확인하기 위해
@@ -272,8 +274,10 @@ public class PostControllerV2 {
 
 
     //마이페이지 요청인지 판단
-    private Boolean myPageCheck(String token, String nickname){
+    private Boolean myPageCheck(String accessToken, String nickname){
+        String token = jwtProvider.parsingAccessToken(accessToken);
         String findNickname = jwtProvider.getNickname(token);
+
         if(findNickname.equals(nickname))
             return true;
         return false;

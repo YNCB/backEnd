@@ -42,9 +42,10 @@ public class FollowController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰", required = true)
     })
-    public BaseResponse addFollow(@RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken,
+    public BaseResponse addFollow(@RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String token,
                                   @Validated @RequestBody FollowSaveForm form) {
 
+        String accessToken = jwtProvider.parsingAccessToken(token);
         Long userId = jwtProvider.getUserId(accessToken);
         Follow follow = followService.addFollow(userId, form.getUserId());
 
@@ -84,8 +85,9 @@ public class FollowController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰", required = true),
     })
-    public DataResponse<List> followers(@RequestHeader(JwtProperties.ACCESS_HEADER_STRING)String accessToken) {
+    public DataResponse<List> followers(@RequestHeader(JwtProperties.ACCESS_HEADER_STRING)String token) {
 
+        String accessToken = jwtProvider.parsingAccessToken(token);
         Long userId = jwtProvider.getUserId(accessToken);
         List<Follow> followers = followService.findFollowersByUserId(userId);
 
@@ -106,8 +108,10 @@ public class FollowController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰", required = true),
     })
-    public DataResponse following(@RequestHeader(JwtProperties.ACCESS_HEADER_STRING)String accessToken) {
+    public DataResponse following(@RequestHeader(JwtProperties.ACCESS_HEADER_STRING)String token) {
 
+
+        String accessToken = jwtProvider.parsingAccessToken(token);
         Long userId = jwtProvider.getUserId(accessToken);
         List<Follow> followings = followService.findFollowingsByUserId(userId);
 

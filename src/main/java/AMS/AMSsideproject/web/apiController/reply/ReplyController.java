@@ -43,10 +43,12 @@ public class ReplyController {
     })
     public BaseResponse storeReply(@PathVariable("nickname") String nickname,
                                    @PathVariable("postId") Long postId ,
-                                   @RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken,
+                                   @RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String token,
                                    @Validated @RequestBody ReplySaveForm replySaveForm) {
 
+        String accessToken = jwtProvider.parsingAccessToken(token);
         Long userIdToToken = jwtProvider.getUserId(accessToken);
+
         Reply saveReply = replyService.addReply(postId, userIdToToken, replySaveForm);
 
         return new BaseResponse("200", "댓글이 저장되었습니다.");
@@ -72,9 +74,11 @@ public class ReplyController {
     public BaseResponse removeReply(@PathVariable("nickname") String nickname,
                                     @PathVariable("postId") Long postId,
                                     @PathVariable("replyId") Long replyId,
-                                    @RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken) {
+                                    @RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String token) {
 
+        String accessToken = jwtProvider.parsingAccessToken(token);
         Long userId = jwtProvider.getUserId(accessToken);
+
         replyService.deleteReply(postId, replyId, userId);
 
         return new BaseResponse("200", "댓글이 삭제되었습니다.");
@@ -127,9 +131,11 @@ public class ReplyController {
                                   @PathVariable("postId") Long postId,
                                   @PathVariable("replyId") Long replyId,
                                   @Validated @RequestBody ReplyEditForm replyEditForm,
-                                  @RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken) {
+                                  @RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String token) {
 
+        String accessToken = jwtProvider.parsingAccessToken(token);
         Long userId = jwtProvider.getUserId(accessToken);
+
         replyService.updateReply(userId, replyId, replyEditForm);
 
         return  new BaseResponse("200", "댓글이 수정되었습니다");

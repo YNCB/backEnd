@@ -53,11 +53,14 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             if(!StringUtils.hasText(token))  //토큰이 없는 경우
                 throw new JwtExistingException("토큰이 없습니다.");
 
+            //token parsing
+            String accessToken = jwtProvider.parsingAccessToken(token);
+
             //로그아웃된 토큰인지 검사
-            validBlackToken(token);
+            validBlackToken(accessToken);
 
             //토큰 유효성 검사
-            jwtProvider.validateToken(token);
+            jwtProvider.validateToken(accessToken);
 
             /**
              * 권한을 그냥 "USER" 체크 할까?? -> 그럼 spring security context 안에 넣어서 스프링 시큐리티에게 권한처리 위임하면 되는데....
@@ -65,7 +68,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
              * 이방식이에서 궁금한점이 uri 요청올 때 spring security context에 Authentication 객체 저장했다가 모든 응답이 끝나면 해당 객체는 사라지나?!!!!!!!!!!!!!
              * -> 그러면 괜찮은거지!!!!!!! (지속적인 세션을 사용하지 않는거고 권한처리도 쉬우니!!!!!!!!!!!!!!!!!!!!!!!)
              */
-            Long userId = jwtProvider.getUserId(token);
+            Long userId = jwtProvider.getUserId(accessToken);
             User findUser = userService.findUserByUserId(userId);
             PrincipalDetails principalDetails = new PrincipalDetails(findUser);
             Authentication authentication = new UsernamePasswordAuthenticationToken(

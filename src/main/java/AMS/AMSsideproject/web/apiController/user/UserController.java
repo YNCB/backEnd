@@ -105,11 +105,14 @@ public class UserController {
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰",required = true)
-    public DataResponse<UserEditDto> UserEditForm(@RequestHeader(JwtProperties.ACCESS_HEADER_STRING)String accessToken) {
+    public DataResponse<UserEditDto> UserEditForm(@RequestHeader(JwtProperties.ACCESS_HEADER_STRING)String token) {
 
         //Token 정보에서 User 찾기
+        String accessToken = jwtProvider.parsingAccessToken(token);
         User findUser = jwtService.findUserToToken(accessToken);
+
         UserEditDto userEditDto = UserEditDto.createUserEditDto(findUser);
+
         return new DataResponse<>("200", "회원 정보입니다.", userEditDto);
     }
 
@@ -125,11 +128,13 @@ public class UserController {
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰",required = true)
-    public DataResponse<UserEditSuccessDto> UserEdit(@RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken,
+    public DataResponse<UserEditSuccessDto> UserEdit(@RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String token,
                                                      @Validated @RequestBody UserEditForm userEditForm) {
 
         //Token 정보에서 User 찾기
+        String accessToken = jwtProvider.parsingAccessToken(token);
         Long findUserId = jwtProvider.getUserId(accessToken);
+
 
         User updateUser = userService.update(findUserId, userEditForm);
 
@@ -150,8 +155,9 @@ public class UserController {
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
     })
     @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰", required = true)
-    public BaseResponse userLogout(@RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken){
+    public BaseResponse userLogout(@RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String token){
 
+        String accessToken = jwtProvider.parsingAccessToken(token);
         userService.logout(accessToken);
 
         return new BaseResponse("200", "로그아웃이 되었습니다");
