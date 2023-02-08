@@ -98,13 +98,9 @@ public class Post {
         post.title = postSaveForm.getTitle();
         post.problem_uri = postSaveForm.getProblem_uri();
         post.context = postSaveForm.getContent();
-
         post.type = Type.valueOf(postSaveForm.getType());
-        //post.type = postSaveForm.getType();
-
         post.language = postSaveForm.getLanguage();
         post.level = postSaveForm.getLevel();
-
         post.likeNum =0;
         post.replyNum =0;
         post.countView = 0; //좋아요 조회수 초기화!!!!!!!!

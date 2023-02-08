@@ -16,7 +16,7 @@ public class PostSearchFormAboutAllUser {
 
     @ApiModelProperty(example = "Java", notes = "C++/Python/JS/Java/C/C#/Swift/Kotlin/Ruby/Swift/Go/Etc. 없을시 공백으로 채워주시면 됩니다.")
     @NotNull(message = "필수 입렵값 입니다.")
-    @Pattern(regexp = "C|C++|C#|Python|JS|Java|Swift|Kotlin|Ruby|Swift|Go|Etc|^$",
+    @Pattern(regexp = "(C)|(C\\+\\+)|(C#)|(Python)|(JS)|(Java)|(Swift)|(Kotlin)|(Ruby)|(Swift)|(Go)|(Etc)|^$",
             message = "C++/Python/JS/Java/C/C#/Swift/Kotlin/Ruby/Swift/Go/Etc/공백 중 하나입니다.")
     private String language; //사용 언어
 

@@ -8,8 +8,10 @@ import AMS.AMSsideproject.web.response.DataResponse;
 import AMS.AMSsideproject.web.responseDto.user.UserTokenDto;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/codebox")
 @RequiredArgsConstructor
@@ -34,6 +36,9 @@ public class RefreshTokenController {
         JwtToken jwtToken = jwtService.recreateTokenUsingRefreshToken(refreshToken);
 
         UserTokenDto userTokenDto = new UserTokenDto(jwtToken);
+
+        log.info("UserTokenDto = " + userTokenDto);
+
         return new DataResponse<>("200", "토큰이 재발급되었습니다.",userTokenDto);
     }
 

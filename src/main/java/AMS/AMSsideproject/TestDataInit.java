@@ -50,7 +50,7 @@ public class TestDataInit {
         PostSaveForm postSaveForm4 = new PostSaveForm(tags2, "post4 test", "post4", "post4", "ALONE", "Python", 3);
         List<String> tags3 = new ArrayList<>(); tags3.add("DFS"); tags3.add("Graph");
         PostSaveForm postSaveForm5 = new PostSaveForm(tags3, "post5 test", "post5", "post5", "ALONE", "Java", 4);
-        PostSaveForm postSaveForm6 = new PostSaveForm(tags3, "post6 test", "post6", "post6", "SEE", "Java", 5);
+        PostSaveForm postSaveForm6 = new PostSaveForm(tags3, "post6 test", "post6", "post6", "SEE", "C++", 5);
         Post registration1 = postService.registration(join1.getUser_id(), postSaveForm1);
         Post registration2 = postService.registration(join1.getUser_id(), postSaveForm2);
         Post registration3 = postService.registration(join1.getUser_id(), postSaveForm3);
@@ -58,13 +58,13 @@ public class TestDataInit {
         Post registration5 = postService.registration(join1.getUser_id(), postSaveForm5);
         Post registration6 = postService.registration(join1.getUser_id(), postSaveForm6);
 
-        List<String> tags4 = new ArrayList<>(); tags1.add("DFS"); tags1.add("BFS");
+        List<String> tags4 = new ArrayList<>(); tags4.add("DFS"); tags4.add("BFS");
         PostSaveForm postSaveForm7 = new PostSaveForm(tags4, "post7 test", "post7","post7","SEE","Java",3);
         PostSaveForm postSaveForm8 = new PostSaveForm(tags4, "post8 test", "post8", "post8", "SEE", "Java", 5);
-        List<String> tags5 = new ArrayList<>(); tags2.add("DFS");
+        List<String> tags5 = new ArrayList<>(); tags5.add("DFS");
         PostSaveForm postSaveForm9 = new PostSaveForm(tags5, "post9 test", "post9", "post9", "ALONE", "Java", 2);
         PostSaveForm postSaveForm10 = new PostSaveForm(tags5, "post10 test", "post10", "post10", "ALONE", "Python", 3);
-        List<String> tags6 = new ArrayList<>(); tags3.add("BFS");
+        List<String> tags6 = new ArrayList<>(); tags6.add("BFS");
         PostSaveForm postSaveForm11 = new PostSaveForm(tags6, "post11 test", "post11", "post11", "ALONE", "Java", 4);
         PostSaveForm postSaveForm12 = new PostSaveForm(tags6, "post12 test", "post12", "post12", "SEE", "Java", 5);
         Post registration7 = postService.registration(join2.getUser_id(), postSaveForm7);

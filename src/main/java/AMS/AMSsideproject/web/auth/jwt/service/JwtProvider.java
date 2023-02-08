@@ -126,19 +126,19 @@ public class JwtProvider {
             Jwts.parserBuilder().setSigningKey(JwtProperties.SECRET.getBytes())
                     .build().parseClaimsJws(token).getBody();
         }catch (SignatureException e ){
-            log.error("SignatureException", e);
+            log.error("SignatureException", e.getMessage());
             throw new JwtValidException(e.getMessage());
         }catch (ExpiredJwtException e) {
-            log.error("ExpiredJwtException", e);
+            log.error("ExpiredJwtException", e.getMessage());
             throw new JwtExpireException(e.getMessage());
         } catch (MalformedJwtException e) {
-            log.error("MalformedJwtException", e);
+            log.error("MalformedJwtException", e.getMessage());
             throw new JwtValidException(e.getMessage());
         }catch (IllegalArgumentException e) {
-            log.error("IllegalArgumentException", e);
+            log.error("IllegalArgumentException", e.getMessage());
             throw new JwtValidException(e.getMessage());
         }catch (Exception e ){
-            log.error("Exception", e);
+            log.error("Exception", e.getMessage());
             throw new JwtValidException(e.getMessage());
         }
     }

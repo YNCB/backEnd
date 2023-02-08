@@ -171,7 +171,7 @@ public class PostRepositoryImplV2 implements PostRepositoryV2 {
     }
 
     private BooleanExpression LanguageEq(String language) {
-        if(!StringUtils.hasText(language))
+        if(!StringUtils.hasText(language)) //null, 공백
             return null;
         return QPost.post.language.eq(language);
     }
