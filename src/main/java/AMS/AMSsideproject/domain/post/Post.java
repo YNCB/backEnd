@@ -1,6 +1,7 @@
 package AMS.AMSsideproject.domain.post;
 
 import AMS.AMSsideproject.domain.like.Like;
+import AMS.AMSsideproject.domain.reply.Reply;
 import AMS.AMSsideproject.domain.tag.postTag.PostTag;
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.web.apiController.post.requestForm.PostEditForm;
@@ -9,6 +10,7 @@ import io.swagger.models.auth.In;
 import lombok.Getter;
 
 import javax.persistence.*;
+import java.sql.Array;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,13 +51,23 @@ public class Post {
             orphanRemoval = true )
     private List<PostTag> postTagList = new ArrayList<>();
 
-    //굳이 필요없다고 생각이 듬
-//    @OneToMany(
-//            fetch = FetchType.LAZY,
-//            mappedBy = "post",
-//            cascade = CascadeType.ALL,
-//            orphanRemoval = true)
-//    private List<Like> likes = new ArrayList<>();
+    //양방향 연관관계 -> 삭제할때 한번에 자동 삭제를 위해서 사용
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            mappedBy = "post",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    private List<Like> likes = new ArrayList<>();
+
+    //양방향 연관관계 -> 삭제할때 한번에 자동 삭제를 위해서 사용
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            mappedBy = "post",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Reply> replies = new ArrayList<>();
+
 
     @Column(name = "like_num")
     private Integer likeNum; //좋아요 총 개수 -> 정렬에 컬럼 조건으로 사용되기 때문에
@@ -70,6 +82,12 @@ public class Post {
     public void addPostTag(PostTag postTag) {
         postTag.setPost(this);
         postTagList.add(postTag);
+    }
+    public void addReply(Reply reply){
+        replies.add(reply);
+    }
+    public void addLike(Like like){
+        likes.add(like);
     }
 
     //like 와 양방향 관계 사용됨. (like_v1)
@@ -119,13 +137,5 @@ public class Post {
         this.level = postEditForm.getLevel();
         this.chdate = LocalDateTime.now();
     }
-
-
-
-
-
-//    public void addLikeNum(Long num) {
-//        this.likeNum += num;
-//    }
 
 }

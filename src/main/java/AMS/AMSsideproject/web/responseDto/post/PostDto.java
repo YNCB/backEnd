@@ -23,6 +23,9 @@ public class PostDto {
     @ApiModelProperty(example = "test")
     private String title; //제목
 
+    @ApiModelProperty(example = "https://~~~~~")
+    private String problem_uri;
+
     @ApiModelProperty(example = "['DFS','BFS']", notes = "문제 태그 리스트")
     private List<String> tags; //태그들
 
@@ -53,11 +56,12 @@ public class PostDto {
 
     private List<RepliesDto> replies; //댓글 리스트
 
-    public PostDto(Long postId, String title, String nickname, LocalDateTime redate, Integer likeNum, Integer countView, String language, Type type,
+    public PostDto(Long postId, String title,String problem_uri, String nickname, LocalDateTime redate, Integer likeNum, Integer countView, String language, Type type,
                    Integer level, String context, Integer replyNum) {
 
         this.post_id = postId;
         this.title = title;
+        this.problem_uri = problem_uri;
         this.nickname = nickname;
         this.redate = redate.format(DateTimeFormatter.ISO_LOCAL_DATE);
         this.likeNum = likeNum;

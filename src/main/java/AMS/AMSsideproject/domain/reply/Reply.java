@@ -25,7 +25,7 @@ public class Reply {
     @JoinColumn(name = "user_id")
     private User user; //작성자
     
-    private String title;
+    //private String title;
 
     //@Column(columnDefinition = "TEXT")
     private String content;
@@ -46,11 +46,13 @@ public class Reply {
 
 
     //생성자
-    static public Reply createReply(String title, String content, User user, Post post) {
+    static public Reply createReply(String content, User user, Post post) {
         Reply reply = new Reply();
         reply.post = post;
+        post.addReply(reply);
+
         reply.user = user;
-        reply.title = title;
+        //reply.title = title;
         reply.content = content;
         reply.parent = null; //초기값
         reply.redate = LocalDateTime.now();
@@ -65,8 +67,8 @@ public class Reply {
     }
 
     //수정자
-    public void edit(String title, String content) {
-        this.title = title;
+    public void edit(String content) {
+       // this.title = title;
         this.content = content;
         this.chdate = LocalDateTime.now(); //수정일 설정
     }

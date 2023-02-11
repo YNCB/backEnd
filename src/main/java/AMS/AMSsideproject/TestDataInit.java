@@ -89,13 +89,13 @@ public class TestDataInit {
 
 
         //댓글 데이터
-        ReplySaveForm replySaveForm1 = new ReplySaveForm("reply1", "reply1", null);
+        ReplySaveForm replySaveForm1 = new ReplySaveForm("reply1", null);
         Reply saveReply1 = replyService.addReply(registration1.getPost_id(), join3.getUser_id(), replySaveForm1);
-        ReplySaveForm replySaveForm2 = new ReplySaveForm("reply2", "reply2", saveReply1.getReply_id());
+        ReplySaveForm replySaveForm2 = new ReplySaveForm("reply2", saveReply1.getReply_id());
         Reply saveReply2 = replyService.addReply(registration1.getPost_id(), join4.getUser_id(), replySaveForm2);
-        ReplySaveForm replySaveForm3 = new ReplySaveForm("reply3", "reply3", saveReply2.getReply_id());
+        ReplySaveForm replySaveForm3 = new ReplySaveForm("reply3", saveReply2.getReply_id());
         Reply saveReply3 = replyService.addReply(registration1.getPost_id(), join5.getUser_id(), replySaveForm3);
-        ReplySaveForm replySaveForm4 = new ReplySaveForm("reply4", "reply4", null);
+        ReplySaveForm replySaveForm4 = new ReplySaveForm("reply4", null);
         Reply saveReply4 = replyService.addReply(registration1.getPost_id(), join2.getUser_id(), replySaveForm1);
 
         //팔로우 데이터

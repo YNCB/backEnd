@@ -44,7 +44,7 @@ class ReplyServiceTest {
         Post newPost = postService.registration(newUser.getUser_id(), postSaveForm);
 
         //given
-        ReplySaveForm replySaveForm1 = new ReplySaveForm("test1", "test1", null);
+        ReplySaveForm replySaveForm1 = new ReplySaveForm("test1", null);
 
         //when
         Reply saveReply = replyService.addReply(newPost.getPost_id(), newUser.getUser_id(), replySaveForm1);
@@ -65,11 +65,11 @@ class ReplyServiceTest {
         Post newPost = postService.registration(newUser.getUser_id(), postSaveForm);
 
         //given
-        ReplySaveForm replySaveForm1 = new ReplySaveForm("test1", "test1", null);
+        ReplySaveForm replySaveForm1 = new ReplySaveForm("test1", null);
         Reply saveReply1 = replyService.addReply(newPost.getPost_id(), newUser.getUser_id(), replySaveForm1);
 
         //when
-        ReplySaveForm replySaveForm2 = new ReplySaveForm("test2", "test2", saveReply1.getReply_id());
+        ReplySaveForm replySaveForm2 = new ReplySaveForm( "test2", saveReply1.getReply_id());
         Reply saveReply2 = replyService.addReply(newPost.getPost_id(), newUser.getUser_id(), replySaveForm2);
 
         //then
@@ -89,13 +89,13 @@ class ReplyServiceTest {
         Post newPost = postService.registration(newUser.getUser_id(), postSaveForm);
 
         //given
-        ReplySaveForm replySaveForm1 = new ReplySaveForm("test1", "test1", null);
+        ReplySaveForm replySaveForm1 = new ReplySaveForm("test1", null);
         Reply saveReply1 = replyService.addReply(newPost.getPost_id(), newUser.getUser_id(), replySaveForm1);
-        ReplySaveForm replySaveForm2 = new ReplySaveForm("test2", "test2", saveReply1.getReply_id());
+        ReplySaveForm replySaveForm2 = new ReplySaveForm("test2", saveReply1.getReply_id());
         Reply saveReply2 = replyService.addReply(newPost.getPost_id(), newUser.getUser_id(), replySaveForm2);
 
         //when
-        ReplySaveForm replySaveForm3 = new ReplySaveForm("test3", "test3", saveReply2.getReply_id());
+        ReplySaveForm replySaveForm3 = new ReplySaveForm( "test3", saveReply2.getReply_id());
         Reply saveReply3 = replyService.addReply(newPost.getPost_id(), newUser.getUser_id(), replySaveForm3);
 
         //then
@@ -116,11 +116,11 @@ class ReplyServiceTest {
         Post newPost = postService.registration(newUser.getUser_id(), postSaveForm);
 
         //given
-        ReplySaveForm replySaveForm1 = new ReplySaveForm("test1", "test1", null);
+        ReplySaveForm replySaveForm1 = new ReplySaveForm( "test1", null);
         Reply saveReply1 = replyService.addReply(newPost.getPost_id(), newUser.getUser_id(), replySaveForm1);
-        ReplySaveForm replySaveForm2 = new ReplySaveForm("test2", "test2", saveReply1.getReply_id());
+        ReplySaveForm replySaveForm2 = new ReplySaveForm( "test2", saveReply1.getReply_id());
         Reply saveReply2 = replyService.addReply(newPost.getPost_id(), newUser.getUser_id(), replySaveForm2);
-        ReplySaveForm replySaveForm3 = new ReplySaveForm("test3", "test3", saveReply2.getReply_id());
+        ReplySaveForm replySaveForm3 = new ReplySaveForm( "test3", saveReply2.getReply_id());
         Reply saveReply3 = replyService.addReply(newPost.getPost_id(), newUser.getUser_id(), replySaveForm3);
 
         //when
@@ -140,11 +140,11 @@ class ReplyServiceTest {
         PostSaveForm postSaveForm = new PostSaveForm(tags, "test", "test", "test",Type.SEE.name(), "java",3);
         Post newPost = postService.registration(newUser.getUser_id(), postSaveForm);
 
-        ReplySaveForm replySaveForm1 = new ReplySaveForm("reply1", "test1", null);
+        ReplySaveForm replySaveForm1 = new ReplySaveForm( "test1", null);
         Reply saveReply1 = replyService.addReply(newPost.getPost_id(), newUser.getUser_id(), replySaveForm1);
-        ReplySaveForm replySaveForm2 = new ReplySaveForm("reply2", "test2", saveReply1.getReply_id());
+        ReplySaveForm replySaveForm2 = new ReplySaveForm( "test2", saveReply1.getReply_id());
         Reply saveReply2 = replyService.addReply(newPost.getPost_id(), newUser.getUser_id(), replySaveForm2);
-        ReplySaveForm replySaveForm3 = new ReplySaveForm("reply3", "test3", saveReply2.getReply_id());
+        ReplySaveForm replySaveForm3 = new ReplySaveForm( "test3", saveReply2.getReply_id());
         Reply saveReply3 = replyService.addReply(newPost.getPost_id(), newUser.getUser_id(), replySaveForm3);
 
         //when
@@ -169,7 +169,7 @@ class ReplyServiceTest {
         PostSaveForm postSaveForm = new PostSaveForm(tags, "test", "test", "test", Type.SEE.name(), "java",3);
         Post newPost = postService.registration(newUser1.getUser_id(), postSaveForm);
 
-        ReplySaveForm replySaveForm1 = new ReplySaveForm("test1", "test1", null);
+        ReplySaveForm replySaveForm1 = new ReplySaveForm("test1", null);
         Reply saveReply1 = replyService.addReply(newPost.getPost_id(), newUser1.getUser_id(), replySaveForm1);
 
         //when ,then
@@ -188,16 +188,16 @@ class ReplyServiceTest {
         PostSaveForm postSaveForm = new PostSaveForm(tags, "test", "test", "test", Type.SEE.name(), "java",3);
         Post newPost = postService.registration(newUser1.getUser_id(), postSaveForm);
 
-        ReplySaveForm replySaveForm1 = new ReplySaveForm("test1", "test1", null);
+        ReplySaveForm replySaveForm1 = new ReplySaveForm( "test1", null);
         Reply beforeReply = replyService.addReply(newPost.getPost_id(), newUser1.getUser_id(), replySaveForm1);
 
         //when
-        ReplyEditForm replyEditForm = new ReplyEditForm("edit1", "edit1");
+        ReplyEditForm replyEditForm = new ReplyEditForm( "edit1");
         replyService.updateReply(newUser1.getUser_id(), beforeReply.getReply_id(), replyEditForm);
 
         //then
         Reply afterReply = replyRepository.findReply(beforeReply.getReply_id());
-        Assertions.assertThat(afterReply.getTitle()).isNotEqualTo(beforeReply.getTitle());
+        Assertions.assertThat(afterReply.getContent()).isNotEqualTo(beforeReply.getContent());
     }
 
 }

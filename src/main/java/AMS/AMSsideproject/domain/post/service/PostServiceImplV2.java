@@ -200,6 +200,7 @@ public class PostServiceImplV2 implements PostService{
             else if(orderKey.equals(OrderKey.likeNum.name())) { //좋아요순
                 orders.add(Sort.Order.desc(orderKey));
                 orders.add(Sort.Order.asc("post_id")); //같은 likeNum에 대해서는 post_id로 오름차순 정렬 기준으로 정의
+
                 if(lastLikeNum!=null && lastPostId!=null) {
                     builder.and(QPost.post.likeNum.eq(lastLikeNum).and(QPost.post.post_id.gt(lastPostId))); //같은 개수를 가진 게시물 처리
                     builder.or(QPost.post.likeNum.lt(lastLikeNum));

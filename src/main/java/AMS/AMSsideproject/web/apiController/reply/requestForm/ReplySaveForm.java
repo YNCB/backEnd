@@ -13,9 +13,9 @@ import javax.validation.constraints.Null;
 @NoArgsConstructor
 public class ReplySaveForm {
 
-    @ApiModelProperty(example = "test", notes = "댓글 제목")
-    @NotBlank(message = "필수 입력값 입니다.")
-    private String title;
+//    @ApiModelProperty(example = "test", notes = "댓글 제목")
+//    @NotBlank(message = "필수 입력값 입니다.")
+//    private String title;
 
     @ApiModelProperty(example = "test", notes = "댓글 내용")
     @NotBlank(message = "필수 입력값 입니다.")

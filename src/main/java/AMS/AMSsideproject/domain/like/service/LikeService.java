@@ -4,6 +4,9 @@ import AMS.AMSsideproject.domain.like.Like;
 import AMS.AMSsideproject.domain.like.repository.LikeRepository;
 import AMS.AMSsideproject.domain.post.Post;
 import AMS.AMSsideproject.domain.post.repository.PostRepositoryV1;
+import AMS.AMSsideproject.domain.user.User;
+import AMS.AMSsideproject.domain.user.repository.UserRepository;
+import AMS.AMSsideproject.web.exception.NotExistingUser;
 import AMS.AMSsideproject.web.responseDto.like.LikeDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +23,7 @@ public class LikeService {
 
     private final PostRepositoryV1 postRepository;
     private final LikeRepository likeRepository;
-//    private final UserRepository userRepository;
+    private final UserRepository userRepository;
 
     /** 양방향 vs 단방향
      * 1. post 쿼리1, post.likes 프록시 쿼리 1, ((추가 쿼리1 + user 쿼리1) or 삭제 쿼리 1), post.likeNUm 업데이트 쿼리 -> "양방향"
@@ -62,7 +65,7 @@ public class LikeService {
 //        return new LikeDto(check, findPost.getLikeNum());
 //    }
 
-    //"2(단방향)" : Native query
+    //양방향으로 다시 바꿈
     @Transactional
     public LikeDto like_v2(Long postId, Long userId) {
 
@@ -71,12 +74,21 @@ public class LikeService {
 
         Boolean check = false;
         if(likeCheck.isEmpty()){ //추가되어야 되는 경우
-            likeRepository.save(postId,userId);
+
+            Optional<User> findUser = userRepository.findByUserId(userId);
+            findUser.orElseThrow( () -> new NotExistingUser("존재하지 않은 사용자 입니다."));
+
+            Like newLike = Like.create(findPost, findUser.get());
+            likeRepository.save2(newLike);
+            //likeRepository.save(postId,userId);
+
             findPost.addLikeNum();
             check = true;
 
         }else { //삭제되어야 되는 경우
-            likeRepository.delete(postId, userId);
+            likeRepository.delete2(likeCheck.get());
+            //likeRepository.delete(postId, userId);
+
             findPost.subLikeNum();
         }
 

@@ -36,8 +36,6 @@ public class QReply extends EntityPathBase<Reply> {
 
     public final NumberPath<Long> reply_id = createNumber("reply_id", Long.class);
 
-    public final StringPath title = createString("title");
-
     public final AMS.AMSsideproject.domain.user.QUser user;
 
     public QReply(String variable) {

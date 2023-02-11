@@ -30,6 +30,8 @@ public class Like {
     public static Like create(Post post, User user) {
         Like like = new Like();
         like.post = post;
+        post.addLike(like);
+
         like.user = user;
         like.redate = LocalDateTime.now();
         return like;

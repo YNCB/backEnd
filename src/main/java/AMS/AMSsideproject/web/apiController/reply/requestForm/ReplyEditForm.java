@@ -12,11 +12,11 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 public class ReplyEditForm {
 
-    @ApiModelProperty(example = "test", notes = "댓글 제목")
-    @NotBlank(message = "필수 입력값 입니다.")
-    private String title;
+//    @ApiModelProperty(example = "test", notes = "댓글 제목")
+//    @NotBlank(message = "필수 입력값 입니다.")
+//    private String title;
 
-    @ApiModelProperty(example = "test", notes = "댓글 제목")
+    @ApiModelProperty(example = "test", notes = "댓글 내용")
     @NotBlank(message = "필수 입력값 입니다.")
     private String content;
 }

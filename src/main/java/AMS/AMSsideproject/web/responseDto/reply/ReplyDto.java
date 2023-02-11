@@ -5,11 +5,11 @@ import lombok.Data;
 @Data
 public class ReplyDto {
 
-    private String title;
+   // private String title;
     private String content;
 
-    public ReplyDto(String title, String content) {
-        this.title = title;
+    public ReplyDto(String content) {
+        //this.title = title;
         this.content = content;
     }
 }

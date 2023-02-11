@@ -53,6 +53,14 @@ public class LikeRepository {
     }
 
 
+    public void save2(Like like){
+        em.persist(like);
+    }
+
+    public void delete2(Like like){
+        em.remove(like);
+    }
+
 
     /**
      * test

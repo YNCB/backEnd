@@ -16,8 +16,8 @@ public class RepliesDto {
     private Long reply_id;
     @ApiModelProperty(example = "홍길동")
     private String nickname;
-    @ApiModelProperty(example = "test")
-    private String title;
+//    @ApiModelProperty(example = "test")
+//    private String title;
     @ApiModelProperty(example = "test")
     private String content;
     @ApiModelProperty(example = "2022-2-2")
@@ -29,7 +29,7 @@ public class RepliesDto {
         RepliesDto repliesDto = new RepliesDto();
         repliesDto.setReply_id(reply.getReply_id());
         repliesDto.setNickname(reply.getUser().getNickname());
-        repliesDto.setTitle(reply.getTitle());
+        //repliesDto.setTitle(reply.getTitle());
         repliesDto.setContent(reply.getContent());
         repliesDto.setRedate(reply.getRedate().format(DateTimeFormatter.ISO_LOCAL_DATE));
 

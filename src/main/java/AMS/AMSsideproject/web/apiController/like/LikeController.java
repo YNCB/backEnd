@@ -29,6 +29,7 @@ public class LikeController {
     @ApiOperation(value = "게시물 좋아요 api", notes = "게시물 좋아요 추가, 삭제를 합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
+            @ApiResponse(code=400, message = "잘못된 요청", response = BaseResponse.class),
             @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=412, message = "토큰이 없습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)

@@ -2,6 +2,7 @@ package AMS.AMSsideproject.web.apiController.post.requestForm;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import javax.validation.constraints.Pattern;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class PostSearchFormAboutAllUser {
 
     @ApiModelProperty(example = "Java", notes = "C++/Python/JS/Java/C/C#/Swift/Kotlin/Ruby/Swift/Go/Etc. 없을시 공백으로 채워주시면 됩니다.")

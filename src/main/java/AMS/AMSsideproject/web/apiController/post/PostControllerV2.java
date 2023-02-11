@@ -88,7 +88,7 @@ public class PostControllerV2 {
                                                    @Validated @RequestBody PostSearchFormAboutSpecificUser form){
 
         Slice<Post> posts = null;
-        
+
         //게스트페이지
         if(!StringUtils.hasText(accessToken)){
             posts = postService.findPostsAboutGuestPage(nickname, form);

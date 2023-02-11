@@ -395,4 +395,24 @@ class PostServiceTest {
         Assertions.assertThat(result.getContent().size()).isEqualTo(0);
     }
 
+    @Test
+    public void 마이페이지게시물리스트_정렬테스트() throws Exception {
+        //given
+        PostSearchFormAboutAllUser form  = PostSearchFormAboutAllUser.builder()
+                .language("")
+                .searchTitle("")
+                .orderKey("likeNum")
+                .lastPostId(10L)
+                .lastReplyNum(null)
+                .lastLikeNum(10)
+                .countView(null)
+                .build();
+
+        //when
+        Slice<Post> result = postService.findPostsAboutAllUser(form);
+
+        //then
+        Assertions.assertThat(result.getContent().size()).isEqualTo(0);
+    }
+
 }

@@ -105,7 +105,7 @@ public class ReplyController {
                                       @RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String accessToken) {
 
         Reply findReply = replyService.findReplyByReplyId(replyId);
-        ReplyDto replyDto = new ReplyDto(findReply.getTitle(), findReply.getContent());
+        ReplyDto replyDto = new ReplyDto(findReply.getContent());
 
         return new DataResponse("200", "댓글 수정 항목입니다.", replyDto);
     }

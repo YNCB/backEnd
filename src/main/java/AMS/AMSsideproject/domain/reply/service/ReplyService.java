@@ -44,7 +44,7 @@ public class ReplyService {
                 throw new NotExistingReply("상위 댓글이 존재하지 않습니다.");
         }
 
-        Reply newReply = Reply.createReply(replySaveForm.getTitle(), replySaveForm.getContent(), findUser.get(), findPost);
+        Reply newReply = Reply.createReply(replySaveForm.getContent(), findUser.get(), findPost);
         if(parent != null) { //루트 댓글이 아닌 경우
             newReply.setParent(parent); //parent 댓글과 양방향 연관관계 성정
         }else{
@@ -119,6 +119,6 @@ public class ReplyService {
         if(findReply.getUser().getUser_id() != userId)
             throw new NotUserEq("권한이 없습니다.");
 
-        findReply.edit(form.getTitle(), form.getContent());
+        findReply.edit(form.getContent());
     }
 }

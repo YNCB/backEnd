@@ -34,6 +34,8 @@ public class QPost extends EntityPathBase<Post> {
 
     public final NumberPath<Integer> likeNum = createNumber("likeNum", Integer.class);
 
+    public final ListPath<AMS.AMSsideproject.domain.like.Like, AMS.AMSsideproject.domain.like.QLike> likes = this.<AMS.AMSsideproject.domain.like.Like, AMS.AMSsideproject.domain.like.QLike>createList("likes", AMS.AMSsideproject.domain.like.Like.class, AMS.AMSsideproject.domain.like.QLike.class, PathInits.DIRECT2);
+
     public final NumberPath<Long> post_id = createNumber("post_id", Long.class);
 
     public final ListPath<AMS.AMSsideproject.domain.tag.postTag.PostTag, AMS.AMSsideproject.domain.tag.postTag.QPostTag> postTagList = this.<AMS.AMSsideproject.domain.tag.postTag.PostTag, AMS.AMSsideproject.domain.tag.postTag.QPostTag>createList("postTagList", AMS.AMSsideproject.domain.tag.postTag.PostTag.class, AMS.AMSsideproject.domain.tag.postTag.QPostTag.class, PathInits.DIRECT2);
@@ -41,6 +43,8 @@ public class QPost extends EntityPathBase<Post> {
     public final StringPath problem_uri = createString("problem_uri");
 
     public final DateTimePath<java.time.LocalDateTime> redate = createDateTime("redate", java.time.LocalDateTime.class);
+
+    public final ListPath<AMS.AMSsideproject.domain.reply.Reply, AMS.AMSsideproject.domain.reply.QReply> replies = this.<AMS.AMSsideproject.domain.reply.Reply, AMS.AMSsideproject.domain.reply.QReply>createList("replies", AMS.AMSsideproject.domain.reply.Reply.class, AMS.AMSsideproject.domain.reply.QReply.class, PathInits.DIRECT2);
 
     public final NumberPath<Integer> replyNum = createNumber("replyNum", Integer.class);
 
