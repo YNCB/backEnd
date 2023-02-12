@@ -10,6 +10,7 @@ import AMS.AMSsideproject.domain.user.service.UserService;
 import AMS.AMSsideproject.web.apiController.user.requestDto.UserJoinForm2;
 import AMS.AMSsideproject.web.exception.AlreadyExistingFollow;
 import AMS.AMSsideproject.web.exception.NotExistingUser;
+import AMS.AMSsideproject.web.responseDto.follow.IsFollowDto;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -133,6 +134,27 @@ class FollowServiceTest {
 
         //then
         Assertions.assertThat(findFollowings.size()).isEqualTo(2);
+    }
+
+    @Test
+    @Transactional
+    public void 팔로우유무검색테스트() throws Exception {
+        //given
+        UserJoinForm2 userJoinForm1 = new UserJoinForm2("test1@naver.com", "test1","test1",LoginType.BASIC.name(),Job.학생.name(),"Java");
+        UserJoinForm2 userJoinForm2 = new UserJoinForm2("test2@naver.com", "test2","test2",LoginType.BASIC.name(),Job.학생.name(),"Java");
+
+        User findUser1 = userService.join(userJoinForm1);
+        User findUser2 = userService.join(userJoinForm2);
+
+        Follow follow1 = followService.addFollow(findUser1.getUser_id(), findUser2.getUser_id());
+
+        //when
+        Boolean isFollow1 = followService.findIsFollow(findUser1.getUser_id(), findUser2.getUser_id());
+        Boolean isFollow2 = followService.findIsFollow(findUser2.getUser_id(), findUser1.getUser_id());
+
+        //then
+        Assertions.assertThat(isFollow1).isTrue();
+        Assertions.assertThat(isFollow2).isFalse();
     }
 
 }

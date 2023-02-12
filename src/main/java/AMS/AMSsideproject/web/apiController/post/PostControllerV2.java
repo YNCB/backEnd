@@ -1,9 +1,12 @@
 package AMS.AMSsideproject.web.apiController.post;
 
+import AMS.AMSsideproject.domain.follow.service.FollowService;
 import AMS.AMSsideproject.domain.like.service.LikeService;
 import AMS.AMSsideproject.domain.post.Post;
 import AMS.AMSsideproject.domain.post.repository.query.PostRepositoryQueryDto;
 import AMS.AMSsideproject.domain.post.service.PostServiceImplV2;
+import AMS.AMSsideproject.domain.user.User;
+import AMS.AMSsideproject.domain.user.service.UserService;
 import AMS.AMSsideproject.web.apiController.post.requestForm.*;
 import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
@@ -12,7 +15,9 @@ import AMS.AMSsideproject.web.custom.annotation.PostAuthor;
 import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
 import AMS.AMSsideproject.web.response.BaseResponse;
 import AMS.AMSsideproject.web.response.DataResponse;
-import AMS.AMSsideproject.web.response.post.PostListResponse;
+import AMS.AMSsideproject.web.response.post.MainPagePostListDto;
+import AMS.AMSsideproject.web.response.post.UserPagePostListDto;
+import AMS.AMSsideproject.web.responseDto.follow.IsFollowDto;
 import AMS.AMSsideproject.web.responseDto.post.*;
 import AMS.AMSsideproject.web.swagger.postController.UserPage_200;
 import AMS.AMSsideproject.web.swagger.userController.Join_406;
@@ -38,10 +43,11 @@ import java.util.stream.Collectors;
 public class PostControllerV2 {
 
     private final PostServiceImplV2 postService;
-
     private final PostRepositoryQueryDto postRepositoryQueryDto; //성능 튜닝한 repository
     private final JwtProvider jwtProvider;
     private final LikeService likeService;
+    private final FollowService followService;
+    private final UserService userService;
 
     //메인 페이지
     @PostMapping(value = {"/"})
@@ -54,8 +60,8 @@ public class PostControllerV2 {
     @ApiImplicitParams({
             @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰", required = false)
     })
-    public DataResponse<PostListResponse> mainPage(@Validated @RequestBody PostSearchFormAboutAllUser form,
-                                                   @RequestHeader(value = JwtProperties.ACCESS_HEADER_STRING, required = false) String accessToken) {
+    public DataResponse<MainPagePostListDto> mainPage(@Validated @RequestBody PostSearchFormAboutAllUser form,
+                                                      @RequestHeader(value = JwtProperties.ACCESS_HEADER_STRING, required = false) String accessToken) {
 
         Slice<Post> result = postService.findPostsAboutAllUser(form);
 
@@ -65,7 +71,7 @@ public class PostControllerV2 {
                 .collect(Collectors.toList());
 
         //response
-        PostListResponse postListResponse = new PostListResponse(findPostDtos, result.getNumberOfElements(), result.hasNext());
+        MainPagePostListDto postListResponse = new MainPagePostListDto(findPostDtos, result.getNumberOfElements(), result.hasNext());
         return new DataResponse<>("200", "모든 사용자들의 게시물 리스트입니다.", postListResponse);
     }
 
@@ -74,7 +80,8 @@ public class PostControllerV2 {
     @Auth
     @ApiOperation(value = "사용자 페이지 api", notes = "특정 회원 게시물들에 대해서 필터링 조건에 맞게 게시물들을 조회합니다.")
     @ApiResponses({
-            @ApiResponse(code=200, message="정상 호출", response = UserPage_200.class),
+            @ApiResponse(code=200, message="정상 호출"),
+            @ApiResponse(code=400, message = "잘못된 요청", response = BaseResponse.class),
             @ApiResponse(code=401, message = "정상적이지 않은 토큰입니다. or 토큰의 기한이 만료되었습니다.", response = BaseErrorResult.class),
             @ApiResponse(code=406, message = "각 키값 조건 불일치", response = Join_406.class),
             @ApiResponse(code=500, message = "Internal server error", response = BaseErrorResult.class)
@@ -83,31 +90,40 @@ public class PostControllerV2 {
             @ApiImplicitParam(name = "nickname", value = "회원 닉네임", required = true),
             @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰", required = false)
     })
-    public DataResponse<PostListResponse> userPage(@PathVariable("nickname")String nickname,
-                                                   @RequestHeader(value = JwtProperties.ACCESS_HEADER_STRING, required = false)String accessToken,
-                                                   @Validated @RequestBody PostSearchFormAboutSpecificUser form){
+    public DataResponse<UserPagePostListDto> userPage(@PathVariable("nickname")String nickname,
+                                                      @RequestHeader(value = JwtProperties.ACCESS_HEADER_STRING, required = false)String accessToken,
+                                                      @Validated @RequestBody PostSearchFormAboutSpecificUser form){
+
+        //접속한 페이지의 사용자
+        User user = userService.findUserByNickName(nickname);
 
         Slice<Post> posts = null;
-
+        Boolean isFollow = false; //팔로우 유무
         //게스트페이지
-        if(!StringUtils.hasText(accessToken)){
+        if(!StringUtils.hasText(accessToken)){ //비로그인
             posts = postService.findPostsAboutGuestPage(nickname, form);
-        }else {
-            //마이 페이지
-            if(myPageCheck(accessToken, nickname))
+        }else { //로그인
+            if(myPageCheck(accessToken, nickname)) { //마이 페이지
                 posts = postService.findPostsAboutMyPage(nickname, form);
-            //게스트 페이지
-            else
+                isFollow = true;
+            }
+            else { //게스트 페이지
                 posts = postService.findPostsAboutGuestPage(nickname, form);
+
+                Long userId = jwtProvider.getUserId(jwtProvider.parsingAccessToken(accessToken));
+                isFollow = followService.findIsFollow(userId, user.getUser_id());
+            }
         }
 
-        //Dto 변환
+        //게시물 리스트 Dto 변환
         List<PostListDtoAboutSpecificUser> postsDto = posts.getContent().stream()
                 .map(p -> new PostListDtoAboutSpecificUser(p))
                 .collect(Collectors.toList());
 
         //response
-        PostListResponse postListResponse = new PostListResponse(postsDto, posts.getNumberOfElements(), posts.hasNext());
+        UserPagePostListDto postListResponse = new UserPagePostListDto(postsDto, posts.getNumberOfElements(),
+                posts.hasNext(), user.getUser_id(), isFollow);
+
         return new DataResponse<>("200", "사용자의 게시물 리스트 입니다.",postListResponse);
     }
 

@@ -1,6 +1,7 @@
 package AMS.AMSsideproject.web.responseDto.post;
 
 import AMS.AMSsideproject.domain.post.Post;
+import AMS.AMSsideproject.domain.post.Type;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,11 +32,11 @@ public class PostEditDto {
     private List<String> tags;
 
 
-    public PostEditDto(String title, String problem_uri, String content, String type, String language, Integer level) {
+    public PostEditDto(String title, String problem_uri, String content, Type type, String language, Integer level) {
         this.title = title;
         this.problem_uri = problem_uri;
         this.content = content;
-        this.type = type;
+        this.type = type.name();
         this.language = language;
         this.level = level;
     }

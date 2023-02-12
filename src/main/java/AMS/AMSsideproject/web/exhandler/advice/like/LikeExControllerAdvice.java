@@ -22,7 +22,4 @@ public class LikeExControllerAdvice {
         return new BaseErrorResult(e.getMessage(),"400", "BAS_REQUEST");
     }
 
-
-
-
 }

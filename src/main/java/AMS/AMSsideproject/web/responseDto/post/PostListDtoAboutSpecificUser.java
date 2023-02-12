@@ -27,7 +27,7 @@ public class PostListDtoAboutSpecificUser {
     @ApiModelProperty(example = "6")
     private Integer countView; //조회수
 
-    @ApiModelProperty(example = "DFS", notes = "문제 태그들")
+    @ApiModelProperty(example = "['DFS', 'BFS']" , notes = "문제 태그들")
     private List<String> tags; //태그들
 
     public PostListDtoAboutSpecificUser(Post post) {

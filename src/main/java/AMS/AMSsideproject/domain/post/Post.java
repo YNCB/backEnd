@@ -28,8 +28,10 @@ public class Post {
     private User user;
 
     private String title;
+
     @Column(columnDefinition = "TEXT")
     private String problem_uri;
+
     @Column(columnDefinition = "TEXT")
     private String context;
 

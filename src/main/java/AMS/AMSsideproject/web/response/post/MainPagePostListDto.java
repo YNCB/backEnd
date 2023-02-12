@@ -1,13 +1,10 @@
 package AMS.AMSsideproject.web.response.post;
 
-import AMS.AMSsideproject.web.responseDto.post.PostListDtoAboutAllUser;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
-public class PostListResponse<T> {
+public class MainPagePostListDto<T> {
 
     private T list;
 
@@ -17,7 +14,7 @@ public class PostListResponse<T> {
     @ApiModelProperty(example = "true", notes = "무한스크롤 방식을 위해 사용. 다음 게시물 존재 유무")
     private Boolean hasNext; //다음 게시물이 있는지 유무
 
-    public PostListResponse(T list, Integer count, Boolean hasNext) {
+    public MainPagePostListDto(T list, Integer count, Boolean hasNext) {
         this.list = list;
         this.count = count;
         this.hasNext = hasNext;

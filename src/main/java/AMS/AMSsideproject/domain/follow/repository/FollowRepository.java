@@ -41,13 +41,23 @@ public class FollowRepository {
         return em.find(Follow.class, followId);
     }
 
-    //팔로우 검색(userId, followId 를 통해)
+    //팔로우 엔티티 검색(userId, followId 를 통해)
     public Optional<Follow> findFollowById(Long userId, Long followId) {
         return Optional.ofNullable(query.selectFrom(f1)
                 .join(f1.user, u1)
                 .join(f1.follow, u2)
                 .where(userIdEq(userId), followIdEq(followId))
                 .fetchFirst());
+    }
+
+    //팔로우 유무 검사
+    public Boolean existsFollow(Long userId, Long followId) {
+        return query.selectFrom(f1)
+                .join(f1.user, u1)
+                .join(f1.follow, u2)
+                .where(userIdEq(userId), followIdEq(followId))
+                .fetchFirst() != null;
+
     }
 
     //팔로워 리스트 조회(내가 팔로우한)

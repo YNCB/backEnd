@@ -7,6 +7,7 @@ import AMS.AMSsideproject.domain.user.repository.UserRepositoryImpl;
 import AMS.AMSsideproject.web.exception.AlreadyExistingFollow;
 import AMS.AMSsideproject.web.exception.NotExistingFollow;
 import AMS.AMSsideproject.web.exception.NotExistingUser;
+import AMS.AMSsideproject.web.responseDto.follow.IsFollowDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +40,12 @@ public class FollowService {
         Follow createFollow = Follow.createFollow(user.get(), follow.get());
         followRepository.save(createFollow);
         return createFollow;
+    }
+
+    //팔로우 유무 검색
+    @Transactional(readOnly = true)
+    public Boolean findIsFollow(Long userId, Long followId){
+        return followRepository.existsFollow(userId, followId);
     }
 
     //팔로우 삭제
