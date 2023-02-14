@@ -4,7 +4,7 @@ import AMS.AMSsideproject.domain.like.repository.query.LikeDtoRepository;
 import AMS.AMSsideproject.domain.like.service.LikeService;
 import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
-import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
+import AMS.AMSsideproject.web.exhandler.dto.BaseErrorResult;
 import AMS.AMSsideproject.web.response.BaseResponse;
 import AMS.AMSsideproject.web.response.DataResponse;
 import AMS.AMSsideproject.web.responseDto.like.LikeDto;

@@ -36,7 +36,7 @@ public class FollowRepository {
     //팔로우 삭제(내가 팔로우한)
     public void delete(Follow follow) {em.remove(follow);}
 
-    //팔로우 검색
+    //고유 Id 로 팔로우 검색
     public Follow findFollow(Long followId) {
         return em.find(Follow.class, followId);
     }

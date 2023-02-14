@@ -1,10 +1,8 @@
 package AMS.AMSsideproject.web.exhandler.advice;
 
-import AMS.AMSsideproject.web.apiController.like.LikeController;
 import AMS.AMSsideproject.web.apiController.post.PostControllerV2;
-import AMS.AMSsideproject.web.exception.NotExistingUser;
 import AMS.AMSsideproject.web.exception.UserNullException;
-import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
+import AMS.AMSsideproject.web.exhandler.dto.BaseErrorResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;

@@ -2,20 +2,14 @@ package AMS.AMSsideproject.web.interceptor;
 
 import AMS.AMSsideproject.domain.refreshToken.service.RefreshTokenService;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
-import AMS.AMSsideproject.web.exception.JWT.JwtExpireException;
-import AMS.AMSsideproject.web.exception.JWT.JwtValidException;
-import AMS.AMSsideproject.web.exception.NotEqRefreshToken;
 import AMS.AMSsideproject.web.exception.JWT.JwtExistingException;
-import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import AMS.AMSsideproject.web.exhandler.dto.BaseErrorResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 public class RefreshTokenAuthInterceptor implements HandlerInterceptor {
 

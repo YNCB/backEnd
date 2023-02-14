@@ -93,9 +93,7 @@ public class SecurityConfig {
                 .antMatchers( "/codebox/*/*/like").hasAuthority("USER") //post,get
 
                 //팔로우 관련
-                .antMatchers(HttpMethod.POST,"/codebox/follow/add").hasAuthority("USER")
-                .antMatchers(HttpMethod.DELETE, "/codebox/follow/*").hasAuthority("USER")
-                .antMatchers(HttpMethod.GET,"/codebox/follow/follower","/codebox/follow/following").hasAuthority("USER")
+                .antMatchers("/codebox/follow/*").hasAuthority("USER")
 
                 .and()
                 .build();

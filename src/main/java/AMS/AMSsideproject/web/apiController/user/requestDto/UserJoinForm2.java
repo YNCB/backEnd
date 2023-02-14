@@ -8,6 +8,7 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 @Data
@@ -40,10 +41,10 @@ public class UserJoinForm2 {
     @ApiModelProperty(example = "학생")
     private String job;
 
+    @ApiModelProperty(example = "Java", notes = "C++/Python/JS/Java/C/C#/Swift/Kotlin/Ruby/Swift/Go 중 하나입니다.")
     @NotBlank (message = "필수 입력값 입니다.")
-    @Pattern(regexp = "C|C++|C#|Python|JS|Java|Swift|Kotlin|Ruby|Swift|Go|Etc",
-            message = "C++/Python/JS/Java/C/C#/Swift/Kotlin/Ruby/Swift/Go/Etc 중 하나입니다.")
-    @ApiModelProperty(example = "Java")
+    @Pattern(regexp = "(C)|(C\\+\\+)|(C#)|(Python)|(JS)|(Java)|(Swift)|(Kotlin)|(Ruby)|(Swift)|(Go)|(Etc)|^$",
+            message = "C++/Python/JS/Java/C/C#/Swift/Kotlin/Ruby/Swift/Go/Etc/공백 중 하나입니다.")
     private String main_lang;
 
 }

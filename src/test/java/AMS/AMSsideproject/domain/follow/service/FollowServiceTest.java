@@ -9,6 +9,7 @@ import AMS.AMSsideproject.domain.user.repository.UserRepository;
 import AMS.AMSsideproject.domain.user.service.UserService;
 import AMS.AMSsideproject.web.apiController.user.requestDto.UserJoinForm2;
 import AMS.AMSsideproject.web.exception.AlreadyExistingFollow;
+import AMS.AMSsideproject.web.exception.NotExistingFollow;
 import AMS.AMSsideproject.web.exception.NotExistingUser;
 import AMS.AMSsideproject.web.responseDto.follow.IsFollowDto;
 import org.assertj.core.api.Assertions;
@@ -88,10 +89,23 @@ class FollowServiceTest {
         Follow follow = followService.addFollow(findUser1.getUser_id(), findUser2.getUser_id());
 
         //when
-        followService.deleteFollow(follow.getId());
+        followService.deleteFollow(findUser1.getUser_id(), findUser2.getUser_id());
 
         //then
         Assertions.assertThat(followRepository.findFollow(follow.getId())).isNull();
+    }
+
+    @Test
+    public void 팔로우삭제에러테스트() throws Exception {
+        //given
+        UserJoinForm2 userJoinForm1 = new UserJoinForm2("test1@naver.com", "test1","test1",LoginType.BASIC.name(),Job.학생.name(),"Java");
+        UserJoinForm2 userJoinForm2 = new UserJoinForm2("test2@naver.com", "test2","test2",LoginType.BASIC.name(),Job.학생.name(),"Java");
+        User findUser1 = userService.join(userJoinForm1);
+        User findUser2 = userService.join(userJoinForm2);
+
+        //when & then
+        Assertions.assertThatThrownBy(() -> followService.deleteFollow(findUser1.getUser_id(), findUser2.getUser_id()))
+                .isInstanceOf(NotExistingFollow.class);
     }
 
     @Test

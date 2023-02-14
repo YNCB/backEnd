@@ -7,7 +7,7 @@ import AMS.AMSsideproject.web.custom.security.PrincipalDetails;
 import AMS.AMSsideproject.web.exception.JWT.JwtExpireException;
 import AMS.AMSsideproject.web.exception.JWT.JwtExistingException;
 import AMS.AMSsideproject.web.exception.JWT.JwtValidException;
-import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
+import AMS.AMSsideproject.web.exhandler.dto.BaseErrorResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;

@@ -6,7 +6,7 @@ import AMS.AMSsideproject.web.apiController.reply.requestForm.ReplyEditForm;
 import AMS.AMSsideproject.web.apiController.reply.requestForm.ReplySaveForm;
 import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
-import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
+import AMS.AMSsideproject.web.exhandler.dto.BaseErrorResult;
 import AMS.AMSsideproject.web.response.BaseResponse;
 import AMS.AMSsideproject.web.response.DataResponse;
 import AMS.AMSsideproject.web.responseDto.reply.ReplyDto;

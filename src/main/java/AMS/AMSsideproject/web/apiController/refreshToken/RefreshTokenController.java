@@ -3,7 +3,7 @@ package AMS.AMSsideproject.web.apiController.refreshToken;
 import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
 import AMS.AMSsideproject.web.auth.jwt.JwtToken;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtService;
-import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
+import AMS.AMSsideproject.web.exhandler.dto.BaseErrorResult;
 import AMS.AMSsideproject.web.response.DataResponse;
 import AMS.AMSsideproject.web.responseDto.user.UserTokenDto;
 import io.swagger.annotations.*;

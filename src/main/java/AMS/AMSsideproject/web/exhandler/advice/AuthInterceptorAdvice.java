@@ -5,7 +5,7 @@ import AMS.AMSsideproject.web.exception.JWT.JwtExistingException;
 import AMS.AMSsideproject.web.exception.JWT.JwtExpireException;
 import AMS.AMSsideproject.web.exception.JWT.JwtValidException;
 import AMS.AMSsideproject.web.exception.UserNullException;
-import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
+import AMS.AMSsideproject.web.exhandler.dto.BaseErrorResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;

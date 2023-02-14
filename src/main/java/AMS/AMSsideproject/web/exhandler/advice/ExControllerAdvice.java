@@ -1,7 +1,7 @@
 package AMS.AMSsideproject.web.exhandler.advice;
 
-import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
-import AMS.AMSsideproject.web.exhandler.DataErrorResult;
+import AMS.AMSsideproject.web.exhandler.dto.BaseErrorResult;
+import AMS.AMSsideproject.web.exhandler.dto.DataErrorResult;
 import AMS.AMSsideproject.web.exhandler.advice.user.UserValidExceptionDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.ArrayList;
 import java.util.List;
 
-//Controller 전체에 대한 에러 처리 핸들러
-@RestControllerAdvice
+//Controller 공통 에러 처리 핸들러
+@RestControllerAdvice(basePackages = "web.apiController")
 public class ExControllerAdvice {
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

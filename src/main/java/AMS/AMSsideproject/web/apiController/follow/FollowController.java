@@ -2,10 +2,10 @@ package AMS.AMSsideproject.web.apiController.follow;
 
 import AMS.AMSsideproject.domain.follow.Follow;
 import AMS.AMSsideproject.domain.follow.service.FollowService;
-import AMS.AMSsideproject.web.apiController.follow.requestForm.FollowSaveForm;
 import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
-import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
+import AMS.AMSsideproject.web.exception.AlreadyExistingFollow;
+import AMS.AMSsideproject.web.exhandler.dto.BaseErrorResult;
 import AMS.AMSsideproject.web.response.BaseResponse;
 import AMS.AMSsideproject.web.response.DataResponse;
 import AMS.AMSsideproject.web.responseDto.follow.FollowersDto;
@@ -13,7 +13,6 @@ import AMS.AMSsideproject.web.responseDto.follow.FollowingsDto;
 import AMS.AMSsideproject.web.swagger.userController.Join_406;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,7 +28,7 @@ public class FollowController {
     private final JwtProvider jwtProvider;
 
     //팔로우 저장
-    @PostMapping("/follow/add")
+    @PostMapping("/follow/{userId}")
     @ApiOperation(value = "팔로우 저장 api", notes = "특정 사용자를 팔로우 합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
@@ -43,17 +42,17 @@ public class FollowController {
             @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰", required = true)
     })
     public BaseResponse addFollow(@RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String token,
-                                  @Validated @RequestBody FollowSaveForm form) {
+                                  @PathVariable("userId") Long followId ) {
 
         String accessToken = jwtProvider.parsingAccessToken(token);
         Long userId = jwtProvider.getUserId(accessToken);
-        Follow follow = followService.addFollow(userId, form.getUserId());
+        followService.addFollow(userId, followId);
 
         return new BaseResponse("200", "팔로우가 저장되었습니다");
     }
 
     //팔로우 삭제
-    @DeleteMapping("/follow/{followId}")
+    @DeleteMapping("/follow/{userId}")
     @ApiOperation(value = "팔로우 삭제 api", notes = "특정 사용자를 언팔로우합니다.")
     @ApiResponses({
             @ApiResponse(code=200, message="정상 호출"),
@@ -66,9 +65,13 @@ public class FollowController {
             @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰", required = true),
             @ApiImplicitParam(name = "followId", value = "삭제할 팔로우 Id", required = true)
     })
-    public BaseResponse deleteFollow(@RequestHeader(JwtProperties.ACCESS_HEADER_STRING)String accessToken,
-                                     @PathVariable("followId")Long followId){
-        followService.deleteFollow(followId);
+    public BaseResponse deleteFollow(@RequestHeader(JwtProperties.ACCESS_HEADER_STRING)String token,
+                                     @PathVariable("userId")Long followId){
+
+        String accessToken = jwtProvider.parsingAccessToken(token);
+        Long userId = jwtProvider.getUserId(accessToken);
+
+        followService.deleteFollow(userId, followId);
 
         return new BaseResponse("200", "팔로우가 삭제되었습니다");
     }

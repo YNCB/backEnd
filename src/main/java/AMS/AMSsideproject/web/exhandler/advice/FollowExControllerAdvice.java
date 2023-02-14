@@ -1,10 +1,10 @@
-package AMS.AMSsideproject.web.exhandler.advice.follow;
+package AMS.AMSsideproject.web.exhandler.advice;
 
 import AMS.AMSsideproject.web.apiController.follow.FollowController;
 import AMS.AMSsideproject.web.exception.AlreadyExistingFollow;
 import AMS.AMSsideproject.web.exception.NotExistingFollow;
 import AMS.AMSsideproject.web.exception.NotExistingUser;
-import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
+import AMS.AMSsideproject.web.exhandler.dto.BaseErrorResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -19,9 +19,10 @@ public class FollowExControllerAdvice {
         return new BaseErrorResult(e.getMessage(),"400", "BAD_REQUEST");
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     @ExceptionHandler(AlreadyExistingFollow.class)
     public BaseErrorResult AlreadyExistingFollow(AlreadyExistingFollow e) {
+
         return new BaseErrorResult(e.getMessage(), "400", "BAD_REQUEST");
     }
 
@@ -30,6 +31,5 @@ public class FollowExControllerAdvice {
     public BaseErrorResult NotExistingFollow(NotExistingFollow e) {
         return new BaseErrorResult(e.getMessage(), "400", "BAD_REQUEST");
     }
-
 
 }

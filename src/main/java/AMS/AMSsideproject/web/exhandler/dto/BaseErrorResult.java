@@ -1,4 +1,4 @@
-package AMS.AMSsideproject.web.exhandler;
+package AMS.AMSsideproject.web.exhandler.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

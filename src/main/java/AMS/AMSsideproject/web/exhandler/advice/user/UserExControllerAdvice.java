@@ -5,17 +5,12 @@ import AMS.AMSsideproject.web.apiController.user.UserController;
 import AMS.AMSsideproject.web.apiController.user.requestDto.ValidNickNameDto;
 import AMS.AMSsideproject.web.exception.AlreadyJoinedUser;
 import AMS.AMSsideproject.web.exception.DuplicationUserNickname;
-import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
-import AMS.AMSsideproject.web.exhandler.DataErrorResult;
+import AMS.AMSsideproject.web.exhandler.dto.BaseErrorResult;
+import AMS.AMSsideproject.web.exhandler.dto.DataErrorResult;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @RestControllerAdvice(basePackageClasses = UserController.class)
 public class UserExControllerAdvice {

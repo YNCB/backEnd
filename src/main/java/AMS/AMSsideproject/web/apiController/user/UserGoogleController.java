@@ -1,12 +1,11 @@
 package AMS.AMSsideproject.web.apiController.user;
 
 import AMS.AMSsideproject.domain.user.LoginType;
-import AMS.AMSsideproject.domain.user.Role;
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
 import AMS.AMSsideproject.web.auth.jwt.JwtToken;
 import AMS.AMSsideproject.web.auth.jwt.service.JwtService;
-import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
+import AMS.AMSsideproject.web.exhandler.dto.BaseErrorResult;
 import AMS.AMSsideproject.web.oauth.provider.info.GoogleInfo;
 import AMS.AMSsideproject.web.response.DataResponse;
 import AMS.AMSsideproject.web.responseDto.user.GoogleUserJoinDto;

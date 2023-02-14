@@ -9,12 +9,14 @@ import AMS.AMSsideproject.web.exception.NotExistingFollow;
 import AMS.AMSsideproject.web.exception.NotExistingUser;
 import AMS.AMSsideproject.web.responseDto.follow.IsFollowDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -30,12 +32,11 @@ public class FollowService {
         Optional<User> user = userRepository.findByUserId(userId);
         Optional<User> follow = userRepository.findByUserId(followId);
 
-        if(follow.isEmpty())
-            throw new NotExistingUser("존재하지 않은 사용자입니다.");
+        follow.orElseThrow( () -> new NotExistingUser("존재하지 않은 사용자입니다."));
 
         Optional<Follow> findFollow = followRepository.findFollowById(userId, followId);
         if(findFollow.isPresent())
-            throw new AlreadyExistingFollow("이미 팔로잉하였습니다.");
+            throw new AlreadyExistingFollow("이미 팔로우 하였습니다.");
 
         Follow createFollow = Follow.createFollow(user.get(), follow.get());
         followRepository.save(createFollow);
@@ -50,13 +51,12 @@ public class FollowService {
 
     //팔로우 삭제
     @Transactional
-    public void deleteFollow(Long followId) {
+    public void deleteFollow(Long userId, Long followId) {
 
-        Follow follow = followRepository.findFollow(followId);
-        if(follow == null)
-            throw new NotExistingFollow("존재하지 않은 팔로우 입니다.");
+        Optional<Follow> follow = followRepository.findFollowById(userId, followId);
+        follow.orElseThrow( () -> new NotExistingFollow("존재하지 않은 팔로우 입니다."));
 
-        followRepository.delete(follow);
+        followRepository.delete(follow.get());
     }
 
     //팔로워 리스트 검색

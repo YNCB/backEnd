@@ -1,6 +1,5 @@
-package AMS.AMSsideproject.web.exhandler;
+package AMS.AMSsideproject.web.exhandler.dto;
 
-import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

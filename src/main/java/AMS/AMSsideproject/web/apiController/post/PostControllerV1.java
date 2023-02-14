@@ -10,7 +10,7 @@
 //import AMS.AMSsideproject.web.custom.annotation.PostAuthor;
 //import AMS.AMSsideproject.web.custom.annotation.UserAuthen;
 //import AMS.AMSsideproject.web.custom.annotation.UserAuthor;
-//import AMS.AMSsideproject.web.exhandler.BaseErrorResult;
+//import AMS.AMSsideproject.web.exhandler.dto.BaseErrorResult;
 //import AMS.AMSsideproject.web.response.BaseResponse;
 //import AMS.AMSsideproject.web.response.DataResponse;
 //import AMS.AMSsideproject.web.response.post.PostListResponse;
