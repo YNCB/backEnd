@@ -1,7 +1,7 @@
 package AMS.AMSsideproject.web.responseDto.user;
 
-import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
-import AMS.AMSsideproject.web.auth.jwt.JwtToken;
+import AMS.AMSsideproject.web.jwt.JwtProperties;
+import AMS.AMSsideproject.web.jwt.JwtToken;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;

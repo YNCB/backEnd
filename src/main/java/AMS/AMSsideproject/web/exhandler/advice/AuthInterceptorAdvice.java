@@ -1,9 +1,9 @@
 package AMS.AMSsideproject.web.exhandler.advice;
 
 import AMS.AMSsideproject.web.exception.JWT.AuthorizationException;
-import AMS.AMSsideproject.web.exception.JWT.JwtExistingException;
-import AMS.AMSsideproject.web.exception.JWT.JwtExpireException;
-import AMS.AMSsideproject.web.exception.JWT.JwtValidException;
+import AMS.AMSsideproject.web.exception.JWT.TokenExistingException;
+import AMS.AMSsideproject.web.exception.JWT.TokenExpireException;
+import AMS.AMSsideproject.web.exception.JWT.TokenValidException;
 import AMS.AMSsideproject.web.exception.UserNullException;
 import AMS.AMSsideproject.web.exhandler.dto.BaseErrorResult;
 import org.springframework.http.HttpStatus;
@@ -16,15 +16,19 @@ public class AuthInterceptorAdvice {
 
     //엑세스 유효성 에러
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(JwtValidException.class)
-    public BaseErrorResult JwtValidException(JwtValidException e) {
-        return new BaseErrorResult("정상적이지 않은 토큰입니다.",String.valueOf(HttpStatus.UNAUTHORIZED.value()),HttpStatus.UNAUTHORIZED.getReasonPhrase());
+    @ExceptionHandler(TokenValidException.class)
+    public BaseErrorResult JwtValidException(TokenValidException e) {
+        return new BaseErrorResult("인증에 실패하였습니다.",String.valueOf(HttpStatus.UNAUTHORIZED.value()),HttpStatus.UNAUTHORIZED.getReasonPhrase());
     }
+
+
+
+
 
     //토큰 기한 만료
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(JwtExpireException.class)
-    public BaseErrorResult JwtExpireException(JwtExpireException e) {
+    @ExceptionHandler(TokenExpireException.class)
+    public BaseErrorResult JwtExpireException(TokenExpireException e) {
         return new BaseErrorResult("토큰의 기한이 만료되었습니다.",String.valueOf(HttpStatus.UNAUTHORIZED.value()),HttpStatus.UNAUTHORIZED.getReasonPhrase());
     }
 
@@ -44,8 +48,8 @@ public class AuthInterceptorAdvice {
 
     //리프레쉬 인터셉터에서 발생
     @ResponseStatus(HttpStatus.PRECONDITION_FAILED)
-    @ExceptionHandler(JwtExistingException.class)
-    public BaseErrorResult JwtExistingException(JwtExistingException e ) {
+    @ExceptionHandler(TokenExistingException.class)
+    public BaseErrorResult JwtExistingException(TokenExistingException e ) {
         return new BaseErrorResult(e.getMessage(), String.valueOf(HttpStatus.PRECONDITION_FAILED.value()), HttpStatus.PRECONDITION_FAILED.getReasonPhrase());
     }
 }

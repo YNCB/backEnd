@@ -1,8 +1,8 @@
 package AMS.AMSsideproject.web.apiController;
 
-import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
-import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
-import io.swagger.annotations.Api;
+import AMS.AMSsideproject.domain.user.User;
+import AMS.AMSsideproject.web.jwt.service.JwtProvider;
+import AMS.AMSsideproject.web.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -49,6 +49,18 @@ public class TestController {
 
         String accessToken = jwtProvider.parsingAccessToken(token);
         return accessToken;
+    }
+
+    @GetMapping("/security-test")
+    @ResponseBody
+    public String securityTest() {
+        User user = SecurityUtil.getCurrentUser();
+
+        System.out.println("id = " + user.getUser_id());
+        System.out.println("nickname = " + user.getNickname());
+        System.out.println("email = " + user.getEmail());
+
+        return "success";
     }
 
 }

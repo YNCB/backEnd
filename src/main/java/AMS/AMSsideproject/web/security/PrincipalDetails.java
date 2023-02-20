@@ -1,4 +1,4 @@
-package AMS.AMSsideproject.web.custom.security;
+package AMS.AMSsideproject.web.security;
 
 import AMS.AMSsideproject.domain.user.User;
 import lombok.Data;
@@ -14,7 +14,9 @@ public class PrincipalDetails implements UserDetails {
 
     private User user;
 
-    public PrincipalDetails(User user) {this.user = user;}
+    public PrincipalDetails(User user) {
+        this.user = user;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

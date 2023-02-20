@@ -2,8 +2,8 @@ package AMS.AMSsideproject.web.apiController.like;
 
 import AMS.AMSsideproject.domain.like.repository.query.LikeDtoRepository;
 import AMS.AMSsideproject.domain.like.service.LikeService;
-import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
-import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
+import AMS.AMSsideproject.web.jwt.JwtProperties;
+import AMS.AMSsideproject.web.jwt.service.JwtProvider;
 import AMS.AMSsideproject.web.exhandler.dto.BaseErrorResult;
 import AMS.AMSsideproject.web.response.BaseResponse;
 import AMS.AMSsideproject.web.response.DataResponse;
@@ -41,7 +41,7 @@ public class LikeController {
     })
     public DataResponse<LikeDto> like(@PathVariable("nickname")String nickname,
                                       @PathVariable("postId")Long postId,
-                                      @RequestHeader(JwtProperties.ACCESS_HEADER_STRING)String token ) {
+                                      @RequestHeader(JwtProperties.ACCESS_HEADER_STRING)String token) {
 
         String accessToken = jwtProvider.parsingAccessToken(token);
         Long findUserId = jwtProvider.getUserId(accessToken);

@@ -5,7 +5,7 @@ import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.repository.UserRepository;
 import AMS.AMSsideproject.web.apiController.user.requestDto.UserEditForm;
 import AMS.AMSsideproject.web.apiController.user.requestDto.UserJoinForm2;
-import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
+import AMS.AMSsideproject.web.jwt.service.JwtProvider;
 import AMS.AMSsideproject.web.exception.DuplicationUserNickname;
 import AMS.AMSsideproject.web.exception.UserNullException;
 import lombok.RequiredArgsConstructor;

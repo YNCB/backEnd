@@ -1,10 +1,10 @@
 package AMS.AMSsideproject.web.interceptor;
 
 import AMS.AMSsideproject.domain.user.Role;
-import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
-import AMS.AMSsideproject.web.custom.annotation.Auth;
+import AMS.AMSsideproject.web.jwt.service.JwtProvider;
+import AMS.AMSsideproject.web.annotation.Auth;
 import AMS.AMSsideproject.web.exception.JWT.AuthorizationException;
-import AMS.AMSsideproject.web.exception.JWT.JwtValidException;
+import AMS.AMSsideproject.web.exception.JWT.TokenValidException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -63,6 +63,6 @@ public class AuthInterceptor implements HandlerInterceptor {
         //Redis에 있는 엑세스 토큰인 경우 로그아웃 처리된 엑세스 토큰임.
         String blackToken = redisTemplate.opsForValue().get(accessToken);
         if(StringUtils.hasText(blackToken))
-            throw new JwtValidException("로그아웃 처리된 엑세스 토큰입니다.");
+            throw new TokenValidException("로그아웃 처리된 엑세스 토큰입니다.");
     }
 }

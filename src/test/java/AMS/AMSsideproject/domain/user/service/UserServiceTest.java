@@ -1,7 +1,6 @@
 package AMS.AMSsideproject.domain.user.service;
 
-import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
-import org.junit.jupiter.api.Test;
+import AMS.AMSsideproject.web.jwt.service.JwtProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;

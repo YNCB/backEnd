@@ -2,14 +2,15 @@ package AMS.AMSsideproject.web.apiController.follow;
 
 import AMS.AMSsideproject.domain.follow.Follow;
 import AMS.AMSsideproject.domain.follow.service.FollowService;
-import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
-import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
-import AMS.AMSsideproject.web.exception.AlreadyExistingFollow;
+import AMS.AMSsideproject.domain.user.User;
+import AMS.AMSsideproject.web.jwt.JwtProperties;
+import AMS.AMSsideproject.web.jwt.service.JwtProvider;
 import AMS.AMSsideproject.web.exhandler.dto.BaseErrorResult;
 import AMS.AMSsideproject.web.response.BaseResponse;
 import AMS.AMSsideproject.web.response.DataResponse;
 import AMS.AMSsideproject.web.responseDto.follow.FollowersDto;
 import AMS.AMSsideproject.web.responseDto.follow.FollowingsDto;
+import AMS.AMSsideproject.web.security.SecurityUtil;
 import AMS.AMSsideproject.web.swagger.userController.Join_406;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -41,12 +42,11 @@ public class FollowController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = JwtProperties.ACCESS_HEADER_STRING, value = "엑세스 토큰", required = true)
     })
-    public BaseResponse addFollow(@RequestHeader(JwtProperties.ACCESS_HEADER_STRING) String token,
-                                  @PathVariable("userId") Long followId ) {
+    public BaseResponse addFollow(@PathVariable("userId") Long followId) {
 
-        String accessToken = jwtProvider.parsingAccessToken(token);
-        Long userId = jwtProvider.getUserId(accessToken);
-        followService.addFollow(userId, followId);
+        User loginUser = SecurityUtil.getCurrentUser();
+
+        followService.addFollow(loginUser.getUser_id(), followId);
 
         return new BaseResponse("200", "팔로우가 저장되었습니다");
     }

@@ -1,10 +1,10 @@
-package AMS.AMSsideproject.web.auth.jwt.service;
+package AMS.AMSsideproject.web.jwt.service;
 
 import AMS.AMSsideproject.domain.refreshToken.RefreshToken;
 import AMS.AMSsideproject.domain.refreshToken.service.RefreshTokenService;
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
-import AMS.AMSsideproject.web.auth.jwt.JwtToken;
+import AMS.AMSsideproject.web.jwt.JwtToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +23,7 @@ public class JwtService {
     private final UserService userService;
 
     //토큰 생성 및 저장
-    public JwtToken createAndSaveToken(Long userId, String nickName, String role) {
+    public JwtToken login(Long userId, String nickName, String role) {
 
         //토큰 생성
         JwtToken createToken = jwtProvider.createJwtToken(userId, nickName, role);
@@ -42,8 +42,8 @@ public class JwtService {
         return createToken;
     }
 
-    //refreshToken의 정보를 가지고 accessToken, refreshToken 재발급
-    public JwtToken recreateTokenUsingRefreshToken(String token) {
+    //리프레쉬토큰을 통해 accessToken, refreshToken 재발급
+    public JwtToken reissue(String token) {
 
         //리프레쉬 토큰에서 userId 추출
         Long userId = jwtProvider.getUserId(token);
@@ -53,10 +53,23 @@ public class JwtService {
 
         //엑세스 토큰 재생성
         String accessToken = jwtProvider.createAccessToken(userId, findUser.getNickname(), findUser.getRole().name());
-        //String mySessionToken = jwtProvider.createMySessionToken(userId);
 
         return new JwtToken(accessToken, token);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     //Token 에서 user 찾는 메서드 -> 회원 수정할때 사용
     @Transactional(readOnly = true)

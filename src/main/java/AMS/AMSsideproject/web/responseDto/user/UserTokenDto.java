@@ -1,15 +1,11 @@
 package AMS.AMSsideproject.web.responseDto.user;
 
-import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
-import AMS.AMSsideproject.web.auth.jwt.JwtToken;
+import AMS.AMSsideproject.web.jwt.JwtProperties;
+import AMS.AMSsideproject.web.jwt.JwtToken;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.springframework.cglib.core.Local;
 
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 @Data

@@ -22,7 +22,6 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
         query = new JPAQueryFactory(em);
     }
 
-
     @Override
     public Optional<RefreshToken> find(Long userId) {
 

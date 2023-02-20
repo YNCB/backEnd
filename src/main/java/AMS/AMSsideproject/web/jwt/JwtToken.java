@@ -1,4 +1,4 @@
-package AMS.AMSsideproject.web.auth.jwt;
+package AMS.AMSsideproject.web.jwt;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

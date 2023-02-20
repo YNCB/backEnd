@@ -4,17 +4,15 @@ import AMS.AMSsideproject.domain.refreshToken.RefreshToken;
 import AMS.AMSsideproject.domain.refreshToken.repository.RefreshTokenRepository;
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.repository.UserRepository;
-import AMS.AMSsideproject.web.exception.JWT.JwtValidException;
-import AMS.AMSsideproject.web.exception.NotEqRefreshToken;
+import AMS.AMSsideproject.web.exception.JWT.TokenValidException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-/**
- * RefreshToken 토큰과 관련된 기능
- */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -46,16 +44,13 @@ public class RefreshTokenService {
         return findToken.get();
     }
 
-    //사용자의 refreshToken 과 일치하는지 체크하는 메서드 -> refreshToken 재발급 받을때만 사용(그래서 이것만 트랜잭션 따로 걸어둠)
-    public String validRefreshTokenValue(Long userId, String refreshToken) {
+    //사용자의 리프레쉬 토큰과 일치하지 검증
+    public void validRefreshTokenValue(Long userId, String refreshToken) {
 
-        String findRefreshToken = findRefreshToken(userId).get().getValue();
+        Optional<RefreshToken> findToken = refreshTokenRepository.find(userId);
+        String token = findToken.map(t -> new String(t.getValue())).orElseThrow(() -> new TokenValidException());
 
-        //토큰의 값이 잘못된 경우
-        if (!findRefreshToken.equals(refreshToken)) {
-            throw new JwtValidException("리프레시 토큰이 잘못된 값입니다.");
-        }
-        return refreshToken;
+        if(!refreshToken.equals(token))
+            throw new TokenValidException();
     }
-
 }

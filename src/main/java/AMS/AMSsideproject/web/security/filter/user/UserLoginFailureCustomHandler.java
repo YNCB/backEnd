@@ -1,8 +1,9 @@
-package AMS.AMSsideproject.web.custom.security.filter;
+package AMS.AMSsideproject.web.security.filter.user;
 
 import AMS.AMSsideproject.web.exhandler.dto.BaseErrorResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -13,6 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+//"UsernamePasswordCustomFilter" 에서 로그인 실패시 실행되는 커스텀 Handler
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class UserLoginFailureCustomHandler implements AuthenticationFailureHandler {
@@ -22,20 +25,15 @@ public class UserLoginFailureCustomHandler implements AuthenticationFailureHandl
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
 
-        //이거는 세세하게(회원가입하지 않은 사용자, 비밀번호 틀린사용자로 나눌때 사용하는 법!!!!!
-//        if(exp.equals(BadCredentialsException.class)) { //비밀번호가 맞지 않았을 경우
-//            errorResult = new ErrorResult(exception.getMessage(), "BAD", "400");
-//
-//        }else if(exp.equals(LoginUserNullException.class)) {
-//            errorResult = new ErrorResult(exception.getMessage(), "BAD", "400");
-//        }else {
-//            errorResult = new ErrorResult("InternalAuthenticationError", "BAD", "400");
-//        }
+        log.error("로그인 실패");
 
-        BaseErrorResult errorResult = new BaseErrorResult(exception.getMessage(),"BAD", "400");
+        //response
+        BaseErrorResult errorResult = new BaseErrorResult("아이디 또는 비밀번호를 다시 확인해주시기 바랍니다.",
+                HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+                String.valueOf(HttpStatus.UNAUTHORIZED.value()));
         String res = objectMapper.writeValueAsString(errorResult);
 
-        response.setStatus(HttpStatus.BAD_REQUEST.value());
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(res);

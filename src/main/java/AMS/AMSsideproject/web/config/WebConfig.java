@@ -1,7 +1,10 @@
 package AMS.AMSsideproject.web.config;
 
+import AMS.AMSsideproject.domain.refreshToken.service.RefreshTokenService;
 import AMS.AMSsideproject.web.interceptor.*;
+import AMS.AMSsideproject.web.jwt.service.JwtProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -9,7 +12,11 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
+@RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
+
+    private final JwtProvider jwtProvider;
+    private final RefreshTokenService refreshTokenService;
 
     @Bean
     public ObjectMapper objectMapper() {
@@ -23,7 +30,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
 
-        //리프레시토큰 인증체크
+        //리프레시토큰 인증검증 필터
         registry.addInterceptor(refreshTokenInterceptor())
                 .order(1)
                 .addPathPatterns("/codebox/refreshToken")
@@ -47,20 +54,12 @@ public class WebConfig implements WebMvcConfigurer {
     }
     @Bean
     public AuthInterceptor authInterceptor() {return new AuthInterceptor();}
-    @Bean
-    public RefreshTokenAuthInterceptor refreshTokenInterceptor() {return new RefreshTokenAuthInterceptor();}
+
     @Bean
     public PostAuthInterceptor postAuthorizationInterceptor() {return new PostAuthInterceptor(); }
 
-
-
-    /** DefaultMessageCodesResolver 구현체 수정 **/
-//    @Override
-//    public MessageCodesResolver getMessageCodesResolver() {
-//        DefaultMessageCodesResolver codesResolver = new DefaultMessageCodesResolver();
-//        codesResolver.setMessageCodeFormatter(DefaultMessageCodesResolver.Format.POSTFIX_ERROR_CODE);
-//        return codesResolver;
-//    }
-
+    @Bean
+    public RefreshTokenAuthInterceptor refreshTokenInterceptor() {
+        return new RefreshTokenAuthInterceptor(jwtProvider, refreshTokenService);}
 
 }

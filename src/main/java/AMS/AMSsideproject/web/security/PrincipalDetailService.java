@@ -1,8 +1,8 @@
-package AMS.AMSsideproject.web.custom.security.service;
+package AMS.AMSsideproject.web.security;
 
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.repository.UserRepository;
-import AMS.AMSsideproject.web.custom.security.PrincipalDetails;
+import AMS.AMSsideproject.web.exception.NotExistingUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,10 +16,10 @@ public class PrincipalDetailService implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        User findUser = userRepository.findByEmail(username).get();
-
-        return new PrincipalDetails(findUser);
+        return userRepository.findByEmail(email)
+                .map(m -> new PrincipalDetails(m))
+                .orElseThrow( () -> new UsernameNotFoundException("존재하지 않은 사용자 입니다."));
     }
 }

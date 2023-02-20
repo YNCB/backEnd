@@ -3,10 +3,10 @@ package AMS.AMSsideproject.web.apiController.user;
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.domain.user.service.UserService;
 import AMS.AMSsideproject.web.apiController.user.requestDto.*;
-import AMS.AMSsideproject.web.auth.jwt.JwtProperties;
-import AMS.AMSsideproject.web.auth.jwt.JwtToken;
-import AMS.AMSsideproject.web.auth.jwt.service.JwtProvider;
-import AMS.AMSsideproject.web.auth.jwt.service.JwtService;
+import AMS.AMSsideproject.web.jwt.JwtProperties;
+import AMS.AMSsideproject.web.jwt.JwtToken;
+import AMS.AMSsideproject.web.jwt.service.JwtProvider;
+import AMS.AMSsideproject.web.jwt.service.JwtService;
 import AMS.AMSsideproject.web.exhandler.dto.BaseErrorResult;
 import AMS.AMSsideproject.web.response.BaseResponse;
 import AMS.AMSsideproject.web.response.DataResponse;
@@ -139,7 +139,7 @@ public class UserController {
         User updateUser = userService.update(findUserId, userEditForm);
 
         //토큰 새로 발급
-        JwtToken jwtToken = jwtService.createAndSaveToken(updateUser.getUser_id(), updateUser.getNickname(), updateUser.getRole().name());
+        JwtToken jwtToken = jwtService.login(updateUser.getUser_id(), updateUser.getNickname(), updateUser.getRole().name());
 
         UserEditSuccessDto dto = new UserEditSuccessDto(updateUser.getUser_id(), updateUser.getNickname(), jwtToken);
         return new DataResponse<>("200", "회원 수정이 완료되었습니다. 토큰이 재발급되었습니다.", dto);
