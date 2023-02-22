@@ -1,24 +1,21 @@
 package AMS.AMSsideproject.domain.post;
 
 import AMS.AMSsideproject.domain.like.Like;
-import AMS.AMSsideproject.domain.post.auditing.BaseEntity;
 import AMS.AMSsideproject.domain.reply.Reply;
 import AMS.AMSsideproject.domain.tag.postTag.PostTag;
 import AMS.AMSsideproject.domain.user.User;
 import AMS.AMSsideproject.web.apiController.post.requestForm.PostEditForm;
 import AMS.AMSsideproject.web.apiController.post.requestForm.PostSaveForm;
-import io.swagger.models.auth.In;
 import lombok.Getter;
 
 import javax.persistence.*;
-import java.sql.Array;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
-public class Post extends BaseEntity {
+public class Post  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
