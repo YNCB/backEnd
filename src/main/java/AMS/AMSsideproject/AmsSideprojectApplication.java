@@ -23,7 +23,7 @@ public class AmsSideprojectApplication {
 
 
 
-	//!!!Test!!!
+	//!!! Auditing Test!!!
 	//Spring Data Jpa - Auditing(@CreatedBy, @LastModifiedBy) 사용
 	public class AuditorAwareImpl implements AuditorAware<String> {
 		@Override
