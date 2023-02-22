@@ -1,4 +1,4 @@
-package AMS.AMSsideproject.web.exhandler.advice.user;
+package AMS.AMSsideproject.web.exhandler.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;

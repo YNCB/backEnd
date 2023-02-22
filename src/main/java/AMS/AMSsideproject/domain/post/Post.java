@@ -1,6 +1,7 @@
 package AMS.AMSsideproject.domain.post;
 
 import AMS.AMSsideproject.domain.like.Like;
+import AMS.AMSsideproject.domain.post.auditing.BaseEntity;
 import AMS.AMSsideproject.domain.reply.Reply;
 import AMS.AMSsideproject.domain.tag.postTag.PostTag;
 import AMS.AMSsideproject.domain.user.User;
@@ -17,7 +18,7 @@ import java.util.List;
 
 @Entity
 @Getter
-public class Post {
+public class Post extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

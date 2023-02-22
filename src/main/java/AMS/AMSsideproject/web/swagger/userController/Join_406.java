@@ -1,7 +1,7 @@
 package AMS.AMSsideproject.web.swagger.userController;
 
 import AMS.AMSsideproject.web.exhandler.dto.DataErrorResult;
-import AMS.AMSsideproject.web.exhandler.advice.user.UserValidExceptionDto;
+import AMS.AMSsideproject.web.exhandler.dto.UserValidExceptionDto;
 
 import java.util.List;
 

@@ -22,13 +22,21 @@ public class QPost extends EntityPathBase<Post> {
 
     public static final QPost post = new QPost("post");
 
+    public final AMS.AMSsideproject.domain.post.auditing.QBaseEntity _super = new AMS.AMSsideproject.domain.post.auditing.QBaseEntity(this);
+
     public final DateTimePath<java.time.LocalDateTime> chdate = createDateTime("chdate", java.time.LocalDateTime.class);
 
     public final StringPath context = createString("context");
 
     public final NumberPath<Integer> countView = createNumber("countView", Integer.class);
 
+    //inherited
+    public final StringPath createdBy = _super.createdBy;
+
     public final StringPath language = createString("language");
+
+    //inherited
+    public final StringPath lastModifiedBy = _super.lastModifiedBy;
 
     public final NumberPath<Integer> level = createNumber("level", Integer.class);
 
