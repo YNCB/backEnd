@@ -11,6 +11,13 @@ public class GoogleProfile {
     public String id; //고유 아이디
     public String email; //이메일
     public boolean verified_email;
+
+    public String name;
+    public String given_name;
+    public String family_name;
+
     public String picture;
+
+    public String locale;
 
 }

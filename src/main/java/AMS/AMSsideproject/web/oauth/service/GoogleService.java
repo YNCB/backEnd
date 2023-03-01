@@ -41,7 +41,6 @@ public class GoogleService {
         //json 변환
         GoogleToken googleToken = ob.readValue(response, GoogleToken.class);
 
-
         return googleToken;
     }
 
@@ -55,6 +54,11 @@ public class GoogleService {
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
+
+
+        System.out.println("========================================");
+        System.out.println(response);
+
 
         //json 변환
         GoogleProfile googleProfile = ob.readValue(response, GoogleProfile.class);
