@@ -4,7 +4,7 @@ public class GoogleInfo {
 
     public static String client_id = "325383476289-eigkm7k581gg11dnqdajvvgbe6jf4md4.apps.googleusercontent.com";
     public static String client_secret ="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";
-    public static String redirect_uri = "http://localhost:3000";
+    public static String redirect_uri = "http://codeboxs3.s3-website.ap-northeast-2.amazonaws.com";
     //public static String redirect_uri = "http://localhost:8888/login/oauth2/code/google";
     public static String accessTokenUri = "https://oauth2.googleapis.com/token";
     public static String userInfoUri = "https://www.googleapis.com/oauth2/v1/userinfo";
