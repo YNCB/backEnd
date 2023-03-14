@@ -30,6 +30,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
                 .apis(RequestHandlerSelectors.basePackage("AMS.AMSsideproject.web.apiController")) //해당 패키지 아래 controller 대상으로 api 문서 생성
                 .paths(PathSelectors.any())
                 .build()
+                .forCodeGeneration(true)
                 .useDefaultResponseMessages(false); //기본적으로 제공해주는 response 응답 사용안함.
     }
 
