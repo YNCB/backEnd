@@ -58,6 +58,9 @@ public class UserExControllerAdvice {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public BaseErrorResult EtcException(Exception e) {
+
+        log.error("Exception = {}" , e.getMessage());
+
         return new BaseErrorResult(e.getMessage(), "500", "INTERNAL_SERVER_ERROR");
     }
 }

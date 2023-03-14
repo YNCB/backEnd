@@ -9,6 +9,5 @@ public class KakaoInfo {
     public static String accessTokenUri = "https://kauth.kakao.com/oauth/token";
     public static String userInfoUri = "https://kapi.kakao.com/v2/user/me";
     public static String grantType = "authorization_code";
-
     public static String KakaoLoginPassWord = "kakao1234!";
 }
